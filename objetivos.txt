@@ -1,0 +1,8 @@
+[ Tarea 1 ]
+Trabajar en lo de Seraphina y adaptar lo de Isabel de adaptación de ejercicios
+Hacer pruebita en n8n / hacer ejercicios y luego hacerle fine tunning de AI
+[ Tarea 1~ ]
+En app.py limpiarlo,y mejorar la generación de ejercicios y cuando funcione convertirlo en app
+
+[ Tarea 3 ]
+Diseñar y adaptar nuevos ejercicios a la aplicación
