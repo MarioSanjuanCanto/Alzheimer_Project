@@ -1,0 +1,32 @@
+export function ArrowRight(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      viewBox="0 0 23 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line
+        x1="1"
+        y1="9.00024"
+        x2="22"
+        y2="9.00024"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M15.7275 1.00024C16.0718 3.4382 17.7761 4.92912 18.2995 5.47612C18.8229 6.02312 21.7876 8.40702 21.7876 8.40702"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M15.7256 17.0002C16.0728 14.5648 17.7762 13.0732 18.2995 12.5261C18.8228 11.979 21.7856 9.59357 21.7856 9.59357"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+    </svg>
+  );
+}

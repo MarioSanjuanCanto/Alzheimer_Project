@@ -1,0 +1,312 @@
+{
+  "navigation": {
+    "home": "Home",
+    "create": "Create",
+    "memories": "Memories",
+    "practice": "Practice",
+    "settings": "Settings",
+    "myProfile": "My Profile",
+    "practicerProfiles": "Participant Profiles",
+    "signout": "Sign Out"
+  },
+  "auth": {
+    "createAccountTitle": "Create Your Account",
+    "welcomeChooseRole": "Welcome. Choose how you will use this platform.",
+
+    "signInTitle": "Sign In",
+    "signInSubtitle": "Welcome back. Sign In to Your Account",
+
+    "supporterAccount": {
+      "title": "Supporter Account",
+      "description": "If you support someone with memory difficulties or cognitive challenges, choose this role. You can create exercises, add memories, and track their progress."
+    },
+
+    "userAccount": {
+      "title": "Participant Account",
+      "description": "If you experience memory difficulties or cognitive challenges, choose this account to practice and strengthen your memory."
+    },
+
+    "alreadyHaveAccount": "Do you already have an account?",
+    "enterDetails": "Enter your details to set up your account.",
+
+    "form": {
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "password": "Password",
+      "oldPassword": "Old Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+
+      "placeholders": {
+        "fullName": "Enter your full name",
+        "email": "Enter your email address",
+        "password": "Create a password",
+        "oldPassword": "Enter your old password",
+        "newPassword": "Enter your new password",
+        "confirmNewPassword": "Confirm your new password",
+        "confirmPassword": "Repeat your password"
+      }
+    },
+
+    "createAccountButton": "Create Account",
+
+    "linkSupportPerson": {
+      "title": "Invite a Participant",
+      "optional": "Optional",
+      "emailLabel": "Email Address",
+      "emailHint": "The participant you would like to support",
+      "emailPlaceholder": "Enter their email address"
+    },
+
+    "login": {
+      "welcomeBack": "Welcome back. Please sign in.",
+      "noAccountYet": "Don’t have an account yet?",
+      "createOne": "Create one",
+      "forgotPassword": "Forgot password?"
+    },
+
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "description": "A link will be sent to your email to help you reset your password.",
+      "placeholder": "Enter your emailaddress"
+    },
+    "resetPassword": {
+      "title": "Reset Your Password",
+      "description": "Your new password must be different from previous used passwords",
+      "placeholder": "Enter your new password",
+      "confirmation": "Check your email for a password reset link."
+    }
+  },
+
+  "home": {
+    "headline": "Turn Your Memories Into Daily Therapy",
+    "subtitle": "Family photos and voices now in personalized cognitive exercises"
+  },
+
+  "create": {
+    "title": "Create",
+    "createNewMemory": "Create A New Memory",
+
+    "fields": {
+      "title": "Title*",
+      "titleHint": "Up to 60 characters",
+      "titlePlaceholder": "Enter a short title",
+
+      "description": "Description*",
+      "descriptionHint": "Minimum of 50 characters",
+      "descriptionPlaceholder": "Describe this memory",
+
+      "image": "Image*",
+      "imageHint": "Choose a JPG or PNG file",
+      "uploadImage": "Upload Image",
+
+      "audio": "Audio (Optional)",
+      "recordAudio": "Record an audio message",
+      "startRecording": "Start Recording",
+      "stopRecording": "Stop Recording"
+    }
+  },
+
+  "deleteMemory": {
+    "title": "Delete Memory",
+    "description": "Are you sure you want to delete this memory? This action cannot be undone."
+  },
+
+  "view": {
+    "title": "Memories",
+    "showingFor": "Memories showing for",
+    "filterDescription": "Filter your memories by selecting a category.",
+    "noMemoriesYet": "You have no memories yet",
+    "noLinkedUsers": "You have no linked participants yet.",
+    "participantTitle": "What is a Participant?",
+    "participantDescription": "A participant is the person you are supporting. This may be someone with memory difficulties or cognitive challenges. By linking a participant to your account, you can create personal memories for them to practise, helping support their cognitive health and overall well-being."
+  },
+
+  "exercises": {
+    "title": "Exercises",
+    "startExercise": "Start Your Exercise",
+
+    "hint": "Hint",
+
+    "question": "Question",
+    "completeSentence": "Complete the sentence",
+    "enterAnswer": "Enter your answer here",
+    "checkAnswer": "Check Answer",
+
+    "chooseCorrectAnswer": "Choose the correct answer",
+    "orderEvents": "Put the events in the correct order",
+    "orderEventsHint": "Tap the events in the correct order.",
+
+    "correctAnswerIs": "The correct answer is:",
+    "correctFeedback": "That is correct!"
+  },
+
+  "memories": {
+    "title": "Memories",
+    "chooseExercise": "Choose an Exercise to Begin"
+  },
+
+  "exercisesOverview": {
+    "title": "Choose Your Exercise",
+    "exercisesShowingFor": "Exercises showing for"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "settingsFor": "Settings for",
+
+    "generalInformation": {
+      "title": "General Information",
+      "description": "Add helpful information about strengths and challenges to personalise the exercises.",
+      "placeholder": "Enter additional information here"
+    },
+
+    "supporters": {
+      "title": "Supporters",
+      "description": "Supporters can create and manage exercises."
+    },
+
+    "userPermissions": {
+      "title": "Participant Permissions",
+      "description": "Control which features this participant can access.",
+
+      "updated": "Permissions updated successfully.",
+
+      "allowMemoryCreation": "Allow memory creation",
+      "allowMemoryCreationHint": "This participant can create their own memories.",
+
+      "showExerciseResults": "Show exercise results",
+      "showExerciseResultsHint": "This participant can view the results of their exercises."
+    },
+
+    "personalInformation": {
+      "title": "My Profile Settings",
+      "personalInformation": "Personal Information",
+      "emailChangedDirections": "We have send you an email. If you change your email, you will need to verify the new address.",
+      "emailPending": "Email Pending...",
+      "emailChangePassword": "You will not be able to change your password untill you verify your email address."
+    },
+
+    "disconnectUser": {
+      "title": "Disconnect This Participant",
+      "description": "If you disconnect this participant, you will no longer be able to view this practicers progress or create exercises for them. The user must invite you again to gain acces to their account.",
+      "warning": "Are you sure you want to unlink this participant? You will no longer have access to the exercises and memories you have created for them."
+    },
+
+    "security": {
+      "changePassword": "Change Password",
+      "title": "Delete Account",
+      "description": "Deleting your account is permanent. All your data, memories, and exercises will be removed and cannot be recovered.",
+      "warning": "Are you sure you want to delete your account? Your data and memories will be permanently removed."
+    },
+
+    "addUser": {
+      "label": "Invite new Participant",
+      "description": "Invite a new participant who's account you want to manage.",
+      "emailPlaceholder": "Enter their email address"
+    },
+
+    "addSupporter": {
+      "title": "Add Supporter",
+      "description": "Add a supporter who can help you create and manage exercises.",
+      "emailPlaceholder": "Enter their email address"
+    },
+
+    "sidebar": {
+      "practicerProfiles": "People You Support",
+      "general": "General",
+      "myProfile": "My Profile",
+      "languages": "Languages",
+      "english": "English",
+      "spanish": "Spanish"
+    }
+  },
+
+  "validation": {
+    "memoryForm": {
+      "titleRequired": "Title is required.",
+      "titleMinLength": "Title must be at least 3 characters.",
+      "titleMaxLength": "Title cannot exceed 60 characters.",
+      "descriptionRequired": "Description is required.",
+      "descriptionMinLength": "Description must be at least 10 characters.",
+      "descriptionMaxLength": "Description cannot exceed 450 words.",
+      "imageRequired": "An image is required.",
+      "imageInvalidType": "Invalid image type. Please upload a JPG or PNG file."
+    },
+    "login": {
+      "emailRequired": "Email is required.",
+      "passwordRequired": "Password is required.",
+      "invalidCredentials": "Invalid email or password."
+    },
+    "register": {
+      "fullNameRequired": "Full name is required.",
+      "fullNameMinLenght": "Full name must be at least 3 characters.",
+      "fullNameMaxLenght": "Full name cannot exceed 50 characters.",
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Please enter a valid email address.",
+      "emailMissingAtSymbol": "Email must contain '@' symbol.",
+      "emailInUse": "This email is already in use. Do you want to log in instead?",
+      "passwordRequired": "Password is required.",
+      "passwordMinLength": "Password must be at least 8 characters.",
+      "passwordUppercase": "Password must contain at least one uppercase letter.",
+      "passwordNumber": "Password must contain at least one number.",
+      "confirmPasswordRequired": "Please confirm your password.",
+      "passwordsMustMatch": "Passwords must match."
+    },
+    "changePassword": {
+      "oldPasswordRequired": "Old password is required.",
+      "newPasswordRequired": "New password is required.",
+      "newPasswordMinLength": "New password must be at least 8 characters.",
+      "passwordUppercase": "Password must contain at least one uppercase letter.",
+      "passwordNumber": "Password must contain at least one number.",
+      "confirmPasswordRequired": "Please confirm your new password.",
+      "passwordsMustMatch": "New passwords must match."
+    },
+    "myProfile": {
+      "fullNameRequired": "Your name is required.",
+      "fullNameMinLength": "Your name must be at least 3 characters.",
+      "fullNameMaxLength": "Your name cannot exceed 50 characters.",
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Please enter a valid email address."
+    }
+  },
+
+  "buttons": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "register": "Register",
+    "createAccount": "Sign Up",
+    "creatingAccount": "Signing Up...",
+    "back": "Back",
+    "cancel": "Cancel",
+    "close": "Close",
+    "menu": "Menu",
+    "continue": "Continue",
+    "upload": "Upload",
+    "edit": "Edit",
+    "delete": "Delete",
+    "createMemory": "Create Memory",
+    "startHere": "Start Here",
+    "startExercise": "Start Exercise",
+    "viewDemo": "View Demo",
+    "saveChanges": "Save Changes",
+    "saving": "Saving Changes...",
+    "submitting": "Submitting...",
+    "addSupporter": "Invites Supporter",
+    "inviteUser": "Invite Participant",
+    "changePassword": "Change Password",
+    "addUser": "Invite Participant",
+    "deleteAccount": "Delete Account",
+    "deleteAccountConfirm": "Yes, Delete My Account",
+    "disconnectUser": "Disconnect Participant",
+    "disconnectUserConfirm": "Yes, Disconnect this Participant",
+    "english": "English",
+    "spanish": "Spanish",
+    "deleteMemory": "Yes, Delete Memory",
+    "cancelEmailChange": "Cancel email change",
+    "playAudio": "Listen to Memory",
+    "hideAudio": "Hide Audio",
+    "sendReset": "Send Reset Link",
+    "resetPassword": "Cambiar contraseña"
+  }
+}

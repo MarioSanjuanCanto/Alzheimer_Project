@@ -1,0 +1,310 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "create": "Crear",
+    "memories": "Recuerdos",
+    "practice": "Practicar",
+    "settings": "Configuración",
+    "myProfile": "Mi Perfil",
+    "practicerProfiles": "Perfiles de Participante",
+    "signout": "Cerrar Sesión"
+  },
+
+  "auth": {
+    "createAccountTitle": "Crea tu Cuenta",
+    "welcomeChooseRole": "Bienvenido. Elige cómo usarás esta cuenta.",
+
+    "signInTitle": "Iniciar Sesión",
+    "signInSubtitle": "Bienvenido de nuevo. Inicia sesión en tu cuenta",
+
+    "supporterAccount": {
+      "title": "Cuenta de Apoyo",
+      "description": "Si apoyas a alguien con dificultades de memoria o desafíos cognitivos, elige este rol. Puedes crear ejercicios, añadir recuerdos y hacer seguimiento de su progreso."
+    },
+
+    "userAccount": {
+      "title": "Cuenta de participante",
+      "description": "Si experimentas dificultades de memoria o desafíos cognitivos, elige esta cuenta para practicar y fortalecer tu memoria."
+    },
+
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "enterDetails": "Introduce tus datos para crear tu cuenta.",
+
+    "form": {
+      "fullName": "Nombre completo",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "oldPassword": "Contraseña anterior",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar contraseña",
+
+      "placeholders": {
+        "fullName": "Introduce tu nombre completo",
+        "email": "Introduce tu correo electrónico",
+        "password": "Crea una contraseña",
+        "oldPassword": "Introduce tu contraseña anterior",
+        "newPassword": "Introduce tu nueva contraseña",
+        "confirmNewPassword": "Confirma tu nueva contraseña",
+        "confirmPassword": "Repite tu contraseña"
+      }
+    },
+
+    "createAccountButton": "Crear Cuenta",
+
+    "linkSupportPerson": {
+      "title": "Vincular a Una Persona a la que Apoyas",
+      "optional": "Opcional",
+      "emailLabel": "Correo electrónico de la persona",
+      "emailPlaceholder": "Introduce su correo electrónico"
+    },
+
+    "login": {
+      "welcomeBack": "Bienvenido de nuevo. Inicia sesión.",
+      "noAccountYet": "¿Todavía no tienes una cuenta?",
+      "createOne": "Crea una",
+      "forgotPassword": "¿Has olvidado tu contraseña?"
+    },
+
+    "forgotPassword": {
+      "title": "¿Olvidaste tu contraseña?",
+      "description": "Te enviaremos un enlace para restablecer tu contraseña.",
+      "placeholder": "Introduce tu dirección de correo electrónico"
+    },
+    "resetPassword": {
+      "title": "Restablecer contraseña",
+      "description": "Tu nueva contraseña debe ser diferente a las usadas anteriormente",
+      "placeholder": "Introduce tu nueva contraseña",
+      "confirmation": "Revisa tu correo electrónico para restablecer tu contraseña."
+    }
+  },
+
+  "home": {
+    "headline": "Convierte Tus Recuerdos En Terapia Diaria",
+    "subtitle": "Fotos y voces familiares en ejercicios cognitivos personalizados"
+  },
+
+  "create": {
+    "title": "Crear",
+    "createNewMemory": "Crear un nuevo recuerdo",
+
+    "fields": {
+      "title": "Título*",
+      "titleHint": "Hasta 60 caracteres",
+      "titlePlaceholder": "Introduce un título corto",
+
+      "description": "Descripción*",
+      "descriptionHint": "Mínimo de 50 caracteres",
+      "descriptionPlaceholder": "Describe este recuerdo",
+
+      "image": "Imagen*",
+      "imageHint": "Elige un archivo JPG o PNG",
+      "uploadImage": "Subir imagen",
+
+      "audio": "Audio (Opcional)",
+      "recordAudio": "Grabar un mensaje de audio",
+      "startRecording": "Comenzar grabación",
+      "stopRecording": "Detener grabación"
+    }
+  },
+
+  "deleteMemory": {
+    "title": "Eliminar recuerdo",
+    "description": "¿Estás seguro de que quieres eliminar este recuerdo? Esta acción no se puede deshacer."
+  },
+
+  "view": {
+    "title": "Recuerdos",
+    "showingFor": "Recuerdos mostrados para",
+    "filterDescription": "Filtra tus recuerdos seleccionando una categoría.",
+    "noMemoriesYet": "No tienes ningún recuerdo",
+    "noLinkedUsersYet": "No tienes ningún participante vinculado a tu cuenta todavía.",
+    "participantTitle": "¿Qué es un Participante?",
+    "participantDescription": "Un practicer es la persona a la que apoyas. Esto puede ser alguien con dificultades de memoria o desafíos cognitivos. Al vincular a un practicer a tu cuenta, puedes crear recuerdos personalizados para ellos para practicar, ayudando a su salud cognitiva y a su bienestar general."
+  },
+
+  "exercises": {
+    "title": "Ejercicios",
+    "startExercise": "Comienza tu Ejercicio",
+
+    "hint": "Pista",
+
+    "question": "Pregunta",
+    "completeSentence": "Completa la frase",
+    "enterAnswer": "Escribe tu respuesta aquí",
+    "checkAnswer": "Comprobar Respuesta",
+
+    "chooseCorrectAnswer": "Elige la respuesta correcta",
+    "orderEvents": "Coloca los eventos en el orden correcto",
+    "orderEventsHint": "Toca los eventos en el orden correcto.",
+
+    "correctAnswerIs": "La respuesta correcta es:",
+    "correctFeedback": "¡Eso es correcto!"
+  },
+
+  "memories": {
+    "title": "Recuerdos",
+    "chooseExercise": "Elige un ejercicio para comenzar"
+  },
+
+  "exercisesOverview": {
+    "title": "Exercices"
+  },
+
+  "settings": {
+    "title": "Configuración",
+    "settingsFor": "Configuración para",
+
+    "generalInformation": {
+      "title": "Información General",
+      "description": "Añade información útil sobre fortalezas y desafíos para personalizar los ejercicios.",
+      "placeholder": "Introduce información adicional aquí"
+    },
+
+    "supporters": {
+      "title": "Personas de Apoyo",
+      "description": "Las personas de apoyo pueden crear y gestionar ejercicios."
+    },
+
+    "userPermissions": {
+      "title": "Permisos del participante",
+      "description": "Controla a qué funciones puede acceder este participante.",
+
+      "allowMemoryCreation": "Permitir creación de recuerdos",
+      "allowMemoryCreationHint": "Este participante puede crear sus propios recuerdos.",
+
+      "showExerciseResults": "Mostrar resultados de ejercicios",
+      "showExerciseResultsHint": "Este participante puede ver los resultados de sus ejercicios."
+    },
+
+    "personalInformation": {
+      "title": "Configuración de mi perfil",
+      "personalInformation": "Información personal",
+      "emailChangedDirections": "Te hemos enviado un correo electrónico. Si cambias tu dirección de correo, deberás verificar la nueva.",
+      "emailPending": "Correo electrónico pendiente...",
+      "emailChangePassword": "No podrás cambiar tu contraseña hasta que verifiques tu dirección de correo electrónico."
+    },
+
+    "disconnectUser": {
+      "title": "Desconectar participante",
+      "description": "Al desconectar a este participante, ya no podrá acceder a su cuenta ni a sus datos.",
+      "warning": "¿Estás seguro de que quieres desconectar a este participante? Ya no podrá acceder a su cuenta ni a sus datos."
+    },
+
+    "security": {
+      "changePassword": "Cambiar Contraseña",
+      "title": "Eliminar Cuenta",
+      "description": "Eliminar tu cuenta es permanente. Todos tus datos, recuerdos y ejercicios se eliminarán y no podrán recuperarse.",
+      "warning": "¿Estás seguro de que quieres eliminar tu cuenta? Tus datos y recuerdos se eliminarán de forma permanente."
+    },
+
+    "addUser": {
+      "label": "Invitar a un nuevo participante",
+      "description": "Invita a un nuevo participante cuya cuenta quieres gestionar.",
+      "emailPlaceholder": "Introduce su dirección de correo electrónico"
+    },
+
+    "noParticipantsLinked": "No tienes ningún participante vinculado a tu cuenta todavía",
+
+    "addSupporter": {
+      "label": "Añadir Persona de Apoyo",
+      "description": "Invita a una persona de apoyo para que pueda ayudarte a gestionar tu cuenta.",
+      "emailPlaceholder": "Introduce su dirección de correo electrónico"
+    },
+
+    "sidebar": {
+      "practicerProfiles": "Personas a las que Apoyas",
+      "general": "General",
+      "myProfile": "Mi Perfil",
+      "languages": "Idiomas",
+      "english": "Inglés",
+      "spanish": "Español"
+    }
+  },
+
+  "validation": {
+    "memoryForm": {
+      "titleRequired": "El título es obligatorio.",
+      "titleMinLength": "El título debe tener al menos 3 caracteres.",
+      "titleMaxLength": "El título no puede superar los 60 caracteres.",
+      "descriptionRequired": "La descripción es obligatoria.",
+      "descriptionMinLength": "La descripción debe tener al menos 10 caracteres.",
+      "descriptionMaxLength": "La descripción no puede superar las 450 palabras.",
+      "imageRequired": "La imagen es obligatoria.",
+      "imageInvalidType": "Tipo de imagen no válido. Por favor, sube un archivo JPG o PNG."
+    },
+    "login": {
+      "emailRequired": "El correo electrónico es obligatorio.",
+      "passwordRequired": "La contraseña es obligatoria.",
+      "invalidCredentials": "Correo electrónico o contraseña no válidos."
+    },
+    "register": {
+      "fullNameRequired": "El nombre completo es obligatorio.",
+      "fullNameMinLenght": "El nombre completo debe tener al menos 3 caracteres.",
+      "fullNameMaxLenght": "El nombre completo no puede superar los 50 caracteres.",
+      "emailRequired": "El correo electrónico es obligatorio.",
+      "emailInvalid": "Por favor, introduce una dirección de correo electrónico válida.",
+      "emailMissingAtSymbol": "El correo electrónico debe contener el símbolo '@'.",
+      "emailInUse": "Este correo electrónico ya está en uso. ¿Quieres iniciar sesión en su lugar?",
+      "passwordRequired": "La contraseña es obligatoria.",
+      "passwordMinLength": "La contraseña debe tener al menos 8 caracteres.",
+      "passwordUppercase": "La contraseña debe contener al menos una letra mayúscula.",
+      "passwordNumber": "La contraseña debe contener al menos un número.",
+      "confirmPasswordRequired": "Por favor, confirma tu contraseña.",
+      "passwordsMustMatch": "Las contraseñas deben coincidir."
+    },
+    "changePassword": {
+      "oldPasswordRequired": "La contraseña antigua es obligatoria.",
+      "newPasswordRequired": "La nueva contraseña es obligatoria.",
+      "newPasswordMinLength": "La nueva contraseña debe tener al menos 8 caracteres.",
+      "passwordUppercase": "La contraseña debe contener al menos una letra mayúscula.",
+      "passwordNumber": "La contraseña debe contener al menos un número.",
+      "confirmPasswordRequired": "Por favor, confirma tu nueva contraseña.",
+      "passwordsMustMatch": "Las nuevas contraseñas deben coincidir."
+    },
+    "myProfile": {
+      "fullNameRequired": "Tu nombre es obligatorio.",
+      "fullNameMinLength": "Tu nombre debe tener al menos 3 caracteres.",
+      "fullNameMaxLength": "Tu nombre no puede superar los 50 caracteres.",
+      "emailRequired": "El correo electrónico es obligatorio.",
+      "emailInvalid": "Por favor, introduce una dirección de correo electrónico válida."
+    }
+  },
+
+  "buttons": {
+    "signIn": "Iniciar Sesión",
+    "signOut": "Cerrar Sesión",
+    "register": "Registrarse",
+    "createAccount": "Crear Cuenta",
+    "creatingAccount": "Creando Cuanta...",
+    "back": "Volver",
+    "cancel": "Cancelar",
+    "menu": "Menú",
+    "close": "Cerrar",
+    "continue": "Continuar",
+    "upload": "Subir",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "createMemory": "Crear Recuerdo",
+    "startHere": "Empezar Aquí",
+    "startExercise": "Empezar Ejercicio",
+    "viewDemo": "Ver Demostración",
+    "saveChanges": "Guardar Cambios",
+    "saving": "Guardando Cambios...",
+    "submitting": "Enviando...",
+    "savingChanges": "Guardando Cambios",
+    "addSupporter": "Añadir Personas de Apoyo",
+    "inviteUser": "Invitar participante",
+    "changePassword": "Cambiar Contraseña",
+    "addUser": "Añadir participante",
+    "deleteAccount": "Eliminar Cuenta",
+    "deleteAccountConfirma": "Sí, Eliminar Mi Cuenta",
+    "deleteMemory": "Sí, Eliminar Recuerdo",
+    "disconnectUser": "Desconectar participante",
+    "disconnectUserConfirm": "Sí, Desconectar esta participante",
+    "english": "Inglés",
+    "spanish": "Español",
+    "playAudio": "Escuchar Recuerdo",
+    "hideAudio": "Ocultar Audio",
+    "sendReset": "Enviar enlace"
+  }
+}

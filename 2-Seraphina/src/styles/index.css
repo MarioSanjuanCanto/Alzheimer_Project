@@ -1,0 +1,191 @@
+@import "./components.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body.modal-open nav {
+  display: none;
+}
+
+@layer components {
+
+  h1 {
+    @apply text-h1;
+  }
+
+  @screen md {
+    h1 {
+      @apply text-[3rem] leading-[3.5rem];
+    }
+  }
+
+  @screen lg {
+    h1 {
+      @apply text-[3.75rem] leading-[4.25rem];
+    }
+  }
+
+  h2 {
+    @apply text-h2;
+  }
+
+  @screen md {
+    h2 {
+      @apply text-[2.5rem] leading-[3rem];
+    }
+  }
+
+  h3 {
+    @apply text-h3;
+  }
+
+  h4 {
+    @apply text-h4;
+  }
+
+  h5 {
+    @apply text-h5;
+  }
+
+  p {
+    @apply text-body;
+  }
+}
+
+@layer utilities {
+  .page-padding {
+    @apply p-4 md:p-8 lg:p-0;
+  }
+
+  .font-fraunces-soft {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "soft" 82, "opsz" 56, "wght" 500;
+  }
+}
+
+/* Audio */
+.rhap_time {
+  color: #373737;
+}
+
+.rhap_play-pause-button button svg,
+.rhap_rewind-button button svg,
+.rhap_forward-button button svg {
+  fill: #FAFAFA;
+}
+
+.rhap_progress-filled {
+  background-color: #878687;
+}
+
+.rhap_progress-indicator {
+  background-color: #878687;
+}
+
+.rhap_progress-bar {
+  background-color: #878687;
+}
+
+/* Costum scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #fafaf7;
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #7b7b7b;
+  border-radius: 8px;
+}
+
+/* Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #c4c4c4 #f0f0f0;
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+@keyframes slow-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@layer base {
+  :root {
+    --bgwhite: 60 33% 97%;
+    --bggreen: 135, 17%, 91%;
+    --green: 135, 17%, 91%;
+    --white: 60 33% 97%;
+    --black: 0 0% 22%;
+    --darkgrey: 0, 0%, 30%;
+    --greyhover: 0, 0%, 86%;
+    --lightgrey: 40, 6%, 91%;
+    --foreground: 0 0% 22%;
+
+    --primary: 154 43% 18%;
+    --primary-100: 150 12% 90%;
+    --primary-400: 155, 19%, 59%;
+    --primary-hover: 155 36% 31%;
+
+    --red: 359, 82%, 43%;
+    --red-100: 1, 65%, 88%;
+    --red-200: 357, 53%, 78%;
+    --red-500: 359, 82%, 28%;
+    --orange: 35, 78%, 46%;
+
+    --border: 120 6% 90%;
+    --input: 0, 0%, 44%;
+    --ring: 154 43% 18%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-bgwhite text-foreground;
+  }
+}
