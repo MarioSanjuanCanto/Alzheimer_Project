@@ -11,15 +11,18 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # ______________________________________ Exercise Generation ______________________________________
 
+ all_types = ["reconocimiento", "completar_frase", "orden_cronologico", "emocional", "asociativo"]
+
 def generate_cognitive_exercises(memory_data, strategy=None, exclude_types=None):
     """
     Generates personalized cognitive exercises based on a strategy,
     with the option to exclude certain types of exercises.
     """
     print(f"[logic] generate_cognitive_exercises(,{strategy}, {exclude_types})")
-    
-    
-    all_types = ["reconocimiento", "completar_frase", "orden_cronologico", "emocional", "asociativo"]
+
+    global all_types
+
+    # --- Generate exercise type and difficulty prompt ---
 
     if strategy is None or strategy.get("type") == "general":
         available_types = [t for t in all_types if t not in (exclude_types or [])]
@@ -33,7 +36,7 @@ def generate_cognitive_exercises(memory_data, strategy=None, exclude_types=None)
         exercise_type_prompt = f"the exercise type '{strategy.get('type')}'"
         difficulty_prompt = strategy.get('difficulty', 'media')
 
-
+    # --- Prompt creation ---
     prompt = f"""
 Create 3 therapeutic cognitive stimulation exercise based on this memory:
 
@@ -84,6 +87,8 @@ IMPORTANT: Respond ONLY with the requested JSON, without additional text.
 The JSON must be inside an 'exercises' object which is an array.
 
 """
+
+    # --- AI model response ---
     try:
         response = client.chat.completions.create(
 
