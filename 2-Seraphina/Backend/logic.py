@@ -16,7 +16,7 @@ def generate_cognitive_exercises(memory_data, strategy=None, exclude_types=None)
     Generates personalized cognitive exercises based on a strategy,
     with the option to exclude certain types of exercises.
     """
-    print("[logic] generate_cognitive_exercises")
+    print(f"[logic] generate_cognitive_exercises(,{strategy}, {exclude_types})")
     
     
     all_types = ["reconocimiento", "completar_frase", "orden_cronologico", "emocional", "asociativo"]
@@ -85,7 +85,6 @@ The JSON must be inside an 'exercises' object which is an array.
 
 """
     try:
-        
         response = client.chat.completions.create(
 
             model="gpt-3.5-turbo",
@@ -138,6 +137,22 @@ def determine_next_exercise_strategy():
     # In the future, this function could receive the user's performance history
     # not necessary now
     return {"type": "general", "difficulty": "media", "exclude_types": []}
+
+# ______________________________________ Debugging ______________________________________
+
+if __name__ == "__main__":
+    print("[logic] Debugging")
+
+    respone = client.chat.completions.create(
+        model = "gpt-3.5-turbo",
+        messages = [
+            {"role": "user", "content": "Hello, what day it is"}
+        ],
+        max_tokens = 300
+    )
+
+    print(response.choices[0].message.content)
+
 
 
 

@@ -20,7 +20,6 @@ TYPE_MAP_TO_EXTERNAL = {
     'orden_cronologico': 'ordering'
 }
 
-
 # ______________________________________ API END Points ______________________________________
 
 app = Flask(__name__)
@@ -30,17 +29,17 @@ CORS(app)
 def generate_exercise_endpoint():
     """
     Endpoint to generate a single cognitive exercise from memory data.
-    Expects a JSON with 'title', 'user_description', and optionally 'ai_analysis'.
+    Expects a JSON with 'title', 'user_description', and optionally you can add the 'ai_analysis', difficulty and the exercise type.
     """
     print("[app] generate_exercise_endpoint")
-    
+
+    # --- Request Input validation ---
 
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
 
     memory_data = request.get_json()
     
-    # Input data validation 
     if not memory_data or 'title' not in memory_data or 'user_description' not in memory_data:
         return jsonify({
             "error": "JSON must contain 'title' and 'user_description'.",
@@ -51,6 +50,7 @@ def generate_exercise_endpoint():
         }), 400
 
     # --- Exercise generation logic ---
+
     # Check if a specific exercise type has been requested
     requested_type = memory_data.get("exercise_type")
     
