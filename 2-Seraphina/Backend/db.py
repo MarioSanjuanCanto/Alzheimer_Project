@@ -4,13 +4,17 @@ from supabase import create_client, Client
 
 
 # --- Supabase Client Initialization ---
-load_dotenv()
-url: str = os.getenv("VITE_SUPABASE_URL")
-key: str = os.getenv("VITE_SUPABASE_ANON_KEY")
-client: Client = create_client(url, key)
+def init():
+    load_dotenv()
+    url: str = os.getenv("VITE_SUPABASE_URL")
+    key: str = os.getenv("VITE_SUPABASE_ANON_KEY")
+    client: Client = create_client(url, key)
 
-if client is None:
-    raise Exception("Error: supabase connect is not initialized")
+    if client is None:
+        raise Exception("Error: supabase connect is not initialized")
+
+    return client
+    
 
 
 # --- Database Functions ---
@@ -23,4 +27,7 @@ def get_user_data(id:str):
     return response.data
 
 
-print(get_user_data("082b19a0-c005-416e-a837-ef260e674265"))
+
+# Create supabase client
+client = init()
+print(get_users())

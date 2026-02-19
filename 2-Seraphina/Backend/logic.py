@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import os
 import json
-
+import db
 
 load_dotenv()  # Load environment variables from .env
 
@@ -11,7 +11,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # ______________________________________ Exercise Generation ______________________________________
 
- all_types = ["reconocimiento", "completar_frase", "orden_cronologico", "emocional", "asociativo"]
+all_types = ["reconocimiento", "completar_frase", "orden_cronologico", "emocional", "asociativo"]
 
 def generate_cognitive_exercises(memory_data, strategy=None, exclude_types=None):
     """
@@ -142,6 +142,12 @@ def determine_next_exercise_strategy():
     # In the future, this function could receive the user's performance history
     # not necessary now
     return {"type": "general", "difficulty": "media", "exclude_types": []}
+
+
+# ______________________________________ User Performance ______________________________________
+
+
+
 
 # ______________________________________ Debugging ______________________________________
 

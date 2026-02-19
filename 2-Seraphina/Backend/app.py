@@ -39,7 +39,7 @@ def generate_exercise_endpoint():
         return jsonify({"error": "Request must be JSON"}), 400
 
     memory_data = request.get_json()
-    
+
     if not memory_data or 'title' not in memory_data or 'user_description' not in memory_data:
         return jsonify({
             "error": "JSON must contain 'title' and 'user_description'.",
@@ -87,7 +87,6 @@ def test_endpoint():
         "message": "The exercise generation API is active.",
         "usage": "Send a POST request to /api/generate_exercise with the memory data."
     })
-
 
 if __name__ == '__main__':
     print("Starting Cognitive Exercise Generation API...")
