@@ -30,4 +30,3 @@ def get_user_data(id:str):
 
 # Create supabase client
 client = init()
-print(get_users())

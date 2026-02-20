@@ -6,12 +6,12 @@ import db
 
 load_dotenv()  # Load environment variables from .env
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url=os.getenv("OPENROUTER_URL"))
 
 
 # ______________________________________ Exercise Generation ______________________________________
 
-all_types = ["reconocimiento", "completar_frase", "orden_cronologico", "emocional", "asociativo"]
+all_types = ["multiple_choice", "fill_in_the_blank", "ordering"]
 
 def generate_cognitive_exercises(memory_data, strategy=None, exclude_types=None):
     """
@@ -52,31 +52,31 @@ EXERCISE REQUIREMENTS:
 EXACT JSON FORMAT:
 Respond with a JSON array containing 1 single exercise inside an 'exercises' object.
 
-- For multiple choice ('reconocimiento', 'emocional', 'asociativo'):
+- For multiple choice:
   "options" is an array of strings, "correct_answer" is the index of the correct answer.
   {{
-    "type": "reconocimiento",
+    "type": "multiple choice",
     "question": "Who appears in the photo?",
     "options": ["Family", "Friends", "Strangers"],
     "correct_answer": 0,
     "hint": "...", "difficulty": "easy"
   }}
 
-- For fill-in-the-blank ('completar_frase'):
+- For fill-in-the-blank:
   "question" is an open ended question. The question may not exceed 150 characters
   "correct_answer" is a string with the correct word or phrase.
   {{
-    "type": "completar_frase",
+    "type": "fill_in_the_blank",
     "question": "What are the favorite flowers of your grandmother?",
     "correct_answer": "blue",
     "hint": "...", "difficulty": "medium"
   }}
 
-- For ordering ('orden_cronologico'):
+- For ordering:
   "options" is an array of unordered events.
   "correct_answer" is an array of the same strings in the correct chronological order.
   {{
-    "type": "orden_cronologico",
+    "type": "ordering",
     "question": "Order the following events as you think they occurred:",
     "options": ["Arrival of guests", "Cutting the cake", "Opening of gifts"],
     "correct_answer": ["Arrival of guests", "Cutting the cake", "Opening of gifts"],
@@ -90,9 +90,10 @@ The JSON must be inside an 'exercises' object which is an array.
 
     # --- AI model response ---
     try:
+        print(prompt)
         response = client.chat.completions.create(
 
-            model="gpt-3.5-turbo",
+            model="openrouter/free",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=1000
         )

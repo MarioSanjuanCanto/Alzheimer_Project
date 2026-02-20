@@ -21,3 +21,9 @@ dist/
 .env
 .env.*
 
+# Mac files
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+

@@ -2,24 +2,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import logic
 
-# ______________________________________ Type Mapping ______________________________________
-
-# Maps external English names to internal Spanish names
-TYPE_MAP_TO_INTERNAL = {
-    'multiple_choice': 'reconocimiento',  # Default to 'reconocimiento' for multiple choice
-    'fill_in_the_blank': 'completar_frase',
-    'ordering': 'orden_cronologico'
-}
-
-# Maps internal Spanish names back to external English names
-TYPE_MAP_TO_EXTERNAL = {
-    'reconocimiento': 'multiple_choice',
-    'emocional': 'multiple_choice',
-    'asociativo': 'multiple_choice',
-    'completar_frase': 'fill_in_the_blank',
-    'orden_cronologico': 'ordering'
-}
-
 # ______________________________________ API END Points ______________________________________
 
 app = Flask(__name__)
@@ -55,9 +37,7 @@ def generate_exercise_endpoint():
     requested_type = memory_data.get("exercise_type")
     
     if requested_type:
-        # Map the user-friendly name to the internal name
-        internal_type = TYPE_MAP_TO_INTERNAL.get(requested_type, requested_type)
-        strategy = {"type": internal_type, "difficulty": memory_data.get("difficulty", "media")}
+        strategy = {"type": requested_type, "difficulty": memory_data.get("difficulty", "media")}
     else:
         # Otherwise, the general default strategy is used
         strategy = logic.determine_next_exercise_strategy()
@@ -70,11 +50,6 @@ def generate_exercise_endpoint():
     
     if not exercise_set or not exercise_set.get("exercises"):
         return jsonify({"error": "Could not generate exercise."}), 500
-
-    # Map internal types back to user-friendly external types for the response
-    for exercise in exercise_set.get("exercises", []):
-        if exercise.get('type') in TYPE_MAP_TO_EXTERNAL:
-            exercise['type'] = TYPE_MAP_TO_EXTERNAL[exercise['type']]
 
     return jsonify(exercise_set)
 
