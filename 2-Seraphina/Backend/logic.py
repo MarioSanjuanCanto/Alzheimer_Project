@@ -153,14 +153,13 @@ def determine_next_exercise_strategy(user_id=None):
     """
     print(f"[logic] determine_next_exercise_strategy for user {user_id}")
 
+    user_stats = db.get_user_stats(user_id)
+    print(f"[db] {user_stats}")
+
+
     # In the future, this function could receive the user's performance history
     # not necessary now
     return {"type": "general", "difficulty": "media", "exclude_types": []}
-
-
-# ______________________________________ User Performance ______________________________________
-
-
 
 
 # ______________________________________ Debugging ______________________________________

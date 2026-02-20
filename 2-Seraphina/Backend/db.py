@@ -15,7 +15,6 @@ def init():
 
     return client
 
-
 # _______________ User functions  _______________
 def get_users():
     print("[db] get_users")
@@ -51,8 +50,6 @@ def get_user_stats(id:str):
     print("[db] get_user_stats")
     response = client.table("user_stats").select("*").eq("id", id).execute()
     return response.data
-
-
 
 
 # Create supabase client
