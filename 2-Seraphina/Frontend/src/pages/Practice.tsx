@@ -46,6 +46,7 @@ const Practice = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
+              user_id: memory.user_id,
               title: memory.title,
               user_description: memory.description,
             }),

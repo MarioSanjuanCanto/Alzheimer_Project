@@ -11,12 +11,12 @@ client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url=os.getenv("OPE
 
 # ______________________________________ Exercise Generation ______________________________________
 
-def generate_cognitive_exercises(memory_data, strategy=None):
+def generate_cognitive_exercises(memory_data, strategy=None, user_id=None):
     """
     Generates personalized cognitive exercises. 
     Now requests 3 different types in a single call for better consistency and performance.
     """
-    print(f"[logic] generate_cognitive_exercises(,{strategy})")
+    print(f"[logic] generate_cognitive_exercises for user {user_id} with strategy {strategy}")
 
     difficulty_prompt = strategy.get("difficulty", "media") if strategy else "media"
 
@@ -146,12 +146,12 @@ def generate_fallback_exercises(memory_data, count=1):
 
 # ______________________________________ Strategy Planning ______________________________________
 
-def determine_next_exercise_strategy():
+def determine_next_exercise_strategy(user_id=None):
     """
     Simplified strategy function for the API.
     For now, it returns a general strategy.
     """
-    print("[logic] determine_next_exercise_strategy")
+    print(f"[logic] determine_next_exercise_strategy for user {user_id}")
 
     # In the future, this function could receive the user's performance history
     # not necessary now
