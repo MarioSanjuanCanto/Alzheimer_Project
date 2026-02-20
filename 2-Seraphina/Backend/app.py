@@ -10,13 +10,11 @@ CORS(app)
 @app.route('/api/generate_exercise', methods=['POST'])
 def generate_exercise_endpoint():
     """
-    Endpoint to generate a single cognitive exercise from memory data.
-    Expects a JSON with 'title', 'user_description', and optionally you can add the 'ai_analysis', difficulty and the exercise type.
+    Endpoint to generate cognitive exercises from memory data.
     """
     print("[app] generate_exercise_endpoint")
 
     # --- Request Input validation ---
-
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
 
@@ -24,32 +22,20 @@ def generate_exercise_endpoint():
 
     if not memory_data or 'title' not in memory_data or 'user_description' not in memory_data:
         return jsonify({
-            "error": "JSON must contain 'title' and 'user_description'.",
-            "example": {
-                "title": "Birthday at the beach",
-                "user_description": "It was a sunny day, we celebrated grandma's birthday. All the grandchildren were there."
-            }
+            "error": "JSON must contain 'title' and 'user_description'."
         }), 400
 
     # --- Exercise generation logic ---
-
-    # Check if a specific exercise type has been requested
-    requested_type = memory_data.get("exercise_type")
+    # We now generate the full set of exercises (3 different types)
+    strategy = logic.determine_next_exercise_strategy()
     
-    if requested_type:
-        strategy = {"type": requested_type, "difficulty": memory_data.get("difficulty", "media")}
-    else:
-        # Otherwise, the general default strategy is used
-        strategy = logic.determine_next_exercise_strategy()
-
     exercise_set = logic.generate_cognitive_exercises(
         memory_data, 
-        strategy, 
-        exclude_types=[]
+        strategy
     )
     
     if not exercise_set or not exercise_set.get("exercises"):
-        return jsonify({"error": "Could not generate exercise."}), 500
+        return jsonify({"error": "Could not generate exercises."}), 500
 
     return jsonify(exercise_set)
 

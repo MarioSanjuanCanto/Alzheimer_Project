@@ -33,35 +33,29 @@ const Practice = () => {
   }, [memoryId]);
 
   useEffect(() => {
-    if (!memory) return;
+    // Check if memory is loaded and prevent duplicate calls if already loading or exercises already exist
+    if (!memory || exercises.length > 0 || loadingExercise) return;
 
     const generateExercises = async () => {
       setLoadingExercise(true);
 
       try {
-        const types = ["fill_in_the_blank", "multiple_choice", "ordering"];
-
-        const results = await Promise.all(
-          types.map(async (type) => {
-            const res = await fetch(
-              "http://localhost:5001/api/generate_exercise",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  title: memory.title,
-                  user_description: memory.description,
-                  exercise_type: type,
-                }),
-              }
-            );
-
-            const data = await res.json();
-            return data.exercises[0];
-          })
+        const res = await fetch(
+          "http://localhost:5001/api/generate_exercise",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: memory.title,
+              user_description: memory.description,
+            }),
+          }
         );
 
-        setExercises(results);
+        if (!res.ok) throw new Error("API response error");
+
+        const data = await res.json();
+        setExercises(data.exercises || []);
       } catch (err) {
         console.error("Failed to generate exercises", err);
       } finally {
@@ -70,7 +64,7 @@ const Practice = () => {
     };
 
     generateExercises();
-  }, [memory]);
+  }, [memory, exercises.length, loadingExercise]);
 
   const completeExercise = exercises.find(
     (e) => e.type === "fill_in_the_blank"
@@ -89,7 +83,7 @@ const Practice = () => {
       <MobileNav />
       {/* Background */}
       <div className="hidden lg:block bg-white">
-      <BackgroundDesktop />
+        <BackgroundDesktop />
       </div>
       {/* Mobile blur overlay */}
       <div className="hidden lg:block absolute inset-0 z-10 bg-white/10 backdrop-blur-md" />
@@ -103,10 +97,10 @@ const Practice = () => {
               {memory.title}
             </h2>
           )}
-          
+
 
           <div className="space-y-12">
-            {completeExercise && <ExerciseComplete exercise={completeExercise} /> }
+            {completeExercise && <ExerciseComplete exercise={completeExercise} />}
 
             {chooseExercise && <ExerciseChoose exercise={chooseExercise} />}
 

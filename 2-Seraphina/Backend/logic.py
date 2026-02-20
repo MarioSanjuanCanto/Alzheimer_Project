@@ -11,125 +11,138 @@ client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url=os.getenv("OPE
 
 # ______________________________________ Exercise Generation ______________________________________
 
-all_types = ["multiple_choice", "fill_in_the_blank", "ordering"]
-
-def generate_cognitive_exercises(memory_data, strategy=None, exclude_types=None):
+def generate_cognitive_exercises(memory_data, strategy=None):
     """
-    Generates personalized cognitive exercises based on a strategy,
-    with the option to exclude certain types of exercises.
+    Generates personalized cognitive exercises. 
+    Now requests 3 different types in a single call for better consistency and performance.
     """
-    print(f"[logic] generate_cognitive_exercises(,{strategy}, {exclude_types})")
+    print(f"[logic] generate_cognitive_exercises(,{strategy})")
 
-    global all_types
-
-    # --- Generate exercise type and difficulty prompt ---
-
-    if strategy is None or strategy.get("type") == "general":
-        available_types = [t for t in all_types if t not in (exclude_types or [])]
-
-        if not available_types:
-            available_types = all_types  # If all are excluded, use all
-
-        exercise_type_prompt = f"a varied type of exercise (choose one from: {', '.join(available_types)})"
-        difficulty_prompt = strategy.get("difficulty", "media") if strategy else "media"
-    else:
-        exercise_type_prompt = f"the exercise type '{strategy.get('type')}'"
-        difficulty_prompt = strategy.get('difficulty', 'media')
+    difficulty_prompt = strategy.get("difficulty", "media") if strategy else "media"
 
     # --- Prompt creation ---
     prompt = f"""
-Create 3 therapeutic cognitive stimulation exercise based on this memory:
+Create 3 therapeutic cognitive stimulation exercises based on this memory. 
+You MUST create exactly one of each type: 'multiple_choice', 'fill_in_the_blank', and 'ordering'.
 
 Title: {memory_data.get('title', 'Untitled')}
 Description: {memory_data.get('user_description', '')}
 AI Analysis: {json.dumps(memory_data.get('ai_analysis', {}), ensure_ascii=False)}
 
 EXERCISE REQUIREMENTS:
-- TYPE: {exercise_type_prompt}
+- TOTAL EXERCISES: 3
+- TYPES INCLUDED: 1x multiple_choice, 1x fill_in_the_blank, 1x ordering
 - DIFFICULTY: {difficulty_prompt}
-- RESTRICTION: Do not generate an exercise of a type that has already been used if there are other options.
+- LANGUAGE: Spanish
 
 EXACT JSON FORMAT:
-Respond with a JSON array containing 1 single exercise inside an 'exercises' object.
+Respond with a JSON object containing an 'exercises' array with the 3 exercises.
 
 - For multiple choice:
   "options" is an array of strings, "correct_answer" is the index of the correct answer.
   {{
-    "type": "multiple choice",
-    "question": "Who appears in the photo?",
-    "options": ["Family", "Friends", "Strangers"],
+    "type": "multiple_choice",
+    "question": "...",
+    "options": ["...", "...", "..."],
     "correct_answer": 0,
-    "hint": "...", "difficulty": "easy"
+    "hint": "...", "difficulty": "..."
   }}
 
 - For fill-in-the-blank:
-  "question" is an open ended question. The question may not exceed 150 characters
+  "question" is an open ended question. The question may not exceed 150 characters.
   "correct_answer" is a string with the correct word or phrase.
   {{
     "type": "fill_in_the_blank",
-    "question": "What are the favorite flowers of your grandmother?",
-    "correct_answer": "blue",
-    "hint": "...", "difficulty": "medium"
+    "question": "...",
+    "correct_answer": "...",
+    "hint": "...", "difficulty": "..."
   }}
 
 - For ordering:
-  "options" is an array of unordered events.
+  "options" is an array of 3-4 unordered events/steps.
   "correct_answer" is an array of the same strings in the correct chronological order.
   {{
     "type": "ordering",
-    "question": "Order the following events as you think they occurred:",
-    "options": ["Arrival of guests", "Cutting the cake", "Opening of gifts"],
-    "correct_answer": ["Arrival of guests", "Cutting the cake", "Opening of gifts"],
-    "hint": "...", "difficulty": "hard"
+    "question": "...",
+    "options": ["...", "...", "..."],
+    "correct_answer": ["...", "...", "..."],
+    "hint": "...", "difficulty": "..."
   }}
 
 IMPORTANT: Respond ONLY with the requested JSON, without additional text.
-The JSON must be inside an 'exercises' object which is an array.
-
 """
 
     # --- AI model response ---
     try:
-        print(prompt)
         response = client.chat.completions.create(
-
             model="openrouter/free",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=1000
+            max_tokens=2000
         )
         response_text = response.choices[0].message.content
-        response_text = response_text.replace('```json', '').replace('```', '').strip()
+        print(f"[logic] Raw AI response:\n{response_text}") # Debug log
+
+        # Robust JSON cleaning
+        clean_text = response_text.strip()
+        if "```" in clean_text:
+            # Try to extract content between ```json and ``` or just ``` and ```
+            if "```json" in clean_text:
+                clean_text = clean_text.split("```json")[1].split("```")[0].strip()
+            else:
+                clean_text = clean_text.split("```")[1].split("```")[0].strip()
         
-        exercises_data = json.loads(response_text)
-        if isinstance(exercises_data, list):
-            return {"exercises": exercises_data}
-        elif isinstance(exercises_data, dict) and 'exercises' not in exercises_data:
-            return {"exercises": [exercises_data]}
-        elif isinstance(exercises_data, dict) and 'exercises' in exercises_data:
-            return exercises_data
+        data = json.loads(clean_text)
+        if isinstance(data, dict) and 'exercises' in data:
+            return data
+        elif isinstance(data, list):
+            return {"exercises": data}
         else:
-            return generate_fallback_exercises(memory_data)
+            print("[logic] JSON valid but format unexpected")
+            return generate_fallback_exercises(memory_data, count=3)
 
     except Exception as e:
         print(f"Error in 'generate_cognitive_exercises': {e}")
-        return generate_fallback_exercises(memory_data)
+        try:
+            # If json.loads failed, let's see what it was trying to parse
+            print(f"[logic] Failed to parse this text: {clean_text if 'clean_text' in locals() else 'N/A'}")
+        except:
+            pass
+        return generate_fallback_exercises(memory_data, count=3)
 
 def generate_fallback_exercises(memory_data, count=1):
     """Generates fallback exercises if the AI fails."""
-    print("[logic] generate_fallback_exercises")
+    print(f"[logic] generate_fallback_exercises(count={count})")
 
-
-    fallback_exercise = {
-        "type": "reconocimiento",
-        "question": f"About the memory '{memory_data.get('title', 'memory')}', who do you think are the main people?",
-        "options": ["Family", "Friends", "Acquaintances", "I'm not sure"],
-        "correct_answer": 0,
-        "hint": "Think about the most important people to you.",
-        "difficulty": "easy"
-    }
+    fallbacks = [
+        {
+            "type": "multiple_choice",
+            "question": f"Sobre el recuerdo '{memory_data.get('title', 'el evento')}', ¿quiénes crees que son las personas principales?",
+            "options": ["Familia", "Amigos", "Conocidos", "No estoy seguro"],
+            "correct_answer": 0,
+            "hint": "Piensa en las personas más cercanas a ti.",
+            "difficulty": "fácil"
+        },
+        {
+            "type": "fill_in_the_blank",
+            "question": "¿Cómo describirías el sentimiento general de este recuerdo en una palabra?",
+            "correct_answer": "Feliz",
+            "hint": "Puede ser alegría, paz, emoción...",
+            "difficulty": "media"
+        },
+        {
+            "type": "ordering",
+            "question": "Ordena estos momentos típicos de una celebración:",
+            "options": ["Llegada", "Comida", "Despedida"],
+            "correct_answer": ["Llegada", "Comida", "Despedida"],
+            "hint": "Piensa en el orden lógico del tiempo.",
+            "difficulty": "media"
+        }
+    ]
     
-    exercises = [fallback_exercise for _ in range(count)]
-    return {"exercises": exercises}
+    if count == 1:
+        return {"exercises": [fallbacks[0]]}
+    
+    return {"exercises": fallbacks[:count]}
 
 # ______________________________________ Strategy Planning ______________________________________
 
