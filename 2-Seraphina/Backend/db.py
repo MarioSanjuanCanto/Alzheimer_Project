@@ -46,11 +46,75 @@ def reset_user_stats_table():
 
     return {"status": "success"}
 
+def reset_user_stats(id:str):
+    print("[db] reset_user_stats")
+    response = client.table("user_stats").update({
+        "multiple_choice_done" : 0,
+        "multiple_choice_right" : 0,
+        "fill_in_the_blank_done" : 0,
+        "fill_in_the_blank_right" : 0,
+        "ordering_done" : 0,
+        "ordering_right" : 0,
+    }).eq("id", id).execute()
+    return response.data
+
 def get_user_stats(id:str):
     print("[db] get_user_stats")
     response = client.table("user_stats").select("*").eq("id", id).execute()
     return response.data
 
+def add_new_user_stats(id:str):
+    print("[db] add_new_user_stats")
+    user = get_user_info(id)
+
+    info = {
+        "id" : id,
+        "full_name" : user[0]["full_name"],
+        "multiple_choice_done" : 0,
+        "multiple_choice_right" : 0,
+        "fill_in_the_blank_done" : 0,
+        "fill_in_the_blank_right" : 0,
+        "ordering_done" : 0,
+        "ordering_right" : 0,
+    }
+    response = client.table("user_stats").insert(info).execute()
+    return response.data
+
+def delete_user_stats(id:str):
+    print("[db] delete_user_stats")
+    response = client.table("user_stats").delete().eq("id", id).execute()
+    return response.data
+
+def update_user_stats(id:str, exercise_type:str, correct:bool):
+    print("[db] update_user_stats")
+    user_stats = get_user_stats(id)
+    if not user_stats or user_stats == []:
+        return
+    
+    user_stats = user_stats[0]
+    
+    if exercise_type == "multiple_choice":
+        user_stats["multiple_choice_done"] += 1
+        if correct:
+            user_stats["multiple_choice_right"] += 1
+    elif exercise_type == "fill_in_the_blank":
+        user_stats["fill_in_the_blank_done"] += 1
+        if correct:
+            user_stats["fill_in_the_blank_right"] += 1
+    elif exercise_type == "ordering":
+        user_stats["ordering_done"] += 1
+        if correct:
+            user_stats["ordering_right"] += 1
+    
+    response = client.table("user_stats").update(user_stats).eq("id", id).execute()
+    return response.data
+
 
 # Create supabase client
 client = init()
+
+
+if __name__ == "__main__":
+    print("[debug] Testing commands")
+    
+    

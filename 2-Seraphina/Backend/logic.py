@@ -18,7 +18,12 @@ def generate_cognitive_exercises(memory_data, strategy=None, user_id=None):
     """
     print(f"[logic] generate_cognitive_exercises for user {user_id} with strategy {strategy}")
 
-    difficulty_prompt = strategy.get("difficulty", "media") if strategy else "media"
+    difficulty_prompt = ""
+
+    for exercise_type in strategy:
+        difficulty_prompt += f"{exercise_type}:{strategy[exercise_type]} | "
+        
+
 
     # --- Prompt creation ---
     prompt = f"""
@@ -101,7 +106,7 @@ IMPORTANT: Respond ONLY with the requested JSON, without additional text.
             return generate_fallback_exercises(memory_data, count=3)
 
     except Exception as e:
-        print(f"Error in 'generate_cognitive_exercises': {e}")
+        print(f"[logic] Error in 'generate_cognitive_exercises': {e}")
         try:
             # If json.loads failed, let's see what it was trying to parse
             print(f"[logic] Failed to parse this text: {clean_text if 'clean_text' in locals() else 'N/A'}")
@@ -153,13 +158,30 @@ def determine_next_exercise_strategy(user_id=None):
     """
     print(f"[logic] determine_next_exercise_strategy for user {user_id}")
 
+    # Check if the user is in the user stats table, if not, we add it with the reference 
     user_stats = db.get_user_stats(user_id)
-    print(f"[logic] {user_stats}")
+    if not user_stats or user_stats == []:
+       db.add_new_user_stats(user_id)
+
+    # Now we can determine the strategy based on the user's performance
+    user_stats = user_stats[0]
+    
+    strategy = {"multiple_choice": difficulty_level(user_stats["multiple_choice_right"] / (user_stats["multiple_choice_done"] if user_stats["multiple_choice_done"] > 0 else 1)), 
+                "fill_in_the_blank": difficulty_level(user_stats["fill_in_the_blank_right"] / (user_stats["fill_in_the_blank_done"] if user_stats["fill_in_the_blank_done"] > 0 else 1)), 
+                "ordering": difficulty_level(user_stats["ordering_right"] / (user_stats["ordering_done"] if user_stats["ordering_done"] > 0 else 1))}
+
+    print("[logic] strategy selected: " + str(strategy))
 
 
-    # In the future, this function could receive the user's performance history
-    # not necessary now
-    return {"type": "general", "difficulty": "media", "exclude_types": []}
+    return strategy
+
+def difficulty_level(score:float):
+    if score < 0.3:
+        return "fácil"
+    elif score < 0.7:
+        return "media"
+    else:
+        return "difícil"
 
 
 # ______________________________________ Debugging ______________________________________
@@ -167,15 +189,6 @@ def determine_next_exercise_strategy(user_id=None):
 if __name__ == "__main__":
     print("[logic] Debugging")
 
-    respone = client.chat.completions.create(
-        model = "gpt-3.5-turbo",
-        messages = [
-            {"role": "user", "content": "Hello, what day it is"}
-        ],
-        max_tokens = 300
-    )
-
-    print(response.choices[0].message.content)
 
 
 
