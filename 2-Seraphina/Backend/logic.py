@@ -170,8 +170,6 @@ def determine_next_exercise_strategy(user_id=None):
                 "fill_in_the_blank": difficulty_level(user_stats["fill_in_the_blank_right"] / (user_stats["fill_in_the_blank_done"] if user_stats["fill_in_the_blank_done"] > 0 else 1)), 
                 "ordering": difficulty_level(user_stats["ordering_right"] / (user_stats["ordering_done"] if user_stats["ordering_done"] > 0 else 1))}
 
-    print("[logic] strategy selected: " + str(strategy))
-
 
     return strategy
 
