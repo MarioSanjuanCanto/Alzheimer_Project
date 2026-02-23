@@ -80,7 +80,7 @@ IMPORTANT: Respond ONLY with the requested JSON, without additional text.
             max_tokens=2000
         )
         response_text = response.choices[0].message.content
-        print(f"[logic] Raw AI response:\n{response_text}") # Debug log
+        print(f"[logic] Raw AI response:\n{response_text}") 
 
         # Robust JSON cleaning
         clean_text = response_text.strip()
@@ -154,7 +154,7 @@ def determine_next_exercise_strategy(user_id=None):
     print(f"[logic] determine_next_exercise_strategy for user {user_id}")
 
     user_stats = db.get_user_stats(user_id)
-    print(f"[db] {user_stats}")
+    print(f"[logic] {user_stats}")
 
 
     # In the future, this function could receive the user's performance history

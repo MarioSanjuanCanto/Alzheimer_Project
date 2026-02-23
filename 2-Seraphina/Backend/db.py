@@ -54,4 +54,3 @@ def get_user_stats(id:str):
 
 # Create supabase client
 client = init()
-print(str((get_user_stats("38a71d49-27e4-4eed-84b0-6fef657e38b6"))))
