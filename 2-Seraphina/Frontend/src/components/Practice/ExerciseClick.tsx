@@ -9,9 +9,10 @@ interface ExerciseClickProps {
     correct_answer: string[];
     hint?: string;
   };
+  userId: string;
 }
 
-const ExerciseClick = ({ exercise }: ExerciseClickProps) => {
+const ExerciseClick = ({ exercise, userId }: ExerciseClickProps) => {
   const { t } = useTranslation();
 
   const items = exercise.options;
@@ -33,9 +34,23 @@ const ExerciseClick = ({ exercise }: ExerciseClickProps) => {
     setSelected(selected.filter((i) => i !== item));
   };
 
-  const handleCheckAnswer = () => {
+  const handleCheckAnswer = async () => {
     setChecked(true);
     setShowHint(false); // hide hint once answer is checked
+
+    try {
+      await fetch("http://localhost:5001/api/excercise_correction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          exercise_type: "ordering",
+          resultado: isCorrect ? "succeed" : "fail",
+        }),
+      });
+    } catch (error) {
+      console.error("Error updating exercise stats:", error);
+    }
   };
 
   return (
@@ -142,12 +157,11 @@ const ExerciseClick = ({ exercise }: ExerciseClickProps) => {
                 rounded-xl
                 border-2
                 border-dashed
-                ${
-                  !checked
+                ${!checked
+                  ? "border-gray-400"
+                  : isCorrect
                     ? "border-gray-400"
-                    : isCorrect
-                      ? "border-gray-400"
-                      : "border-red-600"
+                    : "border-red-600"
                 }
                 p-3
                 flex
@@ -172,12 +186,11 @@ const ExerciseClick = ({ exercise }: ExerciseClickProps) => {
                       py-2
                       text-xl
                       font-medium
-                      ${
-                        !checked
+                      ${!checked
+                        ? "bg-primary text-white"
+                        : isItemCorrect
                           ? "bg-primary text-white"
-                          : isItemCorrect
-                            ? "bg-primary text-white"
-                            : "border-2 border-red-200 bg-red-100 text-red"
+                          : "border-2 border-red-200 bg-red-100 text-red"
                       }
                     `}
                   >
@@ -192,12 +205,11 @@ const ExerciseClick = ({ exercise }: ExerciseClickProps) => {
                         font-medium
                         leading-none
                         focus:outline-none
-                        ${
-                          !checked
+                        ${!checked
+                          ? "text-white"
+                          : isItemCorrect
                             ? "text-white"
-                            : isItemCorrect
-                              ? "text-white"
-                              : "text-red"
+                            : "text-red"
                         }
                       `}
                     >

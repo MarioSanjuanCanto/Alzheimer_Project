@@ -9,9 +9,10 @@ interface ExerciseChooseProps {
     correct_answer: number;
     hint?: string;
   };
+  userId: string;
 }
 
-const ExerciseChoose = ({ exercise }: ExerciseChooseProps) => {
+const ExerciseChoose = ({ exercise, userId }: ExerciseChooseProps) => {
   const { t } = useTranslation();
 
   const [selected, setSelected] = useState<number | null>(null);
@@ -21,9 +22,23 @@ const ExerciseChoose = ({ exercise }: ExerciseChooseProps) => {
   const isCorrect = selected === exercise.correct_answer;
   const correctAnswerString = exercise.options[exercise.correct_answer];
 
-  const handleCheckAnswer = () => {
+  const handleCheckAnswer = async () => {
     setChecked(true);
     setShowHint(false);
+
+    try {
+      await fetch("http://localhost:5001/api/excercise_correction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          exercise_type: "multiple_choice",
+          resultado: isCorrect ? "succeed" : "fail",
+        }),
+      });
+    } catch (error) {
+      console.error("Error updating exercise stats:", error);
+    }
   };
 
   return (

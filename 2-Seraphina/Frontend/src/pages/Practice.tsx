@@ -101,11 +101,26 @@ const Practice = () => {
 
 
           <div className="space-y-12">
-            {completeExercise && <ExerciseComplete exercise={completeExercise} />}
+            {completeExercise && (
+              <ExerciseComplete
+                exercise={completeExercise}
+                userId={memory.user_id}
+              />
+            )}
 
-            {chooseExercise && <ExerciseChoose exercise={chooseExercise} />}
+            {chooseExercise && (
+              <ExerciseChoose
+                exercise={chooseExercise}
+                userId={memory.user_id}
+              />
+            )}
 
-            {clickExercise && <ExerciseClick exercise={clickExercise} />}
+            {clickExercise && (
+              <ExerciseClick
+                exercise={clickExercise}
+                userId={memory.user_id}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -181,7 +181,10 @@ def difficulty_level(score:float):
     else:
         return "difícil"
 
-
+def update_exercise_stats(user_id, exercise_type, is_correct):
+    print(f"[logic] update_exercise_stats({user_id}, {exercise_type}, {is_correct})")
+    db.update_user_stats(user_id, exercise_type, is_correct)
+    
 # ______________________________________ Debugging ______________________________________
 
 if __name__ == "__main__":

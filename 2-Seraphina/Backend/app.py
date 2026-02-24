@@ -26,8 +26,6 @@ def generate_exercise_endpoint():
             "error": "JSON must contain 'title' and 'user_description'."
         }), 400
 
-    print(f"[app] Generating exercises for user: {user_id}")
-
     # --- Exercise generation logic ---
     
     # We now generate the full set of exercises (3 different types)
@@ -43,6 +41,45 @@ def generate_exercise_endpoint():
         return jsonify({"error": "Could not generate exercises."}), 500
 
     return jsonify(exercise_set)
+
+
+@app.route('/api/excercise_correction', methods=['POST'])
+def excercise_correction_endpoint():
+    """
+    Endpoint to correct cognitive exercises from memory data.
+    """
+    print("[app] excercise_correction_endpoint")
+
+    # --- Request Input validation ---
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    exercise_data = request.get_json()
+    user_id = exercise_data.get('user_id')
+    exercise_type = exercise_data.get('exercise_type')
+    resultado = exercise_data.get('resultado')
+
+    if not exercise_data or not exercise_type or resultado is None:
+        return jsonify({
+            "error": "JSON must contain 'exercise_type' and 'resultado'."
+        }), 400
+    if user_id is None:
+        return jsonify({
+            "error": "JSON must contain 'user_id'."
+        }), 400
+    
+    print(f"[app] Correcting exercise for user: {user_id} | Type: {exercise_type} | Result: {resultado}")
+
+    # Convert 'succeed'/'fail' to boolean for db.update_user_stats
+    is_correct = (resultado == 'succeed')
+    
+    try:
+        logic.update_exercise_stats(user_id, exercise_type, is_correct)
+        return jsonify({"status": "success", "message": "Exercise stats updated."}), 200
+    except Exception as e:
+        print(f"[app] Error updating user stats: {e}")
+        return jsonify({"error": "Could not update user stats."}), 500
+
 
 @app.route('/api/test', methods=['GET'])
 def test_endpoint():

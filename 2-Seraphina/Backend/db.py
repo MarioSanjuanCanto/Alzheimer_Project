@@ -115,6 +115,6 @@ client = init()
 
 
 if __name__ == "__main__":
-    print("[debug] Testing commands")
+    print("[db] Debugging")
     
     

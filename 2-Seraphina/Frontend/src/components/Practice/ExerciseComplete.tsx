@@ -9,9 +9,10 @@ interface ExerciseCompleteProps {
     correct_answer: string;
     hint?: string;
   };
+  userId: string;
 }
 
-const ExerciseComplete = ({ exercise }: ExerciseCompleteProps) => {
+const ExerciseComplete = ({ exercise, userId }: ExerciseCompleteProps) => {
   const { t } = useTranslation();
 
   const [answer, setAnswer] = useState("");
@@ -22,9 +23,23 @@ const ExerciseComplete = ({ exercise }: ExerciseCompleteProps) => {
     answer.trim().toLowerCase() ===
     exercise.correct_answer.trim().toLowerCase();
 
-  const handleCheckAnswer = () => {
+  const handleCheckAnswer = async () => {
     setChecked(true);
     setShowHint(false);
+
+    try {
+      await fetch("http://localhost:5001/api/excercise_correction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          exercise_type: "fill_in_the_blank", // This component is for fill_in_the_blank
+          resultado: isCorrect ? "succeed" : "fail",
+        }),
+      });
+    } catch (error) {
+      console.error("Error updating exercise stats:", error);
+    }
   };
 
   return (
@@ -116,10 +131,9 @@ const ExerciseComplete = ({ exercise }: ExerciseCompleteProps) => {
               font-normal
               placeholder-darkgrey
               focus:outline-none
-              ${
-                checked && !isCorrect
-                  ? "border-red focus:border-red text-red"
-                  : "border-gray-400 focus:border-b-black text-black"
+              ${checked && !isCorrect
+                ? "border-red focus:border-red text-red"
+                : "border-gray-400 focus:border-b-black text-black"
               }
             `}
           />
