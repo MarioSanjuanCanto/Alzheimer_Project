@@ -227,7 +227,6 @@ def generate_fallback_exercises(memory_data, count=1):
     
     return {"exercises": fallbacks[:count]}
 
-
 # ______________________________________ Strategy Planning ______________________________________
 
 def determine_next_exercise_strategy(user_id=None):
@@ -245,6 +244,9 @@ def determine_next_exercise_strategy(user_id=None):
     # Now we can determine the strategy based on the user's performance
     user_stats = user_stats[0]
     
+    if user_stats["multiple_choice_done"] >= 15 or user_stats["fill_in_the_blank_done"] >= 15 or user_stats["ordering_done"] >= 15:
+        reset_user_stats(user_id)
+
     strategy = {"multiple_choice": difficulty_level(user_stats["multiple_choice_right"] / (user_stats["multiple_choice_done"] if user_stats["multiple_choice_done"] > 0 else 1)), 
                 "fill_in_the_blank": difficulty_level(user_stats["fill_in_the_blank_right"] / (user_stats["fill_in_the_blank_done"] if user_stats["fill_in_the_blank_done"] > 0 else 1)), 
                 "ordering": difficulty_level(user_stats["ordering_right"] / (user_stats["ordering_done"] if user_stats["ordering_done"] > 0 else 1))}
@@ -253,9 +255,9 @@ def determine_next_exercise_strategy(user_id=None):
     return strategy
 
 def difficulty_level(score:float):
-    if score < 0.3:
+    if score < 0.5:
         return "fácil"
-    elif score < 0.7:
+    elif score < 0.8:
         return "media"
     else:
         return "difícil"
@@ -264,6 +266,9 @@ def update_exercise_stats(user_id, exercise_type, is_correct):
     print(f"[logic] update_exercise_stats({user_id}, {exercise_type}, {is_correct})")
     db.update_user_stats(user_id, exercise_type, is_correct)
 
+def reset_user_stats(user_id):
+    print(f"[logic] reset_user_stats({user_id})")
+    db.reset_user_stats(user_id)
 # ______________________________________ Debugging ______________________________________
 
 if __name__ == "__main__":

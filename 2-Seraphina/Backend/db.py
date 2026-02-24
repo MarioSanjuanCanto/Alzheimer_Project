@@ -109,10 +109,8 @@ def update_user_stats(id:str, exercise_type:str, correct:bool):
     response = client.table("user_stats").update(user_stats).eq("id", id).execute()
     return response.data
 
-
 # Create supabase client
 client = init()
-
 
 if __name__ == "__main__":
     print("[db] Debugging")

@@ -42,7 +42,6 @@ def generate_exercise_endpoint():
 
     return jsonify(exercise_set)
 
-
 @app.route('/api/excercise_correction', methods=['POST'])
 def excercise_correction_endpoint():
     """
@@ -79,7 +78,6 @@ def excercise_correction_endpoint():
     except Exception as e:
         print(f"[app] Error updating user stats: {e}")
         return jsonify({"error": "Could not update user stats."}), 500
-
 
 @app.route('/api/test', methods=['GET'])
 def test_endpoint():
