@@ -269,6 +269,7 @@ def update_exercise_stats(user_id, exercise_type, is_correct):
 def reset_user_stats(user_id):
     print(f"[logic] reset_user_stats({user_id})")
     db.reset_user_stats(user_id)
+
 # ______________________________________ Debugging ______________________________________
 
 if __name__ == "__main__":
