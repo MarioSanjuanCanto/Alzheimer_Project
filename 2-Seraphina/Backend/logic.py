@@ -29,24 +29,24 @@ def generate_cognitive_exercises(memory_data, strategy=None, user_id=None):
 
     # --- Prompt creation ---
     prompt = f"""
-Create 3 therapeutic cognitive stimulation exercises based on this memory. 
-You MUST create exactly one of each type: 'multiple_choice', 'fill_in_the_blank', and 'ordering'.
+Crea 3 ejercicios de estimulación cognitiva terapéutica basados en este recuerdo. 
+DEBES crear exactamente uno de cada tipo: 'multiple_choice', 'fill_in_the_blank', y 'ordering'.
 
-Title: {memory_data.get('title', 'Untitled')}
-Description: {memory_data.get('user_description', '')}
-AI Analysis: {json.dumps(memory_data.get('ai_analysis', {}), ensure_ascii=False)}
+Título: {memory_data.get('title', 'Sin título')}
+Descripción: {memory_data.get('user_description', '')}
+Análisis de IA: {json.dumps(memory_data.get('ai_analysis', {}), ensure_ascii=False)}
 
-EXERCISE REQUIREMENTS:
-- TOTAL EXERCISES: 3
-- TYPES INCLUDED: 1x multiple_choice, 1x fill_in_the_blank, 1x ordering
-- DIFFICULTY: {difficulty_prompt}
-- LANGUAGE: Spanish
+REQUISITOS DE LOS EJERCICIOS:
+- TOTAL DE EJERCICIOS: 3
+- TIPOS INCLUIDOS: 1x multiple_choice, 1x fill_in_the_blank, 1x ordering
+- DIFICULTAD: {difficulty_prompt}
+- IDIOMA: Español
 
-EXACT JSON FORMAT:
-Respond with a JSON object containing an 'exercises' array with the 3 exercises.
+FORMATO JSON EXACTO:
+Responde con un objeto JSON que contenga un array 'exercises' con los 3 ejercicios.
 
-- For multiple choice:
-  "options" is an array of strings, "correct_answer" is the index of the correct answer.
+- Para opción múltiple (multiple_choice):
+  "options" es un array de strings (las opciones posibles), "correct_answer" es el índice de la respuesta correcta.
   {{
     "type": "multiple_choice",
     "question": "...",
@@ -55,9 +55,9 @@ Respond with a JSON object containing an 'exercises' array with the 3 exercises.
     "hint": "...", "difficulty": "..."
   }}
 
-- For fill-in-the-blank:
-  "question" is an open ended question. The question may not exceed 150 characters.
-  "correct_answer" is a string with the correct word or phrase.
+- Para rellenar el hueco (fill_in_the_blank):
+  "question" es una pregunta abierta o frase incompleta. La pregunta no debe exceder los 150 caracteres.
+  "correct_answer" es un string con la palabra o frase correcta.
   {{
     "type": "fill_in_the_blank",
     "question": "...",
@@ -65,9 +65,9 @@ Respond with a JSON object containing an 'exercises' array with the 3 exercises.
     "hint": "...", "difficulty": "..."
   }}
 
-- For ordering:
-  "options" is an array of 3-4 unordered events/steps.
-  "correct_answer" is an array of the same strings in the correct chronological order.
+- Para ordenar (ordering):
+  "options" es un array de 3-4 eventos o pasos desordenados.
+  "correct_answer" es un array con los mismos strings pero en el orden cronológico correcto.
   {{
     "type": "ordering",
     "question": "...",
@@ -76,7 +76,7 @@ Respond with a JSON object containing an 'exercises' array with the 3 exercises.
     "hint": "...", "difficulty": "..."
   }}
 
-IMPORTANT: Respond ONLY with the requested JSON, without additional text.
+IMPORTANTE: Responde ÚNICAMENTE con el JSON solicitado, sin texto adicional ni formato markdown.
 """
 
     # --- AI model response ---
