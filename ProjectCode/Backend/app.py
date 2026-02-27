@@ -117,10 +117,9 @@ def generate_exercise_agents_endpoint():
 
     # --- Exercise generation logic ---
     exercise_types = ["multiple_choice", "fill_in_the_blank", "ordering"]
-    exercise_set = service.generate(memory_data['title'], memory_data['user_description'], memory_data.get("ai_analysis", {}), exercise_types)
+    exercise_set = service.generate(user_id, memory_data['title'], memory_data['user_description'], memory_data.get("ai_analysis", {}), exercise_types)
     
-
-    return exercise_set
+    return jsonify(exercise_set)
 
 
 if __name__ == '__main__':
