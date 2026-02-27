@@ -6,6 +6,8 @@ import db
 import random
 import re
 
+from agents.orquestrator import orquestrator
+
 load_dotenv()  # Load environment variables from .env
 
 client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url=os.getenv("OPENROUTER_URL"))
@@ -271,6 +273,12 @@ def reset_user_stats(user_id):
     db.reset_user_stats(user_id)
 
 # ______________________________________ Debugging ______________________________________
+def generate_cognitive_exercises(memory_data, strategy=None, user_id=None):
+    print(f"[logic] generate_cognitive_exercises({memory_data}, {strategy}, {user_id})")
+    orq = orquestrator()
+    orq.generate(memory_data, user_id)
+
+
 
 if __name__ == "__main__":
     print("[logic] Debugging")
