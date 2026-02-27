@@ -2,13 +2,23 @@ import json
 from crewai import Agent, Task
 import yaml
 from dotenv import load_dotenv
+import os
 
 
 load_dotenv()
 
 class selector:
-    def __init__(self, config_path="config/agents.yaml"):
+    def __init__(self):
         print("[selector] initialized")
+
+        # Obtener ruta absoluta del archivo actual (core/selector.py)
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Subir un nivel (Backend/)
+        backend_dir = os.path.dirname(current_dir)
+
+        # Construir ruta absoluta a config/agents.yaml
+        config_path = os.path.join(backend_dir, "config", "agents.yaml")
 
         with open(config_path, "r") as f:
             self.agents_config = yaml.safe_load(f)

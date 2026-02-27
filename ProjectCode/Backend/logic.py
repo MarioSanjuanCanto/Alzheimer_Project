@@ -2,11 +2,10 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import os
 import json
-import db
+import database.db as db
 import random
 import re
 
-from agents.orquestrator import orquestrator
 
 load_dotenv()  # Load environment variables from .env
 
@@ -273,11 +272,6 @@ def reset_user_stats(user_id):
     db.reset_user_stats(user_id)
 
 # ______________________________________ Debugging ______________________________________
-def generate_cognitive_exercises(memory_data, strategy=None, user_id=None):
-    print(f"[logic] generate_cognitive_exercises({memory_data}, {strategy}, {user_id})")
-    orq = orquestrator()
-    orq.generate(memory_data, user_id)
-
 
 
 if __name__ == "__main__":
