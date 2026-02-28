@@ -33,11 +33,13 @@ class Orchestrator:
             VerificadorAgent(),
         ]
 
-    '''def run_pipeline(self, title: str, description: str, analysis: str, exercise_types: List[str]) -> Dict[str, Any]:
+       
+
+    def run_pipeline(self, title: str, description: str, analysis: str, exercise_types: List[str]) -> Dict[str, Any]:
         # A) adapt memory for each exercise type
         selected = self.selector.select(title, description, analysis, exercise_types)
         # selected = { "multiple_choice": "...", "ordering": "...", ... }
-
+        '''
         # B) generate exercises
         exercises: Dict[str, Any] = {}
         for ex_type in exercise_types:
@@ -55,7 +57,6 @@ class Orchestrator:
         # D) persist
         save_generation(title, description, analysis, exercises, validations)
 
-        return {"exercises": exercises, "validations": validations}
+        return {"exercises": exercises, "validations": validations}'''
 
-'''
-       
+

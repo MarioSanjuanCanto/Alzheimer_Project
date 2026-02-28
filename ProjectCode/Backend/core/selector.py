@@ -1,5 +1,5 @@
 import json
-from crewai import Agent, Task
+from crewai import Agent, Task, Crew
 import yaml
 from dotenv import load_dotenv
 import os
@@ -17,6 +17,9 @@ class selector:
         # Subir un nivel (Backend/)
         backend_dir = os.path.dirname(current_dir)
 
+
+        # ______ Agents.yaml load  ______
+
         # Construir ruta absoluta a config/agents.yaml
         config_path = os.path.join(backend_dir, "config", "agents.yaml")
 
@@ -27,37 +30,40 @@ class selector:
             **self.agents_config["selector_agent"]
         )
 
+        # ______ Tasks.yaml load ______
+
+        # Construir ruta absoluta a config/tasks.yaml
+        config_path = os.path.join(backend_dir, "config", "tasks.yaml")
+
+        with open(config_path, "r") as f:
+            self.tasks_config = yaml.safe_load(f)
+
+        # le asignamos el agente que hemos creado
+        self.tasks_config["select_task"]["agent"] = self.selector_agent
+        self.selector_task = Task(
+            **self.tasks_config["select_task"]
+        )
+
+
     
     def select(self, title, description, analysis, exercise_types):
         print(f"[selector] Selecting content for: {exercise_types}")
 
-        prompt = f"""
-Título de la Memoria: {title}
-Descripción de la Memoria: {description}
-Análisis de IA: {analysis}
-
-Tipos de ejercicios solicitados: {exercise_types}
-
-INSTRUCCIONES:
-Genera un JSON donde cada clave sea el tipo de ejercicio y el valor el contenido adaptado.
-
-Reglas:
-- multiple_choice → hechos concretos, nombres, fechas.
-- fill_in_the_blank → sustantivos o verbos clave.
-- ordering → secuencia cronológica.
-
-Devuelve ÚNICAMENTE JSON válido.
-"""
-
         try:
-            response = self.selector_agent.run(prompt)
+           selector_crew = Crew(
+            agents=[self.selector_agent],
+            tasks=[self.selector_task],
+            verbose=True
+           )
 
-            # Limpiar posible markdown
-            if response.startswith("```"):
-                response = response.strip("```json").strip("```").strip()
+           result = selector_crew.kickoff(inputs={
+            "title": title,
+            "description": description,
+            "analysis": analysis,
+            "exercise_types": exercise_types
+           })
 
-            return json.loads(response)
-
+           return result
         except Exception as e:
             print(f"[selector] Error: {e}")
             return {etype: f"{title}: {description}" for etype in exercise_types}

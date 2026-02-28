@@ -1,0 +1,25 @@
+select_task:
+  description: >
+    Analiza la memoria proporcionada y extrae ÚNICAMENTE los datos y fragmentos de texto relevantes que servirán como "materia prima" para preparar futuros ejercicios cognitivos. 
+    ¡ATENCIÓN! BAJO NINGÚN CONCEPTO DEBES GENERAR PREGUNTAS NI RESPUESTAS. TU ÚNICO TRABAJO ES EXTRAER INFORMACIÓN, DATOS Y TEXTO LITERAL DE LA MEMORIA ORIGINAL.
+    
+    INFORMACIÓN DE LA MEMORIA:
+    - Título: {title}
+    - Descripción: {description}
+    - Análisis previo de IA: {analysis}
+
+    EJERCICIOS SOLICITADOS:
+    - Tipos de ejercicios que alguien más generará posteriormente: {exercise_types}
+
+    INSTRUCCIONES DE EXTRACCIÓN (NO HACER PREGUNTAS):
+    Genera un JSON estructurado donde cada clave sea exactamente el nombre del tipo de ejercicio, y el valor sea un listado de HECHOS, DATOS o FRAGMENTOS DE TEXTO Puros extraídos del original.
+    
+    Reglas estrictas de extracción según el tipo de ejercicio futuro:
+    - Para 'multiple_choice': Extrae una lista de afirmaciones cortas basadas en hechos concretos, nombres propios o fechas clave (Ej: "Leo tenía ocho años y la escena ocurrió en invierno", "Leo arrastraba los cordones de su zapatilla"). ¡NO ESCRIBAS PREGUNTAS O CUESTIONARIOS! Solo saca el 'dato'.
+    - Para 'fill_in_the_blank': Extrae literalmente 2 o 3 frases o párrafos completos textualmente de la historia original. (Ej: "Su madre —mi hija— puso los ojos en blanco y me entregó una lista."). NO PONGAS HUECOS NI GUIONES, NO ESCRIBAS PREGUNTAS. Solo devuelve el texto original literal seleccionado.
+    - Para 'ordering': Extrae del texto original de 4 a 6 eventos clave y preséntalos como una lista de oraciones literales en estricto orden cronológico. (Ej: ["Leo llegó justo después del desayuno.", "La madre me entregó una lista.", "Leo soltó un suspiro dramático."]). NO MANDES ORDENAR NADA.
+
+    IMPORTANTE: Tu respuesta debe ser ÚNICA Y EXCLUSIVAMENTE un bloque JSON válido. No te inventes historias, cíñete a extraer datos.
+  expected_output: >
+    Un objeto JSON válido cuyas claves sean los tipos de ejercicio: {exercise_types}, y cuyos valores sean exclusivamente los datos, fragmentos literales o listados de hechos concretos en bruto. ¡ESTÁ TERMINANTEMENTE PROHIBIDO CONTENER PREGUNTAS!
+  agent: "selector_agent"

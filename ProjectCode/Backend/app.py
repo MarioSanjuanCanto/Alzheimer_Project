@@ -8,6 +8,7 @@ from services.exercise_service import ExerciseService
 app = Flask(__name__)
 CORS(app)
 
+'''
 @app.route('/api/generate_exercise', methods=['POST'])
 def generate_exercise_endpoint():
     """
@@ -42,7 +43,7 @@ def generate_exercise_endpoint():
         return jsonify({"error": "Could not generate exercises."}), 500
 
     return jsonify(exercise_set)
-
+'''
 @app.route('/api/excercise_correction', methods=['POST'])
 def excercise_correction_endpoint():
     """
@@ -96,12 +97,12 @@ def test_endpoint():
 
 service = ExerciseService()
 
-@app.route('/api/generate_exercise_agents', methods=['POST'])
-def generate_exercise_agents_endpoint():
+@app.route('/api/generate_exercise', methods=['POST'])
+def generate_exercise_endpoint():
     """
     Endpoint to generate cognitive exercises from memory data.
     """
-    print("[app] generate_exercise_agents_endpoint")
+    print("[app] generate_exercise_endpoint")
 
     # --- Request Input validation ---
     if not request.is_json:
