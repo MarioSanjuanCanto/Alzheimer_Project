@@ -63,7 +63,10 @@ class selector:
             "exercise_types": exercise_types
            })
 
-           return result
+           result = result.raw.strip()
+           parsed = json.loads(result)
+
+           return parsed
         except Exception as e:
             print(f"[selector] Error: {e}")
             return {etype: f"{title}: {description}" for etype in exercise_types}

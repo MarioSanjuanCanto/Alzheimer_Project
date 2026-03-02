@@ -23,3 +23,136 @@ select_task:
   expected_output: >
     Un objeto JSON válido cuyas claves sean los tipos de ejercicio: {exercise_types}, y cuyos valores sean exclusivamente los datos, fragmentos literales o listados de hechos concretos en bruto. ¡ESTÁ TERMINANTEMENTE PROHIBIDO CONTENER PREGUNTAS!
   agent: "selector_agent"
+
+
+
+fill_in_the_blank_task:
+  description: >
+    Genera un ejercicio tipo fill_in_the_blank basado exclusivamente en la informacion proporcionada.
+
+    INFORMACION:
+    - Información: {informacion}
+
+    REGLAS OBLIGATORIAS:
+    - Debes crear una única frase incompleta basada en el texto original.
+    - Debes seleccionar UNA palabra o frase exacta del texto como respuesta correcta.
+    - En el campo "question", debes reemplazar EXACTAMENTE esa palabra o frase seleccionada por: "_______"
+    - El reemplazo debe mantener la puntuación original de la oración.
+    - La pregunta debe tener un solo hueco claro.
+    - La pregunta NO puede exceder los 150 caracteres.
+    - La respuesta correcta debe ser una palabra o frase EXACTA extraída literalmente del texto original.
+    - No inventes contenido.
+    - No reformules la respuesta correcta.
+    - No añadas explicaciones.
+
+    FORMATO DE SALIDA OBLIGATORIO:
+    Devuelve EXCLUSIVAMENTE un JSON válido con esta estructura exacta:
+
+    {
+      "type": "fill_in_the_blank",
+      "question": "...",
+      "correct_answer": "...",
+      "hint": "...",
+      "difficulty": "..."
+    }
+
+    PROHIBIDO:
+    - Añadir texto antes o después del JSON.
+    - Usar markdown.
+    - Añadir comentarios.
+    - Devolver múltiples objetos.
+    - Cambiar las claves del JSON.
+  expected_output: >
+    Un único objeto JSON válido con las claves exactas:
+    type, question, correct_answer, hint, difficulty.
+  agent: "fill_in_the_blank_agent"
+  
+
+multiple_choice_task:
+  description: >
+    Genera un ejercicio tipo multiple_choice basado exclusivamente en la informacion proporcionada.
+
+    INFORMACION:
+    - Información: {informacion}
+
+    REGLAS OBLIGATORIAS:
+    - Debes generar UNA sola pregunta clara y directa.
+    - La pregunta debe basarse únicamente en información real del texto.
+    - Debe haber exactamente 3 o 4 opciones.
+    - Todas las opciones deben ser plausibles.
+    - Solo UNA opción puede ser correcta.
+    - "correct_answer" debe ser el índice numérico (base 0).
+    - No inventes hechos que no estén en la memoria.
+    - No reformules el dato correcto de manera que cambie su significado.
+
+    FORMATO DE SALIDA OBLIGATORIO:
+    Devuelve EXCLUSIVAMENTE un JSON válido con esta estructura exacta:
+
+    {
+      "type": "multiple_choice",
+      "question": "...",
+      "options": ["...", "...", "..."],
+      "correct_answer": 0,
+      "hint": "...",
+      "difficulty": "..."
+    }
+
+    PROHIBIDO:
+    - Añadir texto antes o después del JSON.
+    - Usar markdown.
+    - Añadir explicaciones.
+    - Cambiar las claves del JSON.
+    - Generar múltiples objetos.
+  expected_output: >
+    Un único objeto JSON válido con las claves exactas:
+    type, question, options, correct_answer, hint, difficulty.
+  agent: "multiple_choice_agent"
+
+
+ordering_task:
+  description: >
+    Genera un ejercicio tipo ordering basado exclusivamente en la informacion proporcionada.
+
+    INFORMACION:
+    - Información: {informacion}
+
+    REGLAS OBLIGATORIAS:
+    - Debes generar UN solo ejercicio.
+    - Debes seleccionar entre 3 y 4 eventos reales del texto original.
+    - Los eventos deben ser frases exactas o ligeramente ajustadas sin cambiar su significado.
+    - El campo "options" debe contener los eventos en orden DESORDENADO.
+    - El campo "correct_answer" debe contener EXACTAMENTE los mismos strings que aparecen en "options",
+      pero en el orden cronológico correcto según la historia.
+    - No inventes eventos.
+    - No reformules el contenido de manera que cambie su significado.
+    - No añadas explicaciones.
+    - El campo "correct_answer" debe contener EXACTAMENTE los mismos strings que aparecen en "options".
+    - No modifiques puntuación.
+    - No añadas ni elimines caracteres.
+    - No añadas comas.
+    - No cambies espacios.
+    - No incluyas recuerdos o reflexiones pasadas si no forman parte de la secuencia principal.
+    
+    FORMATO DE SALIDA OBLIGATORIO:
+    Devuelve EXCLUSIVAMENTE un JSON válido con esta estructura exacta:
+
+    {
+      "type": "ordering",
+      "question": "...",
+      "options": ["...", "...", "..."],
+      "correct_answer": ["...", "...", "..."],
+      "hint": "...",
+      "difficulty": "..."
+    }
+
+    PROHIBIDO:
+    - Añadir texto antes o después del JSON.
+    - Usar markdown.
+    - Añadir comentarios.
+    - Generar múltiples objetos.
+    - Cambiar las claves del JSON.
+  expected_output: >
+    Un único objeto JSON válido con las claves exactas:
+    type, question, options, correct_answer, hint, difficulty.
+  agent: "ordering_agent"
+
