@@ -122,8 +122,11 @@ def generate_exercise_endpoint():
     
     if not exercise_set or exercise_set == "":
         return logic.generate_fallback_exercises(memory_data, count=3)
+    else: 
+        exercise_set = {"exercises": exercise_set}
 
-    return ""
+        print("[app] Answer: " + str(exercise_set) + " | Type: " + str(type(exercise_set)))
+        return jsonify(exercise_set)
 
 
 if __name__ == '__main__':

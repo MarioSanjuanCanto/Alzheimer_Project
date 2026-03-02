@@ -6,7 +6,7 @@ select_task:
     INFORMACIÓN DE LA MEMORIA:
     - Título: {title}
     - Descripción: {description}
-    - Análisis previo de IA: {analysis}
+    {analysis}
 
     EJERCICIOS SOLICITADOS:
     - Tipos de ejercicios que alguien más generará posteriormente: {exercise_types}
@@ -28,74 +28,74 @@ select_task:
 
 fill_in_the_blank_task:
   description: >
-    Genera un ejercicio tipo fill_in_the_blank basado exclusivamente en la informacion proporcionada.
+    Genera un ejercicio tipo fill_in_the_blank de alta calidad.
 
     INFORMACION:
-    - Información: {informacion}
+    - {informacion}
 
-    REGLAS OBLIGATORIAS:
-    - Debes crear una única frase incompleta basada en el texto original.
-    - Debes seleccionar UNA palabra o frase exacta del texto como respuesta correcta.
-    - En el campo "question", debes reemplazar EXACTAMENTE esa palabra o frase seleccionada por: "_______"
-    - El reemplazo debe mantener la puntuación original de la oración.
-    - La pregunta debe tener un solo hueco claro.
-    - La pregunta NO puede exceder los 150 caracteres.
-    - La respuesta correcta debe ser una palabra o frase EXACTA extraída literalmente del texto original.
-    - No inventes contenido.
-    - No reformules la respuesta correcta.
-    - No añadas explicaciones.
+    PROCEDIMIENTO:
+    1. Extrae una frase COMPLETA y LITERAL del texto.
+    2. Identifica una palabra CLAVE (sustantivo o nombre propio).
+    3. Crea la pregunta sustituyendo esa palabra por "_______".
 
-    FORMATO DE SALIDA OBLIGATORIO:
-    Devuelve EXCLUSIVAMENTE un JSON válido con esta estructura exacta:
+    REGLAS DE ORO:
+    - PROHIBIDO incluir texto como "Análisis previo de IA" o "Información:" dentro de la pregunta.
+    - La pregunta debe ser SOLO la frase del relato.
+    - La respuesta debe ser una única palabra.
+    - Asegúrate de cerrar todas las comillas y llaves del JSON.
 
+    EJEMPLO DE PREGUNTA CORRECTA: "Leo soltó un _______ dramático."
+    EJEMPLO DE PREGUNTA INCORRECTA: "Información: Leo soltó un _______."
+
+    FORMATO EXACTO:
     {
       "type": "fill_in_the_blank",
-      "question": "...",
-      "correct_answer": "...",
-      "hint": "...",
-      "difficulty": "..."
+      "question": "Frase con _______ obligatoriamente",
+      "correct_answer": "La palabra exacta que sustituiste",
+      "hint": "Pista semántica",
+      "difficulty": "fácil"
     }
+
+    REGLA CRÍTICA DE VERIFICACIÓN:
+    Antes de responder, comprueba:
+    1. ¿Está el hueco "_______" en la pregunta? (DEBE ESTAR).
+    2. ¿Está la palabra de "correct_answer" dentro de la pregunta? (NO DEBE ESTAR).
 
     PROHIBIDO:
     - Añadir texto antes o después del JSON.
     - Usar markdown.
     - Añadir comentarios.
-    - Devolver múltiples objetos.
+    - Generar múltiples objetos.
     - Cambiar las claves del JSON.
   expected_output: >
     Un único objeto JSON válido con las claves exactas:
     type, question, correct_answer, hint, difficulty.
   agent: "fill_in_the_blank_agent"
-  
+
 
 multiple_choice_task:
   description: >
-    Genera un ejercicio tipo multiple_choice basado exclusivamente en la informacion proporcionada.
+    Genera un ejercicio de opción múltiple.
 
     INFORMACION:
-    - Información: {informacion}
+    - {informacion}
 
-    REGLAS OBLIGATORIAS:
-    - Debes generar UNA sola pregunta clara y directa.
-    - La pregunta debe basarse únicamente en información real del texto.
-    - Debe haber exactamente 3 o 4 opciones.
-    - Todas las opciones deben ser plausibles.
-    - Solo UNA opción puede ser correcta.
-    - "correct_answer" debe ser el índice numérico (base 0).
-    - No inventes hechos que no estén en la memoria.
-    - No reformules el dato correcto de manera que cambie su significado.
+    REGLAS:
+    - PROHIBIDO incluir metadatos técnicos o el texto de la instrucción en la pregunta.
+    - La pregunta debe ser directa sobre el relato.
+    - "options" debe ser una lista de 3 textos.
+    - "correct_answer" debe ser el ÍNDICE (0, 1 o 2).
 
-    FORMATO DE SALIDA OBLIGATORIO:
-    Devuelve EXCLUSIVAMENTE un JSON válido con esta estructura exacta:
-
+    FORMATO:
     {
       "type": "multiple_choice",
-      "question": "...",
-      "options": ["...", "...", "..."],
+      "question": "¿Qué le entregó la madre?",
+      "options": ["Una lista", "Una pelota", "Un libro"],
       "correct_answer": 0,
-      "hint": "...",
-      "difficulty": "..."
+      "hint": "Estaba escrito en un papel",
+      "difficulty": "fácil"
     }
+    No incluyas nada más que el JSON.
 
     PROHIBIDO:
     - Añadir texto antes o después del JSON.
@@ -111,38 +111,32 @@ multiple_choice_task:
 
 ordering_task:
   description: >
-    Genera un ejercicio tipo ordering basado exclusivamente en la informacion proporcionada.
+    Genera un ejercicio de ordenación.
 
     INFORMACION:
-    - Información: {informacion}
+    - {informacion}
 
-    REGLAS OBLIGATORIAS:
-    - Debes generar UN solo ejercicio.
-    - Debes seleccionar entre 3 y 4 eventos reales del texto original.
-    - Los eventos deben ser frases exactas o ligeramente ajustadas sin cambiar su significado.
-    - El campo "options" debe contener los eventos en orden DESORDENADO.
-    - El campo "correct_answer" debe contener EXACTAMENTE los mismos strings que aparecen en "options",
-      pero en el orden cronológico correcto según la historia.
-    - No inventes eventos.
-    - No reformules el contenido de manera que cambie su significado.
-    - No añadas explicaciones.
-    - El campo "correct_answer" debe contener EXACTAMENTE los mismos strings que aparecen en "options".
-    - No modifiques puntuación.
-    - No añadas ni elimines caracteres.
-    - No añadas comas.
-    - No cambies espacios.
-    - No incluyas recuerdos o reflexiones pasadas si no forman parte de la secuencia principal.
-    
-    FORMATO DE SALIDA OBLIGATORIO:
-    Devuelve EXCLUSIVAMENTE un JSON válido con esta estructura exacta:
+    INSTRUCCIONES CRÍTICAS (FALLO ZERO TOLERANCE):
+    1. Selecciona 3 frases muy cortas (máximo 10 palabras cada una).
+    2. Ponlas en "options" mezcladas.
+    3. Ponlas en "correct_answer" ordenadas.
+    4. VALIDACIÓN CRUZADA: Cada elemento de "correct_answer" DEBE ser idéntico (carácter por carácter) a un elemento de "options".
 
+    PROHIBIDO:
+    - Que "correct_answer" tenga frases que no están en "options".
+    - Que las frases en "correct_answer" sean más largas o detalladas que las de "options".
+    - Usar "Evento 1", "Evento 2", etc.
+
+    REGLA DE ORO: No incluyas "Análisis de IA" ni etiquetas técnicas dentro de las frases.
+
+    FORMATO:
     {
       "type": "ordering",
-      "question": "...",
-      "options": ["...", "...", "..."],
-      "correct_answer": ["...", "...", "..."],
-      "hint": "...",
-      "difficulty": "..."
+      "question": "Ordena estos momentos de la mañana:",
+      "options": ["Me reí", "Leo llegó", "Me dio la lista"],
+      "correct_answer": ["Leo llegó", "Me dio la lista", "Me reí"],
+      "hint": "Primero entró en la casa",
+      "difficulty": "media"
     }
 
     PROHIBIDO:

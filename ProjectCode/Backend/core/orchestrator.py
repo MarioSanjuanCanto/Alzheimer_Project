@@ -51,15 +51,13 @@ class Orchestrator:
 
     
         # B) generate exercises
-        exercises: Dict[str, Any] = {}
+        exercises = []
         for ex_type in exercise_types:
             gen = self.generators.get(ex_type)
             if not gen:
                 continue
-            exercises[ex_type] = gen.generate(selected.get(ex_type, f"{title}: {description}"))
+            exercises.append(gen.generate(selected.get(ex_type, f"{title}: {description}")))
         
-        for exercise, content in exercises.items():
-            print("[orchestrator] exercise generated: " + str(exercise)+ str(content)+"\n\n")
         '''
         # C) validate
         validations = {}
@@ -70,6 +68,6 @@ class Orchestrator:
         save_generation(title, description, analysis, exercises, validations)
 
         return {"exercises": exercises, "validations": validations}'''
-        return ""
+        return exercises
 
 
