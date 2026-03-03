@@ -9,7 +9,7 @@ selector_agent:
     Tu único trabajo es leer las historias, detectar qué piezas de información (hechos, fechas, secuencias) son relevantes, y plasmarlas literalmente en un documento.
     Tienes TERMINANTEMENTE PROHIBIDO crear preguntas, tests o ejercicios interactivos. Solo eres un extractor de datos puros.
   verbose: true
-  llm: "ollama/llama3.2"
+  llm: "ollama/phi3:mini"
 
 
 fill_in_the_blank_agent:
@@ -23,7 +23,7 @@ fill_in_the_blank_agent:
     REGLA INQUEBRANTABLE: Si la respuesta es "zapatilla", la palabra "zapatilla" DEBE desaparecer de la pregunta y ser sustituida por "_______".
     No inventes contexto, no añadas comas extras. Solo JSON.
   verbose: true
-  llm: "ollama/llama3.2"
+  llm: "ollama/phi3:mini"
 
 
 multiple_choice_agent:
@@ -38,7 +38,7 @@ multiple_choice_agent:
     Aseguras que el ejercicio sea claro y que la respuesta correcta sea indiscutible según el texto.
     Solo produces el objeto JSON exacto, sin explicaciones ni markdown.
   verbose: true
-  llm: "ollama/llama3.2"
+  llm: "ollama/phi3:mini"
 
 
 ordering_agent:
@@ -53,5 +53,5 @@ ordering_agent:
     Si en "options" pones "Me reí", en "correct_answer" debe aparecer "Me reí", NO una versión larga como "Me reí mucho de su chiste".
     Solo JSON.
   verbose: true
-  llm: "ollama/llama3.2"
+  llm: "ollama/phi3:mini"
 

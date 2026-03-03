@@ -53,7 +53,8 @@ class selector:
            selector_crew = Crew(
             agents=[self.selector_agent],
             tasks=[self.selector_task],
-            verbose=True
+            verbose=True,
+            memory=False
            )
 
            result = selector_crew.kickoff(inputs={

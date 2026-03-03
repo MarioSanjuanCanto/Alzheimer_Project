@@ -2,6 +2,7 @@ import os
 import yaml
 from crewai import Agent, Task, Crew
 import json
+from utils.json_utils import parse_llm_json
 
 class OrderingAgent:
     def __init__(self, config_path):
@@ -40,7 +41,8 @@ class OrderingAgent:
             ordering_crew = Crew(
             agents=[self.ordering_agent],
             tasks=[self.ordering_task],
-            verbose=True
+            verbose=True,
+            memory=False
             )
 
             result = ordering_crew.kickoff(inputs={
@@ -48,7 +50,7 @@ class OrderingAgent:
             })
 
             result = result.raw.strip()
-            parsed = json.loads(result)
+            parsed = parse_llm_json(result)
 
             return parsed
         except Exception as e:
