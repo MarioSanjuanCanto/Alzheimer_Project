@@ -28,32 +28,26 @@ select_task:
 
 fill_in_the_blank_task:
   description: >
-    Genera un ejercicio tipo fill_in_the_blank de alta calidad.
+    Genera un ejercicio tipo fill_in_the_blank.
 
     INFORMACION:
     - {informacion}
 
     PROCEDIMIENTO:
-    1. Extrae una frase COMPLETA y LITERAL del texto.
-    2. Identifica una palabra CLAVE (sustantivo o nombre propio).
-    3. Crea la pregunta sustituyendo esa palabra por "_______".
+    1. Extrae una frase COMPLETA y LITERAL del texto original.
+    2. Identifica una palabra CLAVE de esa frase (sustantivo o nombre propio).
+    3. Devuelve la frase COMPLETA (sin modificar) en "question" y la palabra clave en "correct_answer".
 
-    REGLAS DE ORO:
+    REGLAS:
+    - "question" debe ser la frase COMPLETA y LITERAL del relato, SIN MODIFICAR.
+    - "correct_answer" debe ser UNA SOLA palabra que aparezca exactamente en "question".
     - PROHIBIDO incluir texto como "Análisis previo de IA" o "Información:" dentro de la pregunta.
-    - La pregunta debe ser SOLO la frase del relato.
-    - La respuesta debe ser una única palabra.
-    - Asegúrate de cerrar todas las comillas y llaves del JSON.
-
-    REGLA CRÍTICA DE VERIFICACIÓN:
-    Antes de responder, comprueba:
-    1. ¿Está el hueco "_______" en la pregunta? (DEBE ESTAR).
-    2. ¿Está la palabra de "correct_answer" dentro de la pregunta? (NO DEBE ESTAR).
 
     ESTRUCTURA JSON REQUERIDA:
     {
-      "type": string (siempre "fill_in_the_blank"),
-      "question": string (frase del relato con "_______" en lugar de la palabra eliminada),
-      "correct_answer": string (la palabra exacta que fue sustituida por el hueco),
+      "type": "fill_in_the_blank",
+      "question": string (frase completa y literal del relato, sin huecos),
+      "correct_answer": string (la palabra clave elegida, que aparece en la frase),
       "hint": string (pista semántica que ayude a recordar la palabra),
       "difficulty": string ("fácil", "media" o "difícil")
     }

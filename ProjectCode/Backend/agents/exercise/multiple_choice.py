@@ -1,6 +1,6 @@
 import os
 import yaml
-from crewai import Agent, Task, Crew
+from crewai import Agent, Task, Crew, LLM
 import json
 from utils.json_utils import parse_llm_json
 
@@ -15,6 +15,13 @@ class MultipleChoiceAgent:
 
     with open(agents_path, "r") as f:
         self.agents_config = yaml.safe_load(f)
+
+    llm = LLM(
+        model="ollama/phi3:mini",
+        temperature=0,
+        base_url="http://localhost:11434"
+    )
+    self.agents_config["multiple_choice_agent"]["llm"] = llm
 
     self.selector_agent = Agent(
         **self.agents_config["multiple_choice_agent"]
@@ -35,13 +42,13 @@ class MultipleChoiceAgent:
     )
 
   def generate(self, data:dict):
-    print(f"[multiple_choice_agent] Generating exercise: " + str(data))
+    print(f"[multiple_choice_agent] Generating exercise")
     
     try:
         selector_crew = Crew(
         agents=[self.selector_agent],
         tasks=[self.selector_task],
-        verbose=True,
+        verbose=False,
         memory=False
         )
 
@@ -49,6 +56,7 @@ class MultipleChoiceAgent:
         "informacion": data
         })
 
+        print("[multiple_choice_agent] Raw: " + str(result.raw))
         result = result.raw.strip()
         parsed = parse_llm_json(result)
 

@@ -8,7 +8,7 @@ selector_agent:
     Eres un analista de datos y procesador de textos implacable.
     Tu único trabajo es leer las historias, detectar qué piezas de información (hechos, fechas, secuencias) son relevantes, y plasmarlas literalmente en un documento.
     Tienes TERMINANTEMENTE PROHIBIDO crear preguntas, tests o ejercicios interactivos. Solo eres un extractor de datos puros.
-  verbose: true
+  verbose: false
   llm: "ollama/phi3:mini"
 
 
@@ -22,7 +22,7 @@ fill_in_the_blank_agent:
     Tu misión es que el paciente reconozca una frase que él mismo escribió o contó.
     REGLA INQUEBRANTABLE: Si la respuesta es "zapatilla", la palabra "zapatilla" DEBE desaparecer de la pregunta y ser sustituida por "_______".
     No inventes contexto, no añadas comas extras. Solo JSON.
-  verbose: true
+  verbose: false
   llm: "ollama/phi3:mini"
 
 
@@ -37,7 +37,7 @@ multiple_choice_agent:
     Diseñas ejercicios que no frustren al paciente pero que planteen un reto cognitivo real.
     Aseguras que el ejercicio sea claro y que la respuesta correcta sea indiscutible según el texto.
     Solo produces el objeto JSON exacto, sin explicaciones ni markdown.
-  verbose: true
+  verbose: false
   llm: "ollama/phi3:mini"
 
 
@@ -52,6 +52,6 @@ ordering_agent:
     No uses etiquetas como "Evento A". Usa las frases reales. 
     Si en "options" pones "Me reí", en "correct_answer" debe aparecer "Me reí", NO una versión larga como "Me reí mucho de su chiste".
     Solo JSON.
-  verbose: true
+  verbose: false
   llm: "ollama/phi3:mini"
 

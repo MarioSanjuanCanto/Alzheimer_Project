@@ -8,6 +8,7 @@ from agents.exercise.ordering import OrderingAgent
 from agents.validation.adecuacion import AdecuacionCognitivaAgent
 from agents.validation.regulador_emocional import ReguladorEmocionalAgent
 from agents.validation.verificador import VerificadorAgent
+from utils.ollama_health import flush_ollama_context
 
 import database.db as db
 import os
@@ -48,6 +49,7 @@ class Orchestrator:
     def run_pipeline(self, title: str, description: str, analysis: str, exercise_types: List[str]) -> Dict[str, Any]:
         # A) adapt memory for each exercise type
         selected = self.selector.select(title, description, analysis, exercise_types)
+        flush_ollama_context("phi3:mini")
 
     
         # B) generate exercises
@@ -57,6 +59,7 @@ class Orchestrator:
             if not gen:
                 continue
             exercises.append(gen.generate(selected.get(ex_type, f"{title}: {description}")))
+            flush_ollama_context("phi3:mini")
         
         '''
         # C) validate

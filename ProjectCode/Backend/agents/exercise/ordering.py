@@ -1,6 +1,6 @@
 import os
 import yaml
-from crewai import Agent, Task, Crew
+from crewai import Agent, Task, Crew, LLM
 import json
 from utils.json_utils import parse_llm_json
 
@@ -15,6 +15,13 @@ class OrderingAgent:
 
         with open(agents_path, "r") as f:
             self.agents_config = yaml.safe_load(f)
+
+        llm = LLM(
+            model="ollama/phi3:mini",
+            temperature=0,
+            base_url="http://localhost:11434"
+        )
+        self.agents_config["ordering_agent"]["llm"] = llm
 
         self.ordering_agent = Agent(
             **self.agents_config["ordering_agent"]
@@ -35,13 +42,13 @@ class OrderingAgent:
         )
 
     def generate(self, data:dict):
-        print(f"[ordering_agent] Generating exercise: " + str(data))
+        print(f"[ordering_agent] Generating exercise")
         
         try:
             ordering_crew = Crew(
             agents=[self.ordering_agent],
             tasks=[self.ordering_task],
-            verbose=True,
+            verbose=False,
             memory=False
             )
 
@@ -49,8 +56,10 @@ class OrderingAgent:
             "informacion": data
             })
 
+            print("[ordering_agent] Raw: " + str(result.raw))
             result = result.raw.strip()
             parsed = parse_llm_json(result)
+            parsed["type"] = "ordering"
 
             return parsed
         except Exception as e:
