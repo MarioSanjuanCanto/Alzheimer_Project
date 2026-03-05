@@ -31,11 +31,11 @@ fill_in_the_blank_task:
     Genera un ejercicio tipo fill_in_the_blank.
 
     INFORMACION:
-    - {informacion}
+    -[ {informacion} ]
 
     PROCEDIMIENTO:
-    1. Extrae una frase COMPLETA y LITERAL del texto original.
-    2. Identifica una palabra CLAVE de esa frase (sustantivo o nombre propio).
+    1. Extrae una frase COMPLETA y LITERAL importante del texto original.
+    2. Identifica una palabra CLAVE de esa frase (sustantivo o nombre propio, que esté presente en la frase).
     3. Devuelve la frase COMPLETA (sin modificar) en "question" y la palabra clave en "correct_answer".
 
     REGLAS:

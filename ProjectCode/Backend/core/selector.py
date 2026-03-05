@@ -1,5 +1,5 @@
 import json
-from crewai import Agent, Task, Crew
+from crewai import Agent, Task, Crew, LLM
 import yaml
 from dotenv import load_dotenv
 import os
@@ -10,50 +10,39 @@ load_dotenv()
 class selector:
     def __init__(self):
         print("[selector] initialized")
-
-        # Obtener ruta absoluta del archivo actual (core/selector.py)
         current_dir = os.path.dirname(os.path.abspath(__file__))
-
-        # Subir un nivel (Backend/)
         backend_dir = os.path.dirname(current_dir)
+        self.config_path = os.path.join(backend_dir, "config")
 
+    def refresh(self):
+        """Recrea Agent y Task frescos para evitar contaminación entre memorias."""
+        with open(os.path.join(self.config_path, "agents.yaml"), "r") as f:
+            agents_config = yaml.safe_load(f)
 
-        # ______ Agents.yaml load  ______
-
-        # Construir ruta absoluta a config/agents.yaml
-        config_path = os.path.join(backend_dir, "config", "agents.yaml")
-
-        with open(config_path, "r") as f:
-            self.agents_config = yaml.safe_load(f)
-
-        self.selector_agent = Agent(
-            **self.agents_config["selector_agent"]
+        llm = LLM(
+            model="ollama/phi3:mini",
+            temperature=0,
+            base_url="http://localhost:11434"
         )
+        agents_config["selector_agent"]["llm"] = llm
 
-        # ______ Tasks.yaml load ______
+        self.selector_agent = Agent(**agents_config["selector_agent"])
 
-        # Construir ruta absoluta a config/tasks.yaml
-        config_path = os.path.join(backend_dir, "config", "tasks.yaml")
+        with open(os.path.join(self.config_path, "tasks.yaml"), "r") as f:
+            tasks_config = yaml.safe_load(f)
 
-        with open(config_path, "r") as f:
-            self.tasks_config = yaml.safe_load(f)
+        tasks_config["select_task"]["agent"] = self.selector_agent
+        self.selector_task = Task(**tasks_config["select_task"])
 
-        # le asignamos el agente que hemos creado
-        self.tasks_config["select_task"]["agent"] = self.selector_agent
-        self.selector_task = Task(
-            **self.tasks_config["select_task"]
-        )
-
-
-    
     def select(self, title, description, analysis, exercise_types):
         print(f"[selector] Selecting content for: {exercise_types}")
+        self.refresh()
 
         try:
            selector_crew = Crew(
             agents=[self.selector_agent],
             tasks=[self.selector_task],
-            verbose=True,
+            verbose=False,
             memory=False
            )
 
@@ -63,7 +52,7 @@ class selector:
             "analysis": analysis,
             "exercise_types": exercise_types
            })
-
+           print("[selector] Raw: " + str(result.raw))
            result = result.raw.strip()
            parsed = json.loads(result)
 
@@ -71,9 +60,3 @@ class selector:
         except Exception as e:
             print(f"[selector] Error: {e}")
             return {etype: f"{title}: {description}" for etype in exercise_types}
-
-
-
-       
-
-

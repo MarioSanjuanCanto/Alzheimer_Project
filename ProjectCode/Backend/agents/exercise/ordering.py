@@ -7,52 +7,41 @@ from utils.json_utils import parse_llm_json
 class OrderingAgent:
     def __init__(self, config_path):
         print("[ordering_agent] initialized")
+        self.config_path = config_path
 
-        # __________ Agents.yaml load __________
-
-        # Construir ruta absoluta a config/agents.yaml
-        agents_path = os.path.join(config_path, "agents.yaml")
-
-        with open(agents_path, "r") as f:
-            self.agents_config = yaml.safe_load(f)
+    def refresh(self):
+        """Recrea Agent y Task frescos para evitar contaminación entre memorias."""
+        with open(os.path.join(self.config_path, "agents.yaml"), "r") as f:
+            agents_config = yaml.safe_load(f)
 
         llm = LLM(
             model="ollama/phi3:mini",
             temperature=0,
             base_url="http://localhost:11434"
         )
-        self.agents_config["ordering_agent"]["llm"] = llm
+        agents_config["ordering_agent"]["llm"] = llm
 
-        self.ordering_agent = Agent(
-            **self.agents_config["ordering_agent"]
-        )
+        self.agent = Agent(**agents_config["ordering_agent"])
 
-        # ______ Tasks.yaml load ______
+        with open(os.path.join(self.config_path, "tasks.yaml"), "r") as f:
+            tasks_config = yaml.safe_load(f)
 
-        # Construir ruta absoluta a config/tasks.yaml
-        tasks_path = os.path.join(config_path, "tasks.yaml")
-
-        with open(tasks_path, "r") as f:
-            self.tasks_config = yaml.safe_load(f)
-
-        # le asignamos el agente que hemos creado
-        self.tasks_config["ordering_task"]["agent"] = self.ordering_agent
-        self.ordering_task = Task(
-            **self.tasks_config["ordering_task"]
-        )
+        tasks_config["ordering_task"]["agent"] = self.agent
+        self.task = Task(**tasks_config["ordering_task"])
 
     def generate(self, data:dict):
         print(f"[ordering_agent] Generating exercise")
+        self.refresh()
         
         try:
-            ordering_crew = Crew(
-            agents=[self.ordering_agent],
-            tasks=[self.ordering_task],
+            crew = Crew(
+            agents=[self.agent],
+            tasks=[self.task],
             verbose=False,
             memory=False
             )
 
-            result = ordering_crew.kickoff(inputs={
+            result = crew.kickoff(inputs={
             "informacion": data
             })
 
