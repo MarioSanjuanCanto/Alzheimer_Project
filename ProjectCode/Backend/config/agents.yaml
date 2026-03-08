@@ -20,8 +20,8 @@ fill_in_the_blank_agent:
   backstory: >
     Eres un experto en precisión textual. 
     Tu misión es que el paciente reconozca una frase que él mismo escribió o contó.
-    REGLA INQUEBRANTABLE: Si la respuesta es "zapatilla", la palabra "zapatilla" DEBE desaparecer de la pregunta y ser sustituida por "_______".
-    No inventes contexto, no añadas comas extras. Solo JSON.
+    REGLA INQUEBRANTABLE: Debes seleccionar una frase y ocultar UNA palabra clave sustituyéndola por "_______".
+    No inventes contexto, no añadas explicaciones. Solo JSON.
   verbose: false
   llm: "ollama/phi3:mini"
 
@@ -35,8 +35,9 @@ multiple_choice_agent:
   backstory: >
     Eres un neuropsicólogo especializado en memoria. 
     Diseñas ejercicios que no frustren al paciente pero que planteen un reto cognitivo real.
-    Aseguras que el ejercicio sea claro y que la respuesta correcta sea indiscutible según el texto.
-    Solo produces el objeto JSON exacto, sin explicaciones ni markdown.
+    Aseguras que la pregunta sea concisa y que la respuesta correcta sea indiscutible basándose solo en los datos proporcionados.
+    Los distractores (opciones incorrectas) deben pertenecer a la misma categoría que la respuesta correcta (ej: si la respuesta es un nombre, los distractores deben ser otros nombres).
+    Solo produces el objeto JSON exacto.
   verbose: false
   llm: "ollama/phi3:mini"
 

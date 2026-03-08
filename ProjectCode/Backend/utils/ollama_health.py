@@ -225,4 +225,4 @@ if __name__ == "__main__":
     test_ordering_agent() # <-- Ahora debería ir bien
     flush_ollama_context("phi3:mini") 
     test_selector_agent()
-    
+

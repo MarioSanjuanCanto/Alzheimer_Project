@@ -6,3 +6,4 @@ supabase
 dotenv
 crewai
 litellm
+requests

@@ -30,24 +30,25 @@ fill_in_the_blank_task:
   description: >
     Genera un ejercicio tipo fill_in_the_blank.
 
-    INFORMACION:
+    INFORMACION (Puede ser un párrafo narrativo o una lista de hechos/frases independientes):
     -[ {informacion} ]
 
     PROCEDIMIENTO:
-    1. Extrae una frase COMPLETA y LITERAL importante del texto original.
-    2. Identifica una palabra CLAVE de esa frase (sustantivo o nombre propio, que esté presente en la frase).
-    3. Devuelve la frase COMPLETA (sin modificar) en "question" y la palabra clave en "correct_answer".
+    1. Selecciona un dato o frase COMPLETA y LITERAL de la información proporcionada.
+    2. Identifica una palabra CLAVE de esa frase (sustantivo o nombre propio).
+    3. En "question", pon la frase pero sustituyendo la palabra CLAVE por "_______".
+    4. En "correct_answer", pon la palabra que has ocultado.
 
     REGLAS:
-    - "question" debe ser la frase COMPLETA y LITERAL del relato, SIN MODIFICAR.
-    - "correct_answer" debe ser UNA SOLA palabra que aparezca exactamente en "question".
-    - PROHIBIDO incluir texto como "Análisis previo de IA" o "Información:" dentro de la pregunta.
+    - "question" DEBE contener el hueco "_______".
+    - "correct_answer" debe ser UNA SOLA palabra que aparezca originalmente en la información.
+    - PROHIBIDO incluir texto como "Análisis previo" o etiquetas dentro del JSON.
 
     ESTRUCTURA JSON REQUERIDA:
     {
       "type": "fill_in_the_blank",
-      "question": string (frase completa y literal del relato, sin huecos),
-      "correct_answer": string (la palabra clave elegida, que aparece en la frase),
+      "question": string (la frase con el hueco "_______"),
+      "correct_answer": string (la palabra que falta),
       "hint": string (pista semántica que ayude a recordar la palabra),
       "difficulty": string ("fácil", "media" o "difícil")
     }
@@ -68,19 +69,19 @@ multiple_choice_task:
   description: >
     Genera un ejercicio de opción múltiple.
 
-    INFORMACION:
+    INFORMACION (Puede ser un párrafo narrativo o una lista de datos/frases sin correlación):
     - {informacion}
 
     REGLAS:
-    - PROHIBIDO incluir metadatos técnicos o el texto de la instrucción en la pregunta.
-    - La pregunta debe ser directa sobre el relato.
-    - "options" debe ser una lista de exactamente 3 textos.
-    - "correct_answer" debe ser el ÍNDICE numérico (0, 1 o 2) de la opción correcta.
+    - La pregunta debe ser concisa y directa.
+    - "options" debe contener 3 opciones del mismo tipo (ej: 3 lugares, 3 fechas, 3 nombres).
+    - Una opción es la correcta y las otras dos son "distractores" plausibles basados en la información.
+    - "correct_answer" debe ser el ÍNDICE (0, 1 o 2) de la opción correcta.
 
     ESTRUCTURA JSON REQUERIDA:
     {
       "type": string (siempre "multiple_choice"),
-      "question": string (pregunta directa sobre el relato),
+      "question": string (pregunta directa sobre la información),
       "options": array de 3 strings (las tres opciones de respuesta),
       "correct_answer": integer (índice 0, 1 o 2 de la opción correcta),
       "hint": string (pista que ayude a recordar la respuesta),
@@ -104,13 +105,13 @@ ordering_task:
   description: >
     Genera un ejercicio de ordenación.
 
-    INFORMACION:
+    INFORMACION (Puede ser un párrafo o una lista de datos/frases):
     - {informacion}
 
     INSTRUCCIONES CRÍTICAS (FALLO ZERO TOLERANCE):
     1. Selecciona 3 frases muy cortas (máximo 10 palabras cada una).
     2. Ponlas en "options" mezcladas (desordenadas).
-    3. Ponlas en "correct_answer" en el orden cronológico correcto.
+    3. Ponlas en "correct_answer" en el orden lógico o secuencial correcto según se presenten en la información.
     4. VALIDACIÓN CRUZADA: Cada elemento de "correct_answer" DEBE ser idéntico (carácter por carácter) a un elemento de "options".
 
     PROHIBIDO:
@@ -123,9 +124,9 @@ ordering_task:
     ESTRUCTURA JSON REQUERIDA:
     {
       "type": string (siempre "ordering"),
-      "question": string (instrucción para ordenar los eventos),
-      "options": array de 3 strings (frases cortas desordenadas),
-      "correct_answer": array de 3 strings (las mismas frases en orden cronológico correcto),
+      "question": string (instrucción para ordenar los elementos),
+      "options": array de 3 strings (datos o frases cortas desordenadas),
+      "correct_answer": array de 3 strings (los mismos elementos en el orden lógico/secuencial correcto),
       "hint": string (pista sobre el orden),
       "difficulty": string ("fácil", "media" o "difícil")
     }
