@@ -15,9 +15,8 @@ class MultipleChoiceAgent:
         agents_config = yaml.safe_load(f)
 
     llm = LLM(
-        model="ollama/phi3:mini",
-        temperature=0,
-        base_url="http://localhost:11434"
+        model="gpt-4o-mini",
+        temperature=0
     )
     agents_config["multiple_choice_agent"]["llm"] = llm
 

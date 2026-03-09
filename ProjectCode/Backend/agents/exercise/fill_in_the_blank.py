@@ -15,10 +15,10 @@ class FillInTheBlankAgent:
         agents_config = yaml.safe_load(f)
 
     llm = LLM(
-        model="ollama/phi3:mini",
-        temperature=0,
-        base_url="http://localhost:11434"
+        model="gpt-4o-mini",
+        temperature=0
     )
+
     agents_config["fill_in_the_blank_agent"]["llm"] = llm
 
     self.agent = Agent(**agents_config["fill_in_the_blank_agent"])

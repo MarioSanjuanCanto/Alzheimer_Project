@@ -9,7 +9,7 @@ selector_agent:
     Tu único trabajo es leer las historias, detectar qué piezas de información (hechos, fechas, secuencias) son relevantes, y plasmarlas literalmente en un documento.
     Tienes TERMINANTEMENTE PROHIBIDO crear preguntas, tests o ejercicios interactivos. Solo eres un extractor de datos puros.
   verbose: false
-  llm: "ollama/phi3:mini"
+  llm: ""
 
 
 fill_in_the_blank_agent:
@@ -23,7 +23,7 @@ fill_in_the_blank_agent:
     REGLA INQUEBRANTABLE: Debes seleccionar una frase y ocultar UNA palabra clave sustituyéndola por "_______".
     No inventes contexto, no añadas explicaciones. Solo JSON.
   verbose: false
-  llm: "ollama/phi3:mini"
+  llm: ""
 
 
 multiple_choice_agent:
@@ -39,7 +39,7 @@ multiple_choice_agent:
     Los distractores (opciones incorrectas) deben pertenecer a la misma categoría que la respuesta correcta (ej: si la respuesta es un nombre, los distractores deben ser otros nombres).
     Solo produces el objeto JSON exacto.
   verbose: false
-  llm: "ollama/phi3:mini"
+  llm: ""
 
 
 ordering_agent:
@@ -54,5 +54,5 @@ ordering_agent:
     Si en "options" pones "Me reí", en "correct_answer" debe aparecer "Me reí", NO una versión larga como "Me reí mucho de su chiste".
     Solo JSON.
   verbose: false
-  llm: "ollama/phi3:mini"
+  llm: ""
 
