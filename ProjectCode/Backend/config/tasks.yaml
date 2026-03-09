@@ -43,12 +43,13 @@ fill_in_the_blank_task:
     -[ {informacion} ]
 
     PROCEDIMIENTO:
-    1. Selecciona un dato o frase COMPLETA y LITERAL de la información proporcionada.
+    1. Selecciona un dato o frase COMPLETA, LITERAL y BREVE (máximo 12-15 palabras) de la información proporcionada.
     2. Identifica una palabra CLAVE de esa frase (sustantivo o nombre propio).
     3. En "question", pon la frase pero sustituyendo la palabra CLAVE por "_______".
     4. En "correct_answer", pon la palabra que has ocultado.
 
     REGLAS:
+    - La frase elegida DEBE ser corta y de fácil lectura.
     - "question" DEBE contener el hueco "_______".
     - "correct_answer" debe ser UNA SOLA palabra que aparezca originalmente en la información.
     - PROHIBIDO incluir texto como "Análisis previo" o etiquetas dentro del JSON.
@@ -63,6 +64,7 @@ fill_in_the_blank_task:
     }
 
     PROHIBIDO:
+    - Hacer frases demasiado largas, tienen que ser breves y concisas.
     - Añadir texto antes o después del JSON.
     - Usar markdown.
     - Añadir comentarios.
@@ -112,23 +114,26 @@ multiple_choice_task:
 
 ordering_task:
   description: >
-    Genera un ejercicio de ordenación.
+    Genera un ejercicio de ordenación basado en una secuencia de EVENTOS.
 
     INFORMACION (Puede ser un párrafo o una lista de datos/frases):
     - {informacion}
 
     INSTRUCCIONES CRÍTICAS (FALLO ZERO TOLERANCE):
-    1. Selecciona 3 frases muy cortas (máximo 10 palabras cada una).
-    2. Ponlas en "options" mezcladas (desordenadas).
-    3. Ponlas en "correct_answer" en el orden lógico o secuencial correcto según se presenten en la información.
-    4. VALIDACIÓN CRUZADA: Cada elemento de "correct_answer" DEBE ser idéntico (carácter por carácter) a un elemento de "options".
+    1. Identifica una secuencia lógica de 3 EVENTOS o momentos clave en la información.
+    2. Las frases deben ser muy cortas (máximo 10 palabras) y representar acciones o hechos claros.
+    3. Evita usar frases abstractas o datos sin una relación secuencial obvia; el objetivo es que el orden sea indiscutible.
+    4. Ponlas en "options" mezcladas (desordenadas).
+    5. Ponlas en "correct_answer" en el orden cronológico o lógico exacto según la información.
+    6. VALIDACIÓN CRUZADA: Cada elemento de "correct_answer" DEBE ser idéntico (carácter por carácter) a un elemento de "options".
 
     PROHIBIDO:
+    - Usar frases que no tengan una relación de orden clara (ej: "Me gusta el azul" y "Tengo 20 años").
     - Que "correct_answer" tenga frases que no están en "options".
     - Que las frases en "correct_answer" sean más largas o detalladas que las de "options".
     - Usar "Evento 1", "Evento 2", etc.
 
-    REGLA DE ORO: No incluyas "Análisis de IA" ni etiquetas técnicas dentro de las frases.
+    REGLA DE ORO: No incluyas "Análisis de IA" ni etiquetas técnicas dentro de las frases. El orden debe ser evidente por el contenido.
 
     ESTRUCTURA JSON REQUERIDA:
     {
@@ -151,3 +156,38 @@ ordering_task:
     type, question, options, correct_answer, hint, difficulty.
   agent: "ordering_agent"
 
+
+
+validate_task:
+  description: >
+    Tu misión es realizar una auditoría técnica y pedagógica exhaustiva del ejercicio generado para asegurar que es apto para un paciente con Alzheimer.
+
+    ENTRADAS:
+    - Ejercicio generado (JSON): {ejercicio}
+    - Información original de referencia: {informacion_original}
+
+    CRITERIOS DE VALIDACIÓN (CHECKLIST):
+    1. FIDELIDAD: ¿El ejercicio se basa ÚNICAMENTE en la información proporcionada? (Falla si hay datos inventados o externos).
+    2. COHERENCIA: ¿La respuesta marcada como correcta es realmente la correcta según el texto original?
+    3. FORMATO: ¿El JSON cumple estrictamente con la estructura requerida (claves correctas, tipos de datos correctos)?
+    4. ACCESIBILIDAD: ¿El lenguaje es sencillo, directo y adecuado para personas con deterioro cognitivo?
+
+    PROCEDIMIENTO DE RESPUESTA:
+    - Si detectas CUALQUIER fallo (datos inventados, error de lógica, JSON mal formado o respuesta incorrecta):
+      * status: "error"
+      * Analysis: Explica detalladamente qué ha fallado y qué debe cambiarse.
+    - Si el ejercicio es perfecto y cumple todas las reglas:
+      * status: "ok"
+      * Analysis: Resume brevemente por qué el ejercicio es válido.
+
+    ESTRUCTURA JSON REQUERIDA:
+    {
+      "Analysis": string,
+      "status": "ok" o "error"
+    }
+
+    IMPORTANTE: Responde ÚNICAMENTE con el objeto JSON. Sin markdown, sin texto extra.
+    
+  expected_output: >
+    Un objeto JSON válido con las claves exactas: Analysis, status.
+  agent: "validator_agent"
