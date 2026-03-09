@@ -14,6 +14,15 @@ select_task:
     INSTRUCCIONES DE EXTRACCIÓN (NO HACER PREGUNTAS):
     Genera un JSON estructurado donde cada clave sea exactamente el nombre del tipo de ejercicio, y el valor sea un listado de HECHOS, DATOS o FRAGMENTOS DE TEXTO Puros extraídos del original.
     
+        ESTRUCTURA JSON REQUERIDA:
+    {
+      "exercise_name1": "...",
+      "exercise_name2": "...",
+      "...": "...",
+
+    }
+
+
     Reglas estrictas de extracción según el tipo de ejercicio futuro:
     - Para 'multiple_choice': Extrae una lista de afirmaciones cortas basadas en hechos concretos, nombres propios o fechas clave. ¡NO ESCRIBAS PREGUNTAS O CUESTIONARIOS! Solo saca el 'dato'.
     - Para 'fill_in_the_blank': Extrae literalmente 2 o 3 frases o párrafos completos textualmente de la historia original. NO PONGAS HUECOS NI GUIONES, NO ESCRIBAS PREGUNTAS. Solo devuelve el texto original literal seleccionado.

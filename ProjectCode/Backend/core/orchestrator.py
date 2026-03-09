@@ -58,6 +58,8 @@ class Orchestrator:
             gen = self.generators.get(ex_type)
             if not gen:
                 continue
+            print(f"[orchestrator] Generating {ex_type}")
+            print(f"[orchestrator] Selected: {selected.get(ex_type, f'{title}: {description}')}\n\n")
             exercises.append(gen.generate(selected.get(ex_type, f"{title}: {description}")))
             flush_ollama_context("phi3:mini")
         
