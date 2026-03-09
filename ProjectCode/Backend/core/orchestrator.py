@@ -49,7 +49,6 @@ class Orchestrator:
     def run_pipeline(self, title: str, description: str, analysis: str, exercise_types: List[str]) -> Dict[str, Any]:
         # A) adapt memory for each exercise type
         selected = self.selector.select(title, description, analysis, exercise_types)
-        flush_ollama_context("phi3:mini")
 
     
         # B) generate exercises
@@ -61,7 +60,6 @@ class Orchestrator:
             print(f"[orchestrator] Generating {ex_type}")
             print(f"[orchestrator] Selected: {selected.get(ex_type, f'{title}: {description}')}\n\n")
             exercises.append(gen.generate(selected.get(ex_type, f"{title}: {description}")))
-            flush_ollama_context("phi3:mini")
         
         '''
         # C) validate

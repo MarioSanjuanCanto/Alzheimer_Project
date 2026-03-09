@@ -114,7 +114,8 @@
     "orderEvents": "Coloca los eventos en el orden correcto",
     "orderEventsHint": "Toca los eventos en el orden correcto.",
     "correctAnswerIs": "La respuesta correcta es:",
-    "correctFeedback": "¡Eso es correcto!"
+    "correctFeedback": "¡Eso es correcto!",
+    "generating": "Generando tus ejercicios personales..."
   },
   "memories": {
     "title": "Recuerdos",
