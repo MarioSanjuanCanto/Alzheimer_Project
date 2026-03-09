@@ -3,34 +3,12 @@ import yaml
 from crewai import Agent, Task, Crew, LLM
 import json
 import requests
+from dotenv import load_dotenv
+from agents.validation.verificador import VerificadorAgent
 
+# Cargar variables de entorno desde el archivo .env
+load_dotenv()
 
-def flush_ollama_context(model_name="phi3:mini"):
-    """
-    Fuerza a Ollama a liberar el contexto residual del modelo.
-    Envía una petición con keep_alive=0 para descargar el modelo de memoria,
-    y luego lo recarga limpio.
-    """
-    print(f"[ollama_health] Flushing context for model: {model_name}")
-    try:
-        # Paso 1: Descargar el modelo de memoria (keep_alive=0)
-        requests.post("http://localhost:11434/api/generate", json={
-            "model": model_name,
-            "prompt": "",
-            "keep_alive": 0  # Descargar inmediatamente de memoria
-        })
-        print(f"[ollama_health] Model {model_name} unloaded from memory")
-
-        # Paso 2: Recargar limpio con un prompt vacío mínimo
-        requests.post("http://localhost:11434/api/generate", json={
-            "model": model_name,
-            "prompt": "hi",
-            "keep_alive": "5m",
-            "options": {"num_predict": 1}  # Solo 1 token, para que cargue rápido
-        })
-        print(f"[ollama_health] Model {model_name} reloaded clean")
-    except Exception as e:
-        print(f"[ollama_health] Warning: Could not flush context: {e}")
 
 def test_selector_agent():
     print("[test_selector_agent] Testing selector agent")
@@ -204,25 +182,58 @@ def test_ordering_agent():
         print(f"[ollama_health] Error: {e}")
         return {}
 
+def test_verificador_agent():
+    print("[test_verificador_agent] Testing verificador agent")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Subir un nivel (Backend/)
+    backend_dir = os.path.dirname(current_dir)
+
+    # Construir ruta absoluta a config/agents.yaml
+    config_path = os.path.join(backend_dir, "config")
+
+    verificador_agent = VerificadorAgent(config_path)
+
+    structure = {
+        "type":"",
+        "question":"",
+        "options":"",
+        "correct_answer":"",
+        "hint":"",
+        "difficulty":""
+    }
+
+    exercise = {
+        "type": "ordering",
+        "question": "Ordena los eventos de la historia.",
+        "options": [
+            "Leo llegó justo después del desayuno.",
+            "El abuelo se despertó con una emoción especial.",
+            "La madre de Leo le entregó una lista al abuelo."
+        ],
+        "correct_answer": [
+            "El abuelo se despertó con una emoción especial.",
+            "Leo llegó justo después del desayuno.",
+            "La madre de Leo le entregó una lista al abuelo."
+        ],
+        "hint": "Piensa en el momento en que el abuelo se despierta.",
+        "difficulty": "fácil"
+    }
+
+    original_information = """ordering": [
+    "El abuelo se despertó con una emoción especial.",
+    "Leo llegó justo después del desayuno.",
+    "La madre de Leo le entregó una lista al abuelo.",
+    "Leo expresó su deseo de tener ropa con dinosaurios.",
+    "El abuelo y Leo acordaron negociar sobre la ropa."
+  ]"""
+
+
+
+    print(verificador_agent.validate(exercise, original_information, structure))
+    
+
+
 if __name__ == "__main__":
-    # ===== TEST: Probar que el flush de contexto funciona =====
-    # 
-    # Prueba 1: Selector solo (debería ir bien)
-    # Prueba 2: Ordering -> flush -> Selector (debería ir igual de bien)
-    #
-    # Descomenta la prueba que quieras ejecutar:
-
-    # --- Prueba A: Solo selector ---
-    # test_selector_agent()
-
-    # --- Prueba B: Ordering + Selector SIN flush (se contamina) ---
-    # test_ordering_agent()
-    # test_selector_agent()  # <-- Aquí va peor por contexto residual
-
-    # --- Prueba C: Ordering + flush + Selector (limpio) ---
-    test_selector_agent()
-    flush_ollama_context("phi3:mini")  # <-- Limpia el contexto entre llamadas
-    test_ordering_agent() # <-- Ahora debería ir bien
-    flush_ollama_context("phi3:mini") 
-    test_selector_agent()
+    test_verificador_agent()
 

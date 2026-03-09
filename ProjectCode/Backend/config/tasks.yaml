@@ -160,34 +160,23 @@ ordering_task:
 
 validate_task:
   description: >
-    Tu misión es realizar una auditoría técnica y pedagógica exhaustiva del ejercicio generado para asegurar que es apto para un paciente con Alzheimer.
+    Solo revisa si el ejercicio (JSON o STRING) es COHERENTE con la INFORMACIÓN.
 
-    ENTRADAS:
-    - Ejercicio generado (JSON): {ejercicio}
-    - Información original de referencia: {informacion_original}
+    EJERCICIO: {ejercicio}
 
-    CRITERIOS DE VALIDACIÓN (CHECKLIST):
-    1. FIDELIDAD: ¿El ejercicio se basa ÚNICAMENTE en la información proporcionada? (Falla si hay datos inventados o externos).
-    2. COHERENCIA: ¿La respuesta marcada como correcta es realmente la correcta según el texto original?
-    3. FORMATO: ¿El JSON cumple estrictamente con la estructura requerida (claves correctas, tipos de datos correctos)?
-    4. ACCESIBILIDAD: ¿El lenguaje es sencillo, directo y adecuado para personas con deterioro cognitivo?
+    INFORMACIÓN: {informacion_original}
 
-    PROCEDIMIENTO DE RESPUESTA:
-    - Si detectas CUALQUIER fallo (datos inventados, error de lógica, JSON mal formado o respuesta incorrecta):
-      * status: "error"
-      * Analysis: Explica detalladamente qué ha fallado y qué debe cambiarse.
-    - Si el ejercicio es perfecto y cumple todas las reglas:
-      * status: "ok"
-      * Analysis: Resume brevemente por qué el ejercicio es válido.
+    REGLAS:
+    1. Si el ejercicio dice algo que NO sale o contradice la INFORMACIÓN -> status: "error".
+    2. Si la solución (correct_answer) NO es la respuesta a la pregunta -> status: "error".
+    3. Si el ejercicio es breve y correcto respecto al texto -> status: "ok" (NO penalices que falte información).
 
-    ESTRUCTURA JSON REQUERIDA:
+    RESULTADO (JSON):
     {
-      "Analysis": string,
+      "Analysis": "explicación",
       "status": "ok" o "error"
     }
-
-    IMPORTANTE: Responde ÚNICAMENTE con el objeto JSON. Sin markdown, sin texto extra.
     
   expected_output: >
-    Un objeto JSON válido con las claves exactas: Analysis, status.
+    Un objeto JSON con: Analysis, status.
   agent: "validator_agent"

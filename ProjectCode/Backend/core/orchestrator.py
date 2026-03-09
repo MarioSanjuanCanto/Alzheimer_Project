@@ -8,7 +8,6 @@ from agents.exercise.ordering import OrderingAgent
 from agents.validation.adecuacion import AdecuacionCognitivaAgent
 from agents.validation.regulador_emocional import ReguladorEmocionalAgent
 from agents.validation.verificador import VerificadorAgent
-from utils.ollama_health import flush_ollama_context
 
 import database.db as db
 import os
@@ -40,11 +39,9 @@ class Orchestrator:
         }
 
         # 4) validators
-        self.validators = [
-            AdecuacionCognitivaAgent(),
-            ReguladorEmocionalAgent(),
-            VerificadorAgent(),
-        ]
+        self.validators = {
+            "verificador": VerificadorAgent(self.config_path),
+        }
 
     def run_pipeline(self, title: str, description: str, analysis: str, exercise_types: List[str]) -> Dict[str, Any]:
         # A) adapt memory for each exercise type
