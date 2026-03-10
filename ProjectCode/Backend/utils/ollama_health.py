@@ -267,7 +267,7 @@ def test_verificador_agent():
         "type":"multiple_choice",
         "question":"¿Qué tipo de ropa quería Leo?",
         "options":[
-            "Ropa con dinosaurios",
+            
             "Ropa con superhéroes",
             "Ropa con coches"
         ],
