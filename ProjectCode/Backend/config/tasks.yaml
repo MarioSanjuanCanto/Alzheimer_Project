@@ -33,8 +33,6 @@ select_task:
     Un objeto JSON válido cuyas claves sean los tipos de ejercicio: {exercise_types}, y cuyos valores sean exclusivamente los datos, fragmentos literales o listados de hechos concretos en bruto. ¡ESTÁ TERMINANTEMENTE PROHIBIDO CONTENER PREGUNTAS!
   agent: "selector_agent"
 
-
-
 fill_in_the_blank_task:
   description: >
     Genera un ejercicio tipo fill_in_the_blank.
@@ -75,7 +73,6 @@ fill_in_the_blank_task:
     type, question, correct_answer, hint, difficulty.
   agent: "fill_in_the_blank_agent"
 
-
 multiple_choice_task:
   description: >
     Genera un ejercicio de opción múltiple.
@@ -110,7 +107,6 @@ multiple_choice_task:
     Un único objeto JSON válido con las claves exactas:
     type, question, options, correct_answer, hint, difficulty.
   agent: "multiple_choice_agent"
-
 
 ordering_task:
   description: >
@@ -155,6 +151,7 @@ ordering_task:
     Un único objeto JSON válido con las claves exactas:
     type, question, options, correct_answer, hint, difficulty.
   agent: "ordering_agent"
+
 
 
 

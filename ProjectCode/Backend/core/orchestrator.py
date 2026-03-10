@@ -43,31 +43,44 @@ class Orchestrator:
             "verificador": VerificadorAgent(self.config_path),
         }
 
+        # 5) structures
+        self.structures = {
+            "fill_in_the_blank": {"type", "question", "correct_answer", "hint", "difficulty"}, 
+            "multiple_choice": {"type", "question", "options", "correct_answer", "hint", "difficulty"}, 
+            "ordering": {"type", "question", "options", "correct_answer", "hint", "difficulty"}
+        }
+
     def run_pipeline(self, title: str, description: str, analysis: str, exercise_types: List[str]) -> Dict[str, Any]:
         # A) adapt memory for each exercise type
         selected = self.selector.select(title, description, analysis, exercise_types)
 
-    
-        # B) generate exercises
+        # B) Generate exercises
         exercises = []
         for ex_type in exercise_types:
             gen = self.generators.get(ex_type)
             if not gen:
                 continue
-            print(f"[orchestrator] Generating {ex_type}")
-            print(f"[orchestrator] Selected: {selected.get(ex_type, f'{title}: {description}')}\n\n")
-            exercises.append(gen.generate(selected.get(ex_type, f"{title}: {description}")))
+
+            status = 'error'
+            validation = ""
+            i = 0
+
+            while status == 'error' and i < 3:
+                # C) Generate exercise
+                print(f"[orchestrator] Generating {ex_type}")
+                data = selected.get(ex_type, f'{title}: {description}')
+                print(f"[orchestrator] Selected: {data}\n\n")
+                exercise = gen.generate(data)
+
+                # D) Validate exercise
+                validation = self.validators.get('verificador').validate(exercise, data, self.structures.get(ex_type))
         
-        '''
-        # C) validate
-        validations = {}
-        for v in self.validators:
-            validations[v.name] = v.validate(title, description, analysis, exercises)
+                if validation.get('status') == 'ok':
+                    exercises.append(exercise)
+                    status = 'ok'
+                else:
+                    i += 1
 
-        # D) persist
-        save_generation(title, description, analysis, exercises, validations)
-
-        return {"exercises": exercises, "validations": validations}'''
         return exercises
 
 
