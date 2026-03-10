@@ -194,7 +194,10 @@ def test_verificador_agent():
 
     verificador_agent = VerificadorAgent(config_path)
 
-    structure = {
+    
+    # _______________________ ordering test _______________________
+
+    ordering_structure = {
         "type":"",
         "question":"",
         "options":"",
@@ -203,7 +206,8 @@ def test_verificador_agent():
         "difficulty":""
     }
 
-    exercise = {
+
+    ordering_exercise = {
         "type": "ordering",
         "question": "Ordena los eventos de la historia.",
         "options": [
@@ -220,19 +224,77 @@ def test_verificador_agent():
         "difficulty": "fácil"
     }
 
-    original_information = """ordering": [
+    ordering_original_information = """ordering": [
     "El abuelo se despertó con una emoción especial.",
     "Leo llegó justo después del desayuno.",
     "La madre de Leo le entregó una lista al abuelo.",
     "Leo expresó su deseo de tener ropa con dinosaurios.",
     "El abuelo y Leo acordaron negociar sobre la ropa."
   ]"""
+    # _______________________ fill_in_the_blank test _______________________
+
+    fill_in_the_blank_exercise = {
+        "type": "fill_in_the_blank",
+        "question": "El abuelo fue a la tienda a comprar ropa con _______",
+        "correct_answer": "dinosaurios",
+        "hint": "A Leo le gustaban mucho los dinosaurios.",
+        "difficulty": "fácil"
+    }
+    fill_in_the_blank_exercise_wrong = {
+        "type": "fill_in_the_blank",
+        "question": "El abuelo fue a la tienda a comprar ropa con _______",
+        "correct_answer": "dinosaurios",
+        "hint": "A Leo le gustaban mucho los dinosaurios.",
+        "difficulty": "fácil"
+    }
+
+    fill_in_the_blank_original_information = """fill_in_the_blank": [
+    "El abuelo fue a la tienda a comprar ropa con dinosaurios",
+    "A Leo le gustaban mucho los dinosaurios."
+  ]"""
+
+    fill_in_the_blank_structure = {
+        "type":"",
+        "question":"",
+        "correct_answer":"",
+        "hint":"",
+        "difficulty":""
+    }
+
+    # _______________________ multiple_choice test _______________________
+
+    multiple_choice_exercise = {
+        "type":"multiple_choice",
+        "question":"¿Qué tipo de ropa quería Leo?",
+        "options":[
+            "Ropa con dinosaurios",
+            "Ropa con superhéroes",
+            "Ropa con coches"
+        ],
+        "correct_answer":0,
+        "hint":"A Leo le gustaban mucho los dinosaurios.",
+        "difficulty":"fácil"
+    } 
+
+    multiple_choice_original_information = """multiple_choice": [
+    "El abuelo fue a la tienda a comprar ropa con dinosaurios",
+    "A Leo le gustaban mucho los dinosaurios."
+  ]"""
+
+    multiple_choice_structure = {
+        "type":"",
+        "question":"",
+        "options":"",
+        "correct_answer":"",
+        "hint":"",
+        "difficulty":""
+    }
 
 
 
-    print(verificador_agent.validate(exercise, original_information, structure))
-    
-
+    #verificador_agent.validate(ordering_exercise, ordering_original_information, ordering_structure)
+    #verificador_agent.validate(fill_in_the_blank_exercise, fill_in_the_blank_original_information, fill_in_the_blank_structure)
+    verificador_agent.validate(multiple_choice_exercise, multiple_choice_original_information, multiple_choice_structure)
 
 if __name__ == "__main__":
     test_verificador_agent()

@@ -38,7 +38,7 @@ select_task:
 fill_in_the_blank_task:
   description: >
     Genera un ejercicio tipo fill_in_the_blank.
-
+    
     INFORMACION (Puede ser un párrafo narrativo o una lista de hechos/frases independientes):
     -[ {informacion} ]
 
@@ -158,25 +158,75 @@ ordering_task:
 
 
 
-validate_task:
+validate_fill_in_the_blank_task:
   description: >
-    Solo revisa si el ejercicio (JSON o STRING) es COHERENTE con la INFORMACIÓN.
-
+    Valida un ejercicio de "Rellenar Huecos". 
+    
     EJERCICIO: {ejercicio}
+    INFORMACIÓN ORIGINAL: {informacion_original}
+    
+    TU MISIÓN:
+    Actúa como un revisor técnico literal. No juzgues si la frase es extraña o poco común, solo comprueba si los datos existen en la fuente.
 
-    INFORMACIÓN: {informacion_original}
-
-    REGLAS:
-    1. Si el ejercicio dice algo que NO sale o contradice la INFORMACIÓN -> status: "error".
-    2. Si la solución (correct_answer) NO es la respuesta a la pregunta -> status: "error".
-    3. Si el ejercicio es breve y correcto respecto al texto -> status: "ok" (NO penalices que falte información).
+    REGLAS DE VALIDACIÓN:
+    1. LITERALIDAD: ¿La frase de la pregunta (ignorando el hueco) existe en la INFORMACIÓN ORIGINAL? Si la frase ha sido inventada o modificada significativamente -> status: "error".
+    2. EXISTENCIA: ¿La "correct_answer" aparece literalmente en el texto original? -> Si no aparece, status: "error".
+    3. FORMATO: ¿El apartado question tiene el "_______"? -> Si no, status: "error".
+    4. COHERENCIA: Si se rellena el hueco con la respuesta, ¿la frase resultante es verdadera según el texto?
+    
+    IMPORTANTE: Si la frase existe en el texto, dalo por bueno (status: "ok") aunque gramaticalmente sea simple. Sé objetivo.
 
     RESULTADO (JSON):
     {
-      "Analysis": "explicación",
+      "Analysis": "Explicación muy breve del fallo o 'Ejercicio correcto'",
+      "status": "ok" o "error"
+    }
+  expected_output: >
+    Un objeto JSON con Analysis y status.
+  agent: "validator_agent"
+
+validate_ordering_task:
+  description: >
+    Valida un ejercicio de "Ordenación".
+    
+    EJERCICIO: {ejercicio}
+    INFORMACIÓN ORIGINAL: {informacion_original}
+    
+    REGLAS DE ORO:
+    1. COMPARACIÓN: Comprueba que el array "correct_answer" y "options" contengan las mismas frases exactas. NO importa si el orden es diferente entre ellos (esto es lo esperado en un ejercicio de ordenar).
+    2. CANTIDAD: Debe haber el mismo número de elementos en ambos listados.
+    3. LITERALIDAD: Cada frase en "correct_answer" debe ser idéntica (letra por letra) a una frase en "options". No se permiten cambios, ni siquiera mínimos.
+    4. Si falta alguna frase, sobra alguna, o hay diferencias en el texto entre arrays -> status: "error
+    
+    RESULTADO (JSON):
+    {
+      "Analysis": "Respuesta breve con el error o 'Ejercicio correcto'.",
       "status": "ok" o "error"
     }
     
   expected_output: >
-    Un objeto JSON con: Analysis, status.
+    Un objeto JSON con Analysis y status.
+  agent: "validator_agent"
+
+validate_multiple_choice_task:
+  description: >
+    Valida un ejercicio de "Opción Múltiple" (multiple_choice).
+    
+    EJERCICIO: {ejercicio}
+    INFORMACIÓN ORIGINAL: {informacion_original}
+    
+    REGLAS DE ORO:
+    1. La respuesta seleccionada por el índice "correct_answer" debe ser VERDADERA según el texto.
+    2. Los "options" (distractores) no deben ser verdaderos según el texto.
+    3. Si la pregunta es ambigua o la respuesta es falsa -> status: "error".
+    4. "Analysis": Respuesta BREVE (1 frase) indicando el error.
+  
+
+    RESULTADO (JSON):
+    {
+      "Analysis": "explicación breve",
+      "status": "ok" o "error"
+    }
+  expected_output: >
+    Un objeto JSON con Analysis y status.
   agent: "validator_agent"
