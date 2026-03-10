@@ -28,10 +28,12 @@ class MultipleChoiceAgent:
     tasks_config["multiple_choice_task"]["agent"] = self.agent
     self.task = Task(**tasks_config["multiple_choice_task"])
 
-  def generate(self, data:dict):
+  def generate(self, data:dict, validation=""):
     print(f"[multiple_choice_agent] Generating exercise")
     self.refresh()
-    
+    if validation != "":
+      validation = "COSAS A MEJORAR: " + validation
+      
     try:
         crew = Crew(
         agents=[self.agent],
@@ -41,7 +43,8 @@ class MultipleChoiceAgent:
         )
 
         result = crew.kickoff(inputs={
-        "informacion": data
+        "informacion": data,
+        "feedback_ia": validation
         })
 
         print("[multiple_choice_agent] Raw: " + str(result.raw))

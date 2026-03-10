@@ -29,9 +29,12 @@ class FillInTheBlankAgent:
     tasks_config["fill_in_the_blank_task"]["agent"] = self.agent
     self.task = Task(**tasks_config["fill_in_the_blank_task"])
 
-  def generate(self, data:dict):
+  def generate(self, data:dict, validation=""):
     print(f"[fill_in_the_blank_agent] Generating exercise")
     self.refresh()
+
+    if validation != "":
+      validation = "COSAS A MEJORAR: " + validation
     
     try:
         crew = Crew(
@@ -42,7 +45,8 @@ class FillInTheBlankAgent:
         )
 
         result = crew.kickoff(inputs={
-        "informacion": data
+        "informacion": data,
+        "feedback_ia": validation
         })
         
         print("[fill_in_the_blank_agent] Raw: " + str(result.raw))

@@ -62,7 +62,7 @@ class Orchestrator:
                 continue
 
             status = 'error'
-            validation = ""
+            validation = {}
             i = 0
 
             while status == 'error' and i < 3:
@@ -70,7 +70,7 @@ class Orchestrator:
                 print(f"[orchestrator] Generating {ex_type}")
                 data = selected.get(ex_type, f'{title}: {description}')
                 print(f"[orchestrator] Selected: {data}\n\n")
-                exercise = gen.generate(data)
+                exercise = gen.generate(data, validation.get("Analysis", ""))
 
                 # D) Validate exercise
                 validation = self.validators.get('verificador').validate(exercise, data, self.structures.get(ex_type))
@@ -79,6 +79,7 @@ class Orchestrator:
                     exercises.append(exercise)
                     status = 'ok'
                 else:
+                    print(f"[orquestrator] Error detected, feedback received: {validation.get('Analysis','')}")
                     i += 1
 
         return exercises

@@ -40,6 +40,8 @@ fill_in_the_blank_task:
     INFORMACION (Puede ser un párrafo narrativo o una lista de hechos/frases independientes):
     -[ {informacion} ]
 
+    {feedback_ia}
+
     PROCEDIMIENTO:
     1. Selecciona un dato o frase COMPLETA, LITERAL y BREVE (máximo 12-15 palabras) de la información proporcionada.
     2. Identifica una palabra CLAVE de esa frase (sustantivo o nombre propio).
@@ -68,6 +70,8 @@ fill_in_the_blank_task:
     - Añadir comentarios.
     - Generar múltiples objetos.
     - Cambiar las claves del JSON.
+
+    
   expected_output: >
     Un único objeto JSON válido con las claves exactas:
     type, question, correct_answer, hint, difficulty.
@@ -79,6 +83,8 @@ multiple_choice_task:
 
     INFORMACION (Puede ser un párrafo narrativo o una lista de datos/frases sin correlación):
     - {informacion}
+
+    {feedback_ia}
 
     REGLAS:
     - La pregunta debe ser concisa y directa.
@@ -103,6 +109,7 @@ multiple_choice_task:
     - Añadir explicaciones.
     - Cambiar las claves del JSON.
     - Generar múltiples objetos.
+
   expected_output: >
     Un único objeto JSON válido con las claves exactas:
     type, question, options, correct_answer, hint, difficulty.
@@ -114,6 +121,8 @@ ordering_task:
 
     INFORMACION (Puede ser un párrafo o una lista de datos/frases):
     - {informacion}
+
+    {feedback_ia}
 
     INSTRUCCIONES CRÍTICAS (FALLO ZERO TOLERANCE):
     1. Identifica una secuencia lógica de 3 EVENTOS o momentos clave en la información.
@@ -147,11 +156,11 @@ ordering_task:
     - Añadir comentarios.
     - Generar múltiples objetos.
     - Cambiar las claves del JSON.
+
   expected_output: >
     Un único objeto JSON válido con las claves exactas:
     type, question, options, correct_answer, hint, difficulty.
   agent: "ordering_agent"
-
 
 
 
@@ -224,6 +233,7 @@ validate_multiple_choice_task:
       "Analysis": "explicación breve",
       "status": "ok" o "error"
     }
+
   expected_output: >
     Un objeto JSON con Analysis y status.
   agent: "validator_agent"
