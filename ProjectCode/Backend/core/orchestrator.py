@@ -1,3 +1,4 @@
+from Backend.logic import difficulty_level
 from typing import List, Dict, Any
 
 from core.selector import selector
@@ -11,8 +12,6 @@ from agents.validation.verificador import VerificadorAgent
 
 import database.db as db
 import os
-
-
 
 class Orchestrator:
     def __init__(self):
@@ -55,6 +54,9 @@ class Orchestrator:
         selected = self.selector.select(title, description, analysis, exercise_types)
 
         # B) Generate exercises
+
+        difficulty = self.get_user_difficulty(user_id)
+
         exercises = []
         for ex_type in exercise_types:
             gen = self.generators.get(ex_type)
@@ -70,7 +72,7 @@ class Orchestrator:
                 print(f"[orchestrator] Generating {ex_type}")
                 data = selected.get(ex_type, f'{title}: {description}')
                 print(f"[orchestrator] Selected: {data}\n\n")
-                exercise = gen.generate(data, validation.get("Analysis", ""))
+                exercise = gen.generate(data, validation.get("Analysis", ""),difficulty.get(ex_type, "media"))
 
                 # D) Validate exercise
                 validation = self.validators.get('verificador').validate(exercise, data, self.structures.get(ex_type))
@@ -85,3 +87,29 @@ class Orchestrator:
         return exercises
 
 
+    def get_user_difficulty(self, user_id:str):
+        user_stats = db.get_user_stats(user_id)
+
+        if not user_stats or user_stats == []:
+            db.add_new_user_stats(user_id)
+            return {"multiple_choice": "media", "fill_in_the_blank": "meida", "ordering": "media"}
+
+        # Now we can determine the strategy based on the user's performance
+        user_stats = user_stats[0]
+
+        if user_stats["multiple_choice_done"] >= 15 or user_stats["fill_in_the_blank_done"] >= 15 or user_stats["ordering_done"] >= 15:
+            db.reset_user_stats(user_id)
+
+        strategy = {"multiple_choice": difficulty_level(user_stats["multiple_choice_right"] / (user_stats["multiple_choice_done"] if user_stats["multiple_choice_done"] > 0 else 1)), 
+                    "fill_in_the_blank": difficulty_level(user_stats["fill_in_the_blank_right"] / (user_stats["fill_in_the_blank_done"] if user_stats["fill_in_the_blank_done"] > 0 else 1)), 
+                    "ordering": difficulty_level(user_stats["ordering_right"] / (user_stats["ordering_done"] if user_stats["ordering_done"] > 0 else 1))}
+        return strategy
+
+
+    def difficulty_level(score:float):
+        if score < 0.5:
+            return "fácil"
+        elif score < 0.8:
+            return "media"
+        else:
+            return "difícil"

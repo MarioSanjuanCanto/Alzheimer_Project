@@ -29,7 +29,7 @@ class FillInTheBlankAgent:
     tasks_config["fill_in_the_blank_task"]["agent"] = self.agent
     self.task = Task(**tasks_config["fill_in_the_blank_task"])
 
-  def generate(self, data:dict, validation=""):
+  def generate(self, data:dict, validation="", difficulty="media"):
     print(f"[fill_in_the_blank_agent] Generating exercise")
     self.refresh()
 
