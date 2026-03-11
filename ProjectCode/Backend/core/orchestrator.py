@@ -54,7 +54,7 @@ class Orchestrator:
 
         # B) Generate exercises
         difficulty = self.get_user_difficulty(user_id)
-        print("[orchestrator] difficulty: ", difficulty)
+        print("[orchestrator] Difficulty: ", difficulty)
 
         exercises = []
         for ex_type in exercise_types:
@@ -71,14 +71,17 @@ class Orchestrator:
                 print(f"[orchestrator] Generating {ex_type}")
                 data = selected.get(ex_type, f'{title}: {description}')
                 print(f"[orchestrator] Selected: {data}\n\n")
-                exercise = gen.generate(data, validation.get("Analysis", ""),difficulty.get(ex_type, "media"))
+                exercise = gen.generate(data, validation.get("Analysis", ""), difficulty.get(ex_type, "media"))
 
                 # D) Validate exercise
-                validation = self.validators.get('verificador').validate(exercise, data, self.structures.get(ex_type,""))
+                validation = self.validators.get('verificador').validate(exercise, data, self.structures.get(ex_type))
         
                 if validation.get('status') == 'ok':
                     exercises.append(exercise)
                     status = 'ok'
+                elif i >= 3:
+                    exercises.append(exercise)
+                    status = 'failed - last one chosen'
                 else:
                     print(f"[orquestrator] Error detected, feedback received: {validation.get('Analysis','')}")
                     i += 1

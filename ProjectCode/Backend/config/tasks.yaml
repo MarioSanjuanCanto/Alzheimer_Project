@@ -249,7 +249,14 @@ validate_multiple_choice_task:
     2. Los "options" (distractores) no deben ser verdaderos según el texto.
     3. Si la pregunta es ambigua o la respuesta es falsa -> status: "error".
     4. "Analysis": Respuesta BREVE (1 frase) indicando el error.
+    5. Si options[correct_answer] coincide con la respuesta verdadera según la INFORMACIÓN ORIGINAL, el status DEBE ser "ok".
+    6. No devuelvas status "error" si tu propio análisis concluye que la opción seleccionada es correcta.
   
+    IMPORTANTE: En ejercicios "multiple_choice", el campo "correct_answer" es un entero que indica la posición de la opción correcta en el array "options".
+    - La indexación empieza en 0.
+    - Debes validar la opción como: options[correct_answer].
+    - Si esa opción es verdadera según el texto → status "ok".
+    - NO interpretes "correct_answer" como texto ni como índice basado en 1.
 
     RESULTADO (JSON):
     {

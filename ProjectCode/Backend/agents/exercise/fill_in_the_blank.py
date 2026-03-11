@@ -34,7 +34,7 @@ class FillInTheBlankAgent:
     self.refresh()
 
     if validation != "":
-      validation = "COSAS A MEJORAR: " + validation
+      validation = f"\n!!!ATENCIÓN: ERROR CRÍTICO EN EL INTENTO ANTERIOR !!!\nEl revisor detectó el siguiente problema: '{validation}'\nDEBES corregir este error específicamente en tu nueva respuesta y asegurarte de que el JSON sea válido y fiel a la información original.\n"
     
     try:
         crew = Crew(
