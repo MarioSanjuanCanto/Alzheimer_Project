@@ -29,7 +29,7 @@ class OrderingAgent:
         tasks_config["ordering_task"]["agent"] = self.agent
         self.task = Task(**tasks_config["ordering_task"])
 
-    def generate(self, data:dict, validation=""):
+    def generate(self, data:dict, validation="", difficulty="media"):
         print(f"[ordering_agent] Generating exercise")
         self.refresh()
         
@@ -46,7 +46,8 @@ class OrderingAgent:
 
             result = crew.kickoff(inputs={
             "informacion": data,
-            "feedback_ia": validation
+            "feedback_ia": validation,
+            "dificultad": difficulty
             })
 
             print("[ordering_agent] Raw: " + str(result.raw))

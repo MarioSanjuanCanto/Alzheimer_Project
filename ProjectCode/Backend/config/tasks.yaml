@@ -40,6 +40,9 @@ fill_in_the_blank_task:
     INFORMACION (Puede ser un párrafo narrativo o una lista de hechos/frases independientes):
     -[ {informacion} ]
 
+    NIVEL DE DIFICULTAD REQUERIDO: {dificultad}
+    (Adaptación cognitiva: Si es 'fácil', usa vocabulario común y frases directas. Si es 'difícil', selecciona términos más técnicos o frases que requieran mayor memoria de trabajo).
+
     {feedback_ia}
 
     PROCEDIMIENTO:
@@ -48,7 +51,12 @@ fill_in_the_blank_task:
     3. En "question", pon la frase pero sustituyendo la palabra CLAVE por "_______".
     4. En "correct_answer", pon la palabra que has ocultado.
 
-    REGLAS:
+    REGLAS SEGÚN DIFICULTAD ({dificultad}):
+    - Si es 'fácil': Selecciona una frase principal y oculta una palabra muy obvia (ej: un nombre propio central). La pista debe ser casi directa.
+    - Si es 'media': Selecciona una frase de apoyo y oculta un sustantivo o dato concreto. La pista debe ser una definición.
+    - Si es 'difícil': Selecciona una frase con más detalle y oculta un adjetivo, un número o un término menos central que requiera haber leído con mucha atención. La pista debe ser sutil.
+
+    REGLAS GENERALES:
     - La frase elegida DEBE ser corta y de fácil lectura.
     - "question" DEBE contener el hueco "_______".
     - "correct_answer" debe ser UNA SOLA palabra que aparezca originalmente en la información.
@@ -84,9 +92,17 @@ multiple_choice_task:
     INFORMACION (Puede ser un párrafo narrativo o una lista de datos/frases sin correlación):
     - {informacion}
 
+    NIVEL DE DIFICULTAD REQUERIDO: {dificultad}
+    (Adaptación cognitiva: Si es 'fácil', haz que la respuesta sea evidente y los distractores muy distintos. Si es 'difícil', usa distractores sutiles o que requieran recordar detalles precisos).
+
     {feedback_ia}
 
-    REGLAS:
+    REGLAS SEGÚN DIFICULTAD ({dificultad}):
+    - Si es 'fácil': Pregunta sobre el tema principal. Distractores muy diferentes (ej: si la respuesta es 'Perro', distractores: 'Avión', 'Manzana').
+    - Si es 'media': Pregunta sobre un dato concreto. Distractores del mismo tipo pero incorrectos (ej: si la respuesta es 'Lunes', distractores: 'Jueves', 'Sábado').
+    - Si es 'difícil': Pregunta sobre un detalle preciso o secundario. Distractores muy similares o que aparezcan en el texto en otro contexto para confundir si no se lee bien.
+
+    REGLAS GENERALES:
     - La pregunta debe ser concisa y directa.
     - "options" debe contener 3 opciones del mismo tipo (ej: 3 lugares, 3 fechas, 3 nombres).
     - Una opción es la correcta y las otras dos son "distractores" plausibles basados en la información.
@@ -122,15 +138,23 @@ ordering_task:
     INFORMACION (Puede ser un párrafo o una lista de datos/frases):
     - {informacion}
 
+    NIVEL DE DIFICULTAD REQUERIDO: {dificultad}
+    (Adaptación cognitiva: Si es 'fácil', usa eventos con nexos temporales claros. Si es 'difícil', usa eventos más cercanos cronológicamente que requieran una lectura más minuciosa).
+
     {feedback_ia}
 
-    INSTRUCCIONES CRÍTICAS (FALLO ZERO TOLERANCE):
-    1. Identifica una secuencia lógica de 3 EVENTOS o momentos clave en la información.
-    2. Las frases deben ser muy cortas (máximo 10 palabras) y representar acciones o hechos claros.
-    3. Evita usar frases abstractas o datos sin una relación secuencial obvia; el objetivo es que el orden sea indiscutible.
-    4. Ponlas en "options" mezcladas (desordenadas).
-    5. Ponlas en "correct_answer" en el orden cronológico o lógico exacto según la información.
-    6. VALIDACIÓN CRUZADA: Cada elemento de "correct_answer" DEBE ser idéntico (carácter por carácter) a un elemento de "options".
+    REGLAS SEGÚN DIFICULTAD ({dificultad}):
+    - Si es 'fácil': Usa 3 eventos muy separados (Inicio, nudo y desenlace).
+    - Si es 'media': Usa 3 eventos correlativos pero con acciones claramente distintas.
+    - Si es 'difícil': Usa 3 eventos muy próximos entre sí o matices de una misma escena que requieran entender la secuencia exacta de micro-acciones.
+
+    REGLAS GENERALES:
+    - Identifica una secuencia lógica de 3 EVENTOS o momentos clave en la información.
+    - Las frases deben ser muy cortas (máximo 10 palabras) y representar acciones o hechos claros.
+    - Evita usar frases abstractas o datos sin una relación secuencial obvia; el objetivo es que el orden sea indiscutible.
+    - Ponlas en "options" mezcladas (desordenadas).
+    - Ponlas en "correct_answer" en el orden cronológico o lógico exacto según la información.
+    - VALIDACIÓN CRUZADA: Cada elemento de "correct_answer" DEBE ser idéntico (carácter por carácter) a un elemento de "options".
 
     PROHIBIDO:
     - Usar frases que no tengan una relación de orden clara (ej: "Me gusta el azul" y "Tengo 20 años").
@@ -161,7 +185,6 @@ ordering_task:
     Un único objeto JSON válido con las claves exactas:
     type, question, options, correct_answer, hint, difficulty.
   agent: "ordering_agent"
-
 
 
 validate_fill_in_the_blank_task:

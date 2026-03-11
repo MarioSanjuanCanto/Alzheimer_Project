@@ -46,7 +46,8 @@ class FillInTheBlankAgent:
 
         result = crew.kickoff(inputs={
         "informacion": data,
-        "feedback_ia": validation
+        "feedback_ia": validation,
+        "dificultad": difficulty
         })
         
         print("[fill_in_the_blank_agent] Raw: " + str(result.raw))

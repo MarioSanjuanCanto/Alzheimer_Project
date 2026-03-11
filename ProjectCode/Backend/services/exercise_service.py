@@ -9,5 +9,6 @@ class ExerciseService:
             title=title,
             description=description,
             analysis=analysis,
-            exercise_types=exercise_types
+            exercise_types=exercise_types,
+            user_id=user_id
         )
