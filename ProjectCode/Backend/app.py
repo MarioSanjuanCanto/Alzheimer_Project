@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import logic
+from services.exercise_service import ExerciseService
 
 # ______________________________________ API END Points ______________________________________
 
 app = Flask(__name__)
 CORS(app)
 
+'''
 @app.route('/api/generate_exercise', methods=['POST'])
 def generate_exercise_endpoint():
     """
@@ -41,7 +43,7 @@ def generate_exercise_endpoint():
         return jsonify({"error": "Could not generate exercises."}), 500
 
     return jsonify(exercise_set)
-
+'''
 @app.route('/api/excercise_correction', methods=['POST'])
 def excercise_correction_endpoint():
     """
@@ -88,6 +90,44 @@ def test_endpoint():
         "message": "The exercise generation API is active.",
         "usage": "Send a POST request to /api/generate_exercise with the memory data."
     })
+
+
+
+# ______________________________________ Agents API endpoint ______________________________________
+
+service = ExerciseService()
+
+@app.route('/api/generate_exercise', methods=['POST'])
+def generate_exercise_endpoint():
+    """
+    Endpoint to generate cognitive exercises from memory data.
+    """
+    print("[app] generate_exercise_endpoint")
+
+    # --- Request Input validation ---
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    memory_data = request.get_json()
+    user_id = memory_data.get('user_id')
+
+    if not memory_data or 'title' not in memory_data or 'user_description' not in memory_data:
+        return jsonify({
+            "error": "JSON must contain 'title' and 'user_description'."
+        }), 400
+
+    # --- Exercise generation logic ---
+    exercise_types = ["multiple_choice", "fill_in_the_blank", "ordering"]
+    exercise_set = service.generate(user_id, memory_data['title'], memory_data['user_description'], memory_data.get("ai_analysis", {}), exercise_types)
+    
+    if not exercise_set or exercise_set == "":
+        return logic.generate_fallback_exercises(memory_data, count=3)
+    else: 
+        exercise_set = {"exercises": exercise_set}
+
+        print("[app] Answer: " + str(exercise_set) + " | Type: " + str(type(exercise_set)))
+        return jsonify(exercise_set)
+
 
 if __name__ == '__main__':
     print("Starting Cognitive Exercise Generation API...")

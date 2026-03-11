@@ -12,6 +12,7 @@ import { supabase } from "../supabaseClient";
 const Practice = () => {
   const { t } = useTranslation();
   const { memoryId } = useParams<{ memoryId: string }>();
+  const [loadingMemory, setLoadingMemory] = useState(true);
   const [memory, setMemory] = useState<any>(null);
   const [exercises, setExercises] = useState<any[]>([]);
   const [loadingExercise, setLoadingExercise] = useState(false);
@@ -20,6 +21,7 @@ const Practice = () => {
     if (!memoryId) return;
 
     const fetchMemory = async () => {
+      setLoadingMemory(true);
       const { data, error } = await supabase
         .from("memories")
         .select("*")
@@ -27,6 +29,7 @@ const Practice = () => {
         .single();
 
       if (!error) setMemory(data);
+      setLoadingMemory(false);
     };
 
     fetchMemory();
@@ -34,7 +37,7 @@ const Practice = () => {
 
   useEffect(() => {
     // Check if memory is loaded and prevent duplicate calls if already loading or exercises already exist
-    if (!memory || exercises.length > 0 || loadingExercise) return;
+    if (loadingMemory || !memory || exercises.length > 0 || loadingExercise) return;
 
     const generateExercises = async () => {
       setLoadingExercise(true);
@@ -65,7 +68,7 @@ const Practice = () => {
     };
 
     generateExercises();
-  }, [memory, exercises.length, loadingExercise]);
+  }, [memory, exercises.length, loadingExercise, loadingMemory]);
 
   const completeExercise = exercises.find(
     (e) => e.type === "fill_in_the_blank"
@@ -74,6 +77,14 @@ const Practice = () => {
   const chooseExercise = exercises.find((e) => e.type === "multiple_choice");
 
   const clickExercise = exercises.find((e) => e.type === "ordering");
+
+  if (loadingMemory) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-bggreen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <main
@@ -91,37 +102,56 @@ const Practice = () => {
 
       {/* Content */}
       <div className="relative z-20 flex justify-center">
-        <div className="bg-white lg:rounded-lg w-full py-12 lg:mt-36 lg:mb-14 lg:mx-44 px-4 md:px-8 lg:px-32 lg:py-16">
+        <div className={`bg-white lg:rounded-lg w-full ${loadingExercise ? 'h-[70vh] flex flex-col items-center justify-center' : 'py-12 lg:py-16'} lg:mt-36 lg:mb-14 lg:mx-44 px-4 md:px-8 lg:px-32`}>
           <h1 className="sr-only">{t("exercises.title")}</h1>
-          {memory && (
-            <h2 className="font-fraunces text-5xl text-primary font-semibold mt-2 mb-8 lg:mb-16">
-              {memory.title}
-            </h2>
+
+          {loadingExercise ? (
+            <div className="flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-700">
+              <div className="relative h-24 w-24">
+                <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+              </div>
+              <div className="text-center space-y-2">
+                <h2 className="font-fraunces text-3xl text-primary font-semibold">
+                  {t("exercises.generating")}
+                </h2>
+                <p className="text-primary/60 animate-pulse">
+                  {memory?.title}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
+              {memory && (
+                <h2 className="font-fraunces text-5xl text-primary font-semibold mt-2 mb-8 lg:mb-16">
+                  {memory.title}
+                </h2>
+              )}
+
+              <div className="space-y-12">
+                {completeExercise && (
+                  <ExerciseComplete
+                    exercise={completeExercise}
+                    userId={memory.user_id}
+                  />
+                )}
+
+                {chooseExercise && (
+                  <ExerciseChoose
+                    exercise={chooseExercise}
+                    userId={memory.user_id}
+                  />
+                )}
+
+                {clickExercise && (
+                  <ExerciseClick
+                    exercise={clickExercise}
+                    userId={memory.user_id}
+                  />
+                )}
+              </div>
+            </>
           )}
-
-
-          <div className="space-y-12">
-            {completeExercise && (
-              <ExerciseComplete
-                exercise={completeExercise}
-                userId={memory.user_id}
-              />
-            )}
-
-            {chooseExercise && (
-              <ExerciseChoose
-                exercise={chooseExercise}
-                userId={memory.user_id}
-              />
-            )}
-
-            {clickExercise && (
-              <ExerciseClick
-                exercise={clickExercise}
-                userId={memory.user_id}
-              />
-            )}
-          </div>
         </div>
       </div>
     </main>

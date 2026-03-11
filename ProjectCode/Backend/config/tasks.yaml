@@ -1,0 +1,262 @@
+select_task:
+  description: >
+    Analiza la memoria proporcionada y extrae ÚNICAMENTE los datos y fragmentos de texto relevantes que servirán como "materia prima" para preparar futuros ejercicios cognitivos. 
+    ¡ATENCIÓN! BAJO NINGÚN CONCEPTO DEBES GENERAR PREGUNTAS NI RESPUESTAS. TU ÚNICO TRABAJO ES EXTRAER INFORMACIÓN, DATOS Y TEXTO LITERAL DE LA MEMORIA ORIGINAL.
+    
+    INFORMACIÓN DE LA MEMORIA:
+    - Título: {title}
+    - Descripción: {description}
+    {analysis}
+
+    EJERCICIOS SOLICITADOS:
+    - Tipos de ejercicios que alguien más generará posteriormente: {exercise_types}
+
+    INSTRUCCIONES DE EXTRACCIÓN (NO HACER PREGUNTAS):
+    Genera un JSON estructurado donde cada clave sea exactamente el nombre del tipo de ejercicio, y el valor sea un listado de HECHOS, DATOS o FRAGMENTOS DE TEXTO Puros extraídos del original.
+    
+        ESTRUCTURA JSON REQUERIDA:
+    {
+      "exercise_name1": "...",
+      "exercise_name2": "...",
+      "...": "...",
+
+    }
+
+
+    Reglas estrictas de extracción según el tipo de ejercicio futuro:
+    - Para 'multiple_choice': Extrae una lista de afirmaciones cortas basadas en hechos concretos, nombres propios o fechas clave. ¡NO ESCRIBAS PREGUNTAS O CUESTIONARIOS! Solo saca el 'dato'.
+    - Para 'fill_in_the_blank': Extrae literalmente 2 o 3 frases o párrafos completos textualmente de la historia original. NO PONGAS HUECOS NI GUIONES, NO ESCRIBAS PREGUNTAS. Solo devuelve el texto original literal seleccionado.
+    - Para 'ordering': Extrae del texto original de 4 a 6 eventos clave y preséntalos como una lista de oraciones literales en estricto orden cronológico. NO MANDES ORDENAR NADA.
+
+    IMPORTANTE: Tu respuesta debe ser ÚNICA Y EXCLUSIVAMENTE un bloque JSON válido. No te inventes historias, cíñete a extraer datos.
+  expected_output: >
+    Un objeto JSON válido cuyas claves sean los tipos de ejercicio: {exercise_types}, y cuyos valores sean exclusivamente los datos, fragmentos literales o listados de hechos concretos en bruto. ¡ESTÁ TERMINANTEMENTE PROHIBIDO CONTENER PREGUNTAS!
+  agent: "selector_agent"
+
+fill_in_the_blank_task:
+  description: >
+    Genera un ejercicio tipo fill_in_the_blank.
+    
+    INFORMACION (Puede ser un párrafo narrativo o una lista de hechos/frases independientes):
+    -[ {informacion} ]
+
+    NIVEL DE DIFICULTAD REQUERIDO: {dificultad}
+    (Adaptación cognitiva: Si es 'fácil', usa vocabulario común y frases directas. Si es 'difícil', selecciona términos más técnicos o frases que requieran mayor memoria de trabajo).
+
+    {feedback_ia}
+
+    PROCEDIMIENTO:
+    1. Selecciona un dato o frase COMPLETA, LITERAL y BREVE (máximo 12-15 palabras) de la información proporcionada.
+    2. Identifica una palabra CLAVE de esa frase (sustantivo o nombre propio).
+    3. En "question", pon la frase pero sustituyendo la palabra CLAVE por "_______".
+    4. En "correct_answer", pon la palabra que has ocultado.
+
+    REGLAS SEGÚN DIFICULTAD ({dificultad}):
+    - Si es 'fácil': Selecciona una frase principal y oculta una palabra muy obvia (ej: un nombre propio central). La pista debe ser casi directa.
+    - Si es 'media': Selecciona una frase de apoyo y oculta un sustantivo o dato concreto. La pista debe ser una definición.
+    - Si es 'difícil': Selecciona una frase con más detalle y oculta un adjetivo, un número o un término menos central que requiera haber leído con mucha atención. La pista debe ser sutil.
+
+    REGLAS GENERALES:
+    - La frase elegida DEBE ser corta y de fácil lectura.
+    - "question" DEBE contener el hueco "_______".
+    - "correct_answer" debe ser UNA SOLA palabra que aparezca originalmente en la información.
+    - PROHIBIDO incluir texto como "Análisis previo" o etiquetas dentro del JSON.
+
+    ESTRUCTURA JSON REQUERIDA:
+    {
+      "type": "fill_in_the_blank",
+      "question": string (la frase con el hueco "_______"),
+      "correct_answer": string (la palabra que falta),
+      "hint": string (pista semántica que ayude a recordar la palabra),
+      "difficulty": string ("fácil", "media" o "difícil")
+    }
+
+    PROHIBIDO:
+    - Hacer frases demasiado largas, tienen que ser breves y concisas.
+    - Añadir texto antes o después del JSON.
+    - Usar markdown.
+    - Añadir comentarios.
+    - Generar múltiples objetos.
+    - Cambiar las claves del JSON.
+
+    
+  expected_output: >
+    Un único objeto JSON válido con las claves exactas:
+    type, question, correct_answer, hint, difficulty.
+  agent: "fill_in_the_blank_agent"
+
+multiple_choice_task:
+  description: >
+    Genera un ejercicio de opción múltiple.
+
+    INFORMACION (Puede ser un párrafo narrativo o una lista de datos/frases sin correlación):
+    - {informacion}
+
+    NIVEL DE DIFICULTAD REQUERIDO: {dificultad}
+    (Adaptación cognitiva: Si es 'fácil', haz que la respuesta sea evidente y los distractores muy distintos. Si es 'difícil', usa distractores sutiles o que requieran recordar detalles precisos).
+
+    {feedback_ia}
+
+    REGLAS SEGÚN DIFICULTAD ({dificultad}):
+    - Si es 'fácil': Pregunta sobre el tema principal. Distractores muy diferentes (ej: si la respuesta es 'Perro', distractores: 'Avión', 'Manzana').
+    - Si es 'media': Pregunta sobre un dato concreto. Distractores del mismo tipo pero incorrectos (ej: si la respuesta es 'Lunes', distractores: 'Jueves', 'Sábado').
+    - Si es 'difícil': Pregunta sobre un detalle preciso o secundario. Distractores muy similares o que aparezcan en el texto en otro contexto para confundir si no se lee bien.
+
+    REGLAS GENERALES:
+    - La pregunta debe ser concisa y directa.
+    - "options" debe contener 3 opciones del mismo tipo (ej: 3 lugares, 3 fechas, 3 nombres).
+    - Una opción es la correcta y las otras dos son "distractores" plausibles basados en la información.
+    - "correct_answer" debe ser el ÍNDICE (0, 1 o 2) de la opción correcta.
+
+    ESTRUCTURA JSON REQUERIDA:
+    {
+      "type": string (siempre "multiple_choice"),
+      "question": string (pregunta directa sobre la información),
+      "options": array de 3 strings (las tres opciones de respuesta),
+      "correct_answer": integer (índice 0, 1 o 2 de la opción correcta),
+      "hint": string (pista que ayude a recordar la respuesta),
+      "difficulty": string ("fácil", "media" o "difícil")
+    }
+    No incluyas nada más que el JSON.
+
+    PROHIBIDO:
+    - Añadir texto antes o después del JSON.
+    - Usar markdown.
+    - Añadir explicaciones.
+    - Cambiar las claves del JSON.
+    - Generar múltiples objetos.
+
+  expected_output: >
+    Un único objeto JSON válido con las claves exactas:
+    type, question, options, correct_answer, hint, difficulty.
+  agent: "multiple_choice_agent"
+
+ordering_task:
+  description: >
+    Genera un ejercicio de ordenación basado en una secuencia de EVENTOS.
+
+    INFORMACION (Puede ser un párrafo o una lista de datos/frases):
+    - {informacion}
+
+    NIVEL DE DIFICULTAD REQUERIDO: {dificultad}
+    (Adaptación cognitiva: Si es 'fácil', usa eventos con nexos temporales claros. Si es 'difícil', usa eventos más cercanos cronológicamente que requieran una lectura más minuciosa).
+
+    {feedback_ia}
+
+    REGLAS SEGÚN DIFICULTAD ({dificultad}):
+    - Si es 'fácil': Usa 3 eventos muy separados (Inicio, nudo y desenlace).
+    - Si es 'media': Usa 3 eventos correlativos pero con acciones claramente distintas.
+    - Si es 'difícil': Usa 3 eventos muy próximos entre sí o matices de una misma escena que requieran entender la secuencia exacta de micro-acciones.
+
+    REGLAS GENERALES:
+    - Identifica una secuencia lógica de 3 EVENTOS o momentos clave en la información.
+    - Las frases deben ser muy cortas (máximo 10 palabras) y representar acciones o hechos claros.
+    - Evita usar frases abstractas o datos sin una relación secuencial obvia; el objetivo es que el orden sea indiscutible.
+    - Ponlas en "options" mezcladas (desordenadas).
+    - Ponlas en "correct_answer" en el orden cronológico o lógico exacto según la información.
+    - VALIDACIÓN CRUZADA: Cada elemento de "correct_answer" DEBE ser idéntico (carácter por carácter) a un elemento de "options".
+
+    PROHIBIDO:
+    - Usar frases que no tengan una relación de orden clara (ej: "Me gusta el azul" y "Tengo 20 años").
+    - Que "correct_answer" tenga frases que no están en "options".
+    - Que las frases en "correct_answer" sean más largas o detalladas que las de "options".
+    - Usar "Evento 1", "Evento 2", etc.
+
+    REGLA DE ORO: No incluyas "Análisis de IA" ni etiquetas técnicas dentro de las frases. El orden debe ser evidente por el contenido.
+
+    ESTRUCTURA JSON REQUERIDA:
+    {
+      "type": string (siempre "ordering"),
+      "question": string (instrucción para ordenar los elementos),
+      "options": array de 3 strings (datos o frases cortas desordenadas),
+      "correct_answer": array de 3 strings (los mismos elementos en el orden lógico/secuencial correcto),
+      "hint": string (pista sobre el orden),
+      "difficulty": string ("fácil", "media" o "difícil")
+    }
+
+    PROHIBIDO:
+    - Añadir texto antes o después del JSON.
+    - Usar markdown.
+    - Añadir comentarios.
+    - Generar múltiples objetos.
+    - Cambiar las claves del JSON.
+
+  expected_output: >
+    Un único objeto JSON válido con las claves exactas:
+    type, question, options, correct_answer, hint, difficulty.
+  agent: "ordering_agent"
+
+
+validate_fill_in_the_blank_task:
+  description: >
+    Valida un ejercicio de "Rellenar Huecos". 
+    
+    EJERCICIO: {ejercicio}
+    INFORMACIÓN ORIGINAL: {informacion_original}
+    
+    TU MISIÓN:
+    Actúa como un revisor técnico literal. No juzgues si la frase es extraña o poco común, solo comprueba si los datos existen en la fuente.
+
+    REGLAS DE VALIDACIÓN:
+    1. LITERALIDAD: ¿La frase de la pregunta (ignorando el hueco) existe en la INFORMACIÓN ORIGINAL? Si la frase ha sido inventada o modificada significativamente -> status: "error".
+    2. EXISTENCIA: ¿La "correct_answer" aparece literalmente en el texto original? -> Si no aparece, status: "error".
+    3. FORMATO: ¿El apartado question tiene el "_______"? -> Si no, status: "error".
+    4. COHERENCIA: Si se rellena el hueco con la respuesta, ¿la frase resultante es verdadera según el texto?
+    
+    IMPORTANTE: Si la frase existe en el texto, dalo por bueno (status: "ok") aunque gramaticalmente sea simple. Sé objetivo.
+
+    RESULTADO (JSON):
+    {
+      "Analysis": "Explicación muy breve del fallo o 'Ejercicio correcto'",
+      "status": "ok" o "error"
+    }
+  expected_output: >
+    Un objeto JSON con Analysis y status.
+  agent: "validator_agent"
+
+validate_ordering_task:
+  description: >
+    Valida un ejercicio de "Ordenación".
+    
+    EJERCICIO: {ejercicio}
+    INFORMACIÓN ORIGINAL: {informacion_original}
+    
+    REGLAS DE ORO:
+    1. COMPARACIÓN: Comprueba que el array "correct_answer" y "options" contengan las mismas frases exactas. NO importa si el orden es diferente entre ellos (esto es lo esperado en un ejercicio de ordenar).
+    2. CANTIDAD: Debe haber el mismo número de elementos en ambos listados.
+    3. LITERALIDAD: Cada frase en "correct_answer" debe ser idéntica (letra por letra) a una frase en "options". No se permiten cambios, ni siquiera mínimos.
+    4. Si falta alguna frase, sobra alguna, o hay diferencias en el texto entre arrays -> status: "error
+    
+    RESULTADO (JSON):
+    {
+      "Analysis": "Respuesta breve con el error o 'Ejercicio correcto'.",
+      "status": "ok" o "error"
+    }
+    
+  expected_output: >
+    Un objeto JSON con Analysis y status.
+  agent: "validator_agent"
+
+validate_multiple_choice_task:
+  description: >
+    Valida un ejercicio de "Opción Múltiple" (multiple_choice).
+    
+    EJERCICIO: {ejercicio}
+    INFORMACIÓN ORIGINAL: {informacion_original}
+    
+    REGLAS DE ORO:
+    1. La respuesta seleccionada por el índice "correct_answer" debe ser VERDADERA según el texto.
+    2. Los "options" (distractores) no deben ser verdaderos según el texto.
+    3. Si la pregunta es ambigua o la respuesta es falsa -> status: "error".
+    4. "Analysis": Respuesta BREVE (1 frase) indicando el error.
+  
+
+    RESULTADO (JSON):
+    {
+      "Analysis": "explicación breve",
+      "status": "ok" o "error"
+    }
+
+  expected_output: >
+    Un objeto JSON con Analysis y status.
+  agent: "validator_agent"
