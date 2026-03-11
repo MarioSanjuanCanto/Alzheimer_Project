@@ -60,7 +60,6 @@ class FillInTheBlankAgent:
             parsed["question"] = question.replace(word, "_______", 1)
         parsed["type"] = "fill_in_the_blank"
         
-        print(f"[fill_in_the_blank_agent] Final question: {parsed.get('question')}")
         return parsed
     except Exception as e:
         print(f"[fill_in_the_blank_agent] Error: {e}")

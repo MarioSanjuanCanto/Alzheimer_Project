@@ -39,15 +39,13 @@ class VerificadorAgent:
     def validate(self, exercise: dict, original_information: str, structure:dict):
         print("[verificador_agent] Validating exercises")
 
-        # First thing verify the structure
+        # First thing verify the structure
         for key in structure:
             if key not in exercise:
                 print(f"[verificador_agent] Error: Falta el apartado llamado {key}")
                 return {"status": "error", "Analysis": f"Estructura incorrecta, falta el apartado llamado {key}"}
 
-
-
-        # Call the agent
+        # Call the agent
         exercise_type = exercise.get("type", "fill_in_the_blank")
         if not self.refresh(exercise_type):
             return {"status": "error", "Analysis": f"No se encontró una tarea de validación para {exercise_type}"}
