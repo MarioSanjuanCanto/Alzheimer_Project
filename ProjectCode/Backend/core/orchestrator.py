@@ -119,4 +119,3 @@ class Orchestrator:
     def correct_fill_in_the_blank(self, user_answer: str, correct_answer:str):
         result = self.validators.get("corrector").correct_exercise(user_answer, correct_answer)
         return result
-        
