@@ -78,6 +78,8 @@ def fill_in_the_blank_correction_endpoint():
         }), 400
     
     # --- Exercise correction ---
+    if user_answer == correct_answer:
+        return jsonify({"status": "correct"}), 200
 
     result = service.correct_fill_in_the_blank(user_answer, correct_answer)
     status = result.get('status')
@@ -97,7 +99,6 @@ def test_endpoint():
         "message": "The exercise generation API is active.",
         "usage": "Send a POST request to /api/generate_exercise with the memory data."
     })
-
 
 @app.route('/api/generate_exercise', methods=['POST'])
 def generate_exercise_endpoint():

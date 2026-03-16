@@ -46,20 +46,28 @@ fill_in_the_blank_task:
     {feedback_ia}
 
     PROCEDIMIENTO:
-    1. Selecciona un dato o frase COMPLETA, LITERAL y BREVE (máximo 12-15 palabras) de la información proporcionada.
-    2. Identifica una palabra CLAVE de esa frase (sustantivo o nombre propio).
-    3. En "question", pon la frase pero sustituyendo la palabra CLAVE por "_______".
-    4. En "correct_answer", pon la palabra que has ocultado.
+    1. Identifica los elementos CRÍTICOS y MEMORABLES de la historia: nombres de personas, lugares concretos,
+       objetos significativos, acciones centrales (ej: "parque", "nieto", "cumpleaños").
+    2. Selecciona UNA frase BREVE (máximo 12-15 palabras) que contenga uno de esos elementos críticos.
+    3. En "question", pon la frase sustituyendo ese elemento crítico por "_______".
+    4. En "correct_answer", pon el elemento crítico que has ocultado.
+
+    CRITERIO DE SELECCIÓN DE LA PALABRA CRÍTICA:
+    - PRIORIZAR: nombres de personas cercanas (nieto, abuela, María...), lugares significativos (parque,
+      casa, pueblo...), eventos clave (boda, viaje, cumpleaños...) y objetos centrales de la historia.
+    - EVITAR: palabras genéricas, adjetivos decorativos, conectores o palabras que no aporten significado
+      emocional o narrativo a la historia.
+    - La palabra ocultada debe ser la que un paciente con Alzheimer necesita recordar y reforzar.
 
     REGLAS SEGÚN DIFICULTAD ({dificultad}):
-    - Si es 'fácil': Selecciona una frase principal y oculta una palabra muy obvia (ej: un nombre propio central). La pista debe ser casi directa.
-    - Si es 'media': Selecciona una frase de apoyo y oculta un sustantivo o dato concreto. La pista debe ser una definición.
-    - Si es 'difícil': Selecciona una frase con más detalle y oculta un adjetivo, un número o un término menos central que requiera haber leído con mucha atención. La pista debe ser sutil.
+    - Si es 'fácil': Oculta el elemento más central y reconocible (ej: el lugar principal o el nombre del protagonista). La pista debe ser casi directa.
+    - Si es 'media': Oculta un elemento importante pero secundario (ej: el nombre de un familiar, el lugar de un evento). La pista debe ser una descripción.
+    - Si es 'difícil': Oculta un detalle concreto y específico (ej: el nombre de un lugar menos central, un objeto). La pista debe ser sutil.
 
     REGLAS GENERALES:
     - La frase elegida DEBE ser corta y de fácil lectura.
     - "question" DEBE contener el hueco "_______".
-    - "correct_answer" debe ser UNA SOLA palabra que aparezca originalmente en la información.
+    - "correct_answer" debe ser UNA SOLA palabra que sea un elemento crítico de la historia.
     - PROHIBIDO incluir texto como "Análisis previo" o etiquetas dentro del JSON.
 
     ESTRUCTURA JSON REQUERIDA:
