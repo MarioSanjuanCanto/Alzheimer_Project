@@ -3,6 +3,10 @@ from flask_cors import CORS
 import logic
 from services.exercise_service import ExerciseService
 
+# ______________________________________ Global Objects ______________________________________
+
+service = ExerciseService()
+
 # ______________________________________ API END Points ______________________________________
 
 app = Flask(__name__)
@@ -35,16 +39,54 @@ def excercise_correction_endpoint():
     
     print(f"[app] Correcting exercise for user: {user_id} | Type: {exercise_type} | Result: {resultado}")
 
-    # Convert 'succeed'/'fail' to boolean for db.update_user_stats
+   # --- Updating database values ---
+
     is_correct = (resultado == 'succeed')
     
-    try:
+    try:        
         logic.update_exercise_stats(user_id, exercise_type, is_correct)
         return jsonify({"status": "success", "message": "Exercise stats updated."}), 200
     except Exception as e:
         print(f"[app] Error updating user stats: {e}")
         return jsonify({"error": "Could not update user stats."}), 500
 
+@app.route('/api/excercise_correction/fill_in_the_blank', methods=['POST'])
+def fill_in_the_blank_correction_endpoint():
+    """
+    Endpoint to correct the fill in the blank exercise using an agent
+    """
+    print("[app] fill_in_the_blank_correction_endpoint")
+
+    # --- Request Input validation ---
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    exercise_data = request.get_json()
+    user_id = exercise_data.get('user_id')
+    exercise_type = exercise_data.get('exercise_type')
+    resultado = exercise_data.get('resultado')
+    user_answer = exercise_data.get('user_answer')
+    correct_answer = exercise_data.get('correct_answer')
+
+    if not exercise_data or not exercise_type or resultado is None:
+        return jsonify({
+            "error": "JSON must contain 'exercise_type' and 'resultado'."
+        }), 400
+    if user_id is None:
+        return jsonify({
+            "error": "JSON must contain 'user_id'."
+        }), 400
+    
+    # --- Exercise correction ---
+
+    result = service.correct_fill_in_the_blank(user_answer, correct_answer)
+    status = result.get('status')
+
+    if status == "ok":
+        return jsonify({"status": "correct"}), 200         
+    else:
+        feedback_msg = result.get('analysis', result.get('Analysis', ''))
+        return jsonify({"status": "incorrect", "feedback": feedback_msg}), 200
 
 @app.route('/api/test', methods=['GET'])
 def test_endpoint():
@@ -56,11 +98,6 @@ def test_endpoint():
         "usage": "Send a POST request to /api/generate_exercise with the memory data."
     })
 
-
-
-# ______________________________________ Agents API endpoint ______________________________________
-
-service = ExerciseService()
 
 @app.route('/api/generate_exercise', methods=['POST'])
 def generate_exercise_endpoint():

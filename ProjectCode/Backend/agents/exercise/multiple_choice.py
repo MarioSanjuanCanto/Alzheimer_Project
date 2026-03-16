@@ -16,7 +16,7 @@ class MultipleChoiceAgent:
 
     llm = LLM(
         model="gpt-4o-mini",
-        temperature=0
+        temperature=0.5
     )
     agents_config["multiple_choice_agent"]["llm"] = llm
 

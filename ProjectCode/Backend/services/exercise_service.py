@@ -12,3 +12,5 @@ class ExerciseService:
             exercise_types=exercise_types,
             user_id=user_id
         )
+    def correct_fill_in_the_blank(self, user_answer: str, correct_answer:str):
+        return self.orchestrator.correct_fill_in_the_blank(user_answer, correct_answer)

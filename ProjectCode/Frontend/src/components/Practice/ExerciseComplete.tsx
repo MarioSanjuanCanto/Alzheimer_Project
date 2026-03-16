@@ -18,27 +18,45 @@ const ExerciseComplete = ({ exercise, userId }: ExerciseCompleteProps) => {
   const [answer, setAnswer] = useState("");
   const [checked, setChecked] = useState(false);
   const [showHint, setShowHint] = useState(false);
-
-  const isCorrect =
-    answer.trim().toLowerCase() ===
-    exercise.correct_answer.trim().toLowerCase();
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
 
   const handleCheckAnswer = async () => {
-    setChecked(true);
-    setShowHint(false);
-
+    setIsChecking(true);
     try {
+      // 1. Validar la respuesta a través del Agente Corrector
+      const verifyResponse = await fetch("http://localhost:5001/api/excercise_correction/fill_in_the_blank", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          exercise_type: "fill_in_the_blank",
+          resultado: "pending",
+          user_answer: answer,
+          correct_answer: exercise.correct_answer,
+        }),
+      });
+
+      const verifyData = await verifyResponse.json();
+      const correct = verifyData.status === "correct";
+      setIsCorrect(correct);
+      setChecked(true);
+      setShowHint(false);
+
+      // 2. Registrar el resultado en la base de datos
       await fetch("http://localhost:5001/api/excercise_correction", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user_id: userId,
-          exercise_type: "fill_in_the_blank", // This component is for fill_in_the_blank
-          resultado: isCorrect ? "succeed" : "fail",
+          exercise_type: "fill_in_the_blank",
+          resultado: correct ? "succeed" : "fail",
         }),
       });
     } catch (error) {
-      console.error("Error updating exercise stats:", error);
+      console.error("Error checking or updating exercise stats:", error);
+    } finally {
+      setIsChecking(false);
     }
   };
 
@@ -145,9 +163,9 @@ const ExerciseComplete = ({ exercise, userId }: ExerciseCompleteProps) => {
             <button
               className="button-primary button-sm"
               onClick={handleCheckAnswer}
-              disabled={!answer.trim()}
+              disabled={!answer.trim() || isChecking}
             >
-              {t("exercises.checkAnswer")}
+              {isChecking ? "..." : t("exercises.checkAnswer")}
             </button>
           )}
 

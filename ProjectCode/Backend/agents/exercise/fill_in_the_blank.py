@@ -16,7 +16,7 @@ class FillInTheBlankAgent:
 
     llm = LLM(
         model="gpt-4o-mini",
-        temperature=0
+        temperature=0.5
     )
 
     agents_config["fill_in_the_blank_agent"]["llm"] = llm

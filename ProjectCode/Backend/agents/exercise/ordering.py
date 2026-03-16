@@ -16,7 +16,7 @@ class OrderingAgent:
 
         llm = LLM(
             model="gpt-4o-mini",
-            temperature=0
+            temperature=0.5
         )
 
         agents_config["ordering_agent"]["llm"] = llm

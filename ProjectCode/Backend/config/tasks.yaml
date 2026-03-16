@@ -268,3 +268,28 @@ validate_multiple_choice_task:
   expected_output: >
     Un objeto JSON con Analysis y status.
   agent: "validator_agent"
+
+corrector_task:
+  description: >
+    Evalúa la respuesta de un usuario en un ejercicio de "Rellenar el hueco" (fill_in_the_blank).
+    
+    PALABRA CORRECTA ORIGINAL: {correct_answer}
+    RESPUESTA DEL USUARIO: {user_answer}
+    
+    REGLAS DE CORRECCIÓN:
+    1. Si coinciden exactamente o ignorando mayúsculas/minúsculas y tildes -> status: "ok"
+    2. Si son sinónimos o palabras semánticamente muy cercanas dadas en el contexto -> status: "ok"
+    3. Si el usuario ha cometido un ligero error tipográfico (typo, falta de ortografía menor) pero la intención y el concepto son claramente los mismos -> status: "ok"
+    4. Si la palabra del usuario no tiene nada que ver, cambia radicalmente el significado o es un concepto distinto -> status: "error"
+    
+    RESULTADO ESPERADO (JSON valid code):
+    {
+      "analysis": "Breve explicación de la evaluación (ej. 'Respuesta correcta', 'Tiene un ligero typo pero es válida', o 'La palabra es incorrecta porque...').",
+      "status": "ok" o "error"
+    }
+
+  expected_output: >
+    Un objeto JSON con las claves 'analysis' y 'status'.
+  agent: "corrector_agent"
+
+

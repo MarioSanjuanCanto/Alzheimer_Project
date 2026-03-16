@@ -8,6 +8,7 @@ from agents.exercise.ordering import OrderingAgent
 from agents.validation.adecuacion import AdecuacionCognitivaAgent
 from agents.validation.regulador_emocional import ReguladorEmocionalAgent
 from agents.validation.verificador import VerificadorAgent
+from agents.validation.corrector import CorrectorAgent
 
 import database.db as db
 import os
@@ -39,6 +40,7 @@ class Orchestrator:
         # 4) validators
         self.validators = {
             "verificador": VerificadorAgent(self.config_path),
+            "corrector": CorrectorAgent(self.config_path),
         }
 
         # 5) structures
@@ -88,7 +90,6 @@ class Orchestrator:
 
         return exercises
 
-
     def get_user_difficulty(self, user_id:str):
         user_stats = db.get_user_stats(user_id)
 
@@ -107,7 +108,6 @@ class Orchestrator:
                     "ordering": self.difficulty_level(user_stats["ordering_right"] / (user_stats["ordering_done"] if user_stats["ordering_done"] > 0 else 1))}
         return strategy
 
-
     def difficulty_level(self, score:float):
         if score < 0.5:
             return "fácil"
@@ -115,3 +115,8 @@ class Orchestrator:
             return "media"
         else:
             return "difícil"
+
+    def correct_fill_in_the_blank(self, user_answer: str, correct_answer:str):
+        result = self.validators.get("corrector").correct_exercise(user_answer, correct_answer)
+        return result
+        
