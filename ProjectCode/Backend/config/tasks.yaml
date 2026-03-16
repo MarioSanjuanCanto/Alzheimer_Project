@@ -65,6 +65,10 @@ fill_in_the_blank_task:
     - Si es 'difícil': Oculta un detalle concreto y específico (ej: el nombre de un lugar menos central, un objeto). La pista debe ser sutil.
 
     REGLAS GENERALES:
+    - PERSPECTIVA: La historia la ha escrito la propia persona que juega. Las frases deben estar en
+      PRIMERA o SEGUNDA PERSONA. Usa "mi", "mis", "yo", "me", "mí", "mi nieto", "mi casa", etc.
+      NUNCA uses "el narrador", "el protagonista", "el abuelo", "la persona", "él/ella" para referirte
+      al autor. Ej: MAL → "El narrador fue al parque". BIEN → "Fui al parque" / "Mi nieto fue al parque".
     - La frase elegida DEBE ser corta y de fácil lectura.
     - "question" DEBE contener el hueco "_______".
     - "correct_answer" debe ser UNA SOLA palabra que sea un elemento crítico de la historia.
@@ -111,6 +115,10 @@ multiple_choice_task:
     - Si es 'difícil': Pregunta sobre un detalle preciso o secundario. Distractores muy similares o que aparezcan en el texto en otro contexto para confundir si no se lee bien.
 
     REGLAS GENERALES:
+    - PERSPECTIVA: La historia la ha escrito la propia persona que juega. Las preguntas y opciones deben
+      estar en PRIMERA o SEGUNDA PERSONA. Usa "mi", "mis", "yo", "me", "mi nieto", "mi casa", etc.
+      NUNCA uses "el narrador", "el protagonista", "el abuelo", "la persona", "él/ella" para referirte
+      al autor. Ej: MAL → "¿Adónde fue el narrador?". BIEN → "¿Adónde fui?" / "¿Dónde estaba mi nieto?".
     - La pregunta debe ser concisa y directa.
     - "options" debe contener 3 opciones del mismo tipo (ej: 3 lugares, 3 fechas, 3 nombres).
     - Una opción es la correcta y las otras dos son "distractores" plausibles basados en la información.
@@ -157,6 +165,10 @@ ordering_task:
     - Si es 'difícil': Usa 3 eventos muy próximos entre sí o matices de una misma escena que requieran entender la secuencia exacta de micro-acciones.
 
     REGLAS GENERALES:
+    - PERSPECTIVA: La historia la ha escrito la propia persona que juega. Las frases de los eventos deben
+      estar en PRIMERA o SEGUNDA PERSONA. Usa "mi", "mis", "yo", "fui", "llegué", "mi nieto", etc.
+      NUNCA uses "el narrador", "el protagonista", "el abuelo", "la persona", "él/ella" para referirte
+      al autor. Ej: MAL → "El abuelo llegó al parque". BIEN → "Llegué al parque" / "Mi nieto llegó al parque".
     - Identifica una secuencia lógica de 3 EVENTOS o momentos clave en la información.
     - Las frases deben ser muy cortas (máximo 10 palabras) y representar acciones o hechos claros.
     - Evita usar frases abstractas o datos sin una relación secuencial obvia; el objetivo es que el orden sea indiscutible.
