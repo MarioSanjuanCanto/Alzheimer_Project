@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import Home from "./pages/Home";
 import View from "./pages/View";
 import Login from "./pages/Login";
@@ -19,6 +20,43 @@ import { ParticipantProvider } from "./context/practicerContext";
 
 const queryClient = new QueryClient();
 
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { duration: 0.25, ease: "easeIn" } }}
+        exit={{ opacity: 0, transition: { duration: 0.2, ease: "easeOut" } }}
+      >
+        <Routes location={location}>
+          <Route path="/" element={<Home />} />
+          <Route path="/create" element={<MemoryForm />} />
+          <Route path="/view" element={<View />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route
+            path="/my-profile-settings"
+            element={<MyProfileSettings currentProfile={undefined} />}
+          />
+          <Route
+            path="/exercises-overview"
+            element={<ExercisesOverview />}
+          />
+          <Route path="/edit/:id" element={<MemoryForm />} />
+          <Route path="/practice/:memoryId" element={<Practice />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
 const App = () => {
   return (
     <ParticipantProvider>
@@ -34,27 +72,7 @@ const App = () => {
               Skip to main content
             </a>
 
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/create" element={<MemoryForm />} />
-              <Route path="/view" element={<View />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route
-                path="/my-profile-settings"
-                element={<MyProfileSettings currentProfile={undefined} />}
-              />
-              <Route
-                path="/exercises-overview"
-                element={<ExercisesOverview />}
-              />
-              <Route path="/edit/:id" element={<MemoryForm />} />
-              <Route path="/practice/:memoryId" element={<Practice />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AnimatedRoutes />
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
