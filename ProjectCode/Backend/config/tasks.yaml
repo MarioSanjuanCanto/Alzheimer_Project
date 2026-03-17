@@ -25,7 +25,7 @@ select_task:
 
     Reglas estrictas de extracción según el tipo de ejercicio futuro:
     - Para 'multiple_choice': Extrae una lista de afirmaciones cortas basadas en hechos concretos, nombres propios o fechas clave. ¡NO ESCRIBAS PREGUNTAS O CUESTIONARIOS! Solo saca el 'dato'.
-    - Para 'fill_in_the_blank': Extrae literalmente 2 o 3 frases o párrafos completos textualmente de la historia original. NO PONGAS HUECOS NI GUIONES, NO ESCRIBAS PREGUNTAS. Solo devuelve el texto original literal seleccionado.
+    - Para 'fill_in_the_blank': Extrae fragmentos extensos (mínimo 2-3 párrafos o 100 palabras) que contengan múltiples detalles, nombres y acciones. NO recortes el texto; pásalo íntegro para que el generador tenga contexto de sobra.
     - Para 'ordering': Extrae del texto original de 4 a 6 eventos clave y preséntalos como una lista de oraciones literales en estricto orden cronológico. NO MANDES ORDENAR NADA.
 
     IMPORTANTE: Tu respuesta debe ser ÚNICA Y EXCLUSIVAMENTE un bloque JSON válido. No te inventes historias, cíñete a extraer datos.
@@ -57,10 +57,15 @@ fill_in_the_blank_task:
     - PROHIBIDO: Ocultar adjetivos decorativos (ej: "bonito", "cálido"), verbos genéricos (ej: "fue", "era"), conectores o cualquier palabra que pueda deducirse por gramática pura o contexto trivial.
     - El objetivo es evaluar la MEMORIA del contenido, no la capacidad lingüística. Si la respuesta puede adivinarse sin conocer la historia, el ejercicio es INVÁLIDO.
 
-    REGLAS SEGÚN DIFICULTAD ({dificultad}):
-    - Si es 'fácil': Oculta el protagonista o el lugar principal. La frase debe ser muy directa y la pista debe ser casi una definición (ej: "Mi nieto se llama _______" / Pista: "El nombre de tu nieto").
-    - Si es 'media': Oculta un dato concreto que requiera recordar una acción o una relación (ej: "Fuimos a comer a la _______" / Pista: "Lugar donde ocurrió la comida familiar"). La palabra debe ser esencial para el sentido de la frase.
-    - Si es 'difícil': Oculta un detalle específico, un objeto clave o un concepto que resuma un evento. La frase puede ser más larga o compleja, y la pista debe obligar a reflexionar sobre la historia (ej: "Lo que más me gustó del viaje fue ver el _______" / Pista: "El monumento principal que visitasteis"). PROHIBIDO ocultar adjetivos, colores o palabras genéricas.
+    REGLAS ESTRUCTURALES SEGÚN DIFICULTAD ({dificultad}):
+    - Si es 'fácil': Una sola frase BREVE y simple. Oculta el protagonista o el lugar central. (Ej: "_______ me llevó al mercado").
+    - Si es 'media': DOS frases con lenguaje narrativo estándar. Oculta un evento principal o una relación clara. (Ej: "Mi nieto Leo vino a casa. Me regaló un ramo de _______").
+    - Si es 'difícil': MÁXIMO 2 frases brevemente redactadas con vocabulario más sofisticado o técnico. El hueco DEBE ser un detalle PERIFÉRICO o de ALTA PRECISIÓN (ej: nombre de una calle secundaria, la marca de un coche, una hora exacta, un objeto mencionado solo una vez). La respuesta debe ser IMPOSIBLE de deducir solo por la lógica de la frase; debe requerir haber memorizado el dato exacto de la historia.
+
+    PROHIBICIONES ESTRICTAS:
+    - PROHIBIDO ocultar adjetivos decorativos, verbos comunes o conectores.
+    - NIVEL DIFÍCIL: No uses frases genéricas. Selecciona el dato más "escondido" de la información proporcionada.
+    - Si la palabra puede deducirse por el contexto lingüístico de la pregunta, el ejercicio es INVÁLIDO. Solo cuenta la MEMORIA.
 
     REGLAS GENERALES:
     - PERSPECTIVA: La historia la ha escrito la propia persona que juega. Las frases deben estar en
