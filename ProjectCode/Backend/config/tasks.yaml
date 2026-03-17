@@ -35,66 +35,58 @@ select_task:
 
 fill_in_the_blank_task:
   description: >
-    Genera un ejercicio tipo fill_in_the_blank.
-    
-    INFORMACION (Puede ser un párrafo narrativo o una lista de hechos/frases independientes):
-    -[ {informacion} ]
+    Genera UN ejercicio tipo fill_in_the_blank.
 
-    NIVEL DE DIFICULTAD REQUERIDO: {dificultad}
-    (Adaptación cognitiva: Si es 'fácil', usa vocabulario común y frases directas. Si es 'difícil', selecciona términos más técnicos o frases que requieran mayor memoria de trabajo).
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  TU NIVEL DE DIFICULTAD ES: >>> {dificultad} <<<            ║
+    ║  SIGUE SOLO Y EXCLUSIVAMENTE LAS REGLAS DE ESE NIVEL        ║
+    ╚══════════════════════════════════════════════════════════════╝
+
+    ########################################
+    # SI TU DIFICULTAD ES "fácil":
+    ########################################
+    - PREGUNTA: UNA sola frase corta (máximo 10 palabras).
+    - QUÉ OCULTAR: El nombre del protagonista principal O el lugar más importante.
+    - PISTA: Muy directa, casi la definición.
+    - EJEMPLO GENÉRICO: "_______ me llevó de paseo" → correct_answer: "María" / hint: "Tu hija".
+
+    ########################################
+    # SI TU DIFICULTAD ES "media":
+    ########################################
+    - PREGUNTA: DOS frases conectadas (entre 15 y 25 palabras en total).
+    - QUÉ OCULTAR: Un objeto concreto, un lugar secundario o una acción específica. NUNCA el nombre del protagonista principal (eso es demasiado fácil para este nivel).
+    - PISTA: Descriptiva, dando contexto de la escena.
+    - EJEMPLO GENÉRICO: "Fuimos al centro comercial. Compramos unos _______ nuevos" → correct_answer: "vaqueros" / hint: "Prenda de ropa que necesitaba".
+
+    ########################################
+    # SI TU DIFICULTAD ES "difícil":
+    ########################################
+    - PREGUNTA: MÁXIMO 2 frases (entre 15 y 25 palabras en total).
+    - QUÉ OCULTAR: Un detalle MUY ESPECÍFICO y PERIFÉRICO: una cantidad, un motivo concreto, un objeto mencionado solo una vez, el nombre de un sitio secundario. NUNCA nombres propios del protagonista NI objetos obvios.
+    - PISTA: Indirecta, que obligue a reflexionar sobre la historia completa.
+    - EJEMPLO GENÉRICO: "Tuvimos que cambiar de tienda porque no encontraban la talla de _______" → correct_answer: "camiseta" / hint: "Prenda que no tenían disponible".
+    - CLAVE: La respuesta debe ser IMPOSIBLE de adivinar sin haber memorizado ese detalle concreto de la historia.
 
     {feedback_ia}
 
-    PROCEDIMIENTO:
-    1. Identifica los elementos CRÍTICOS y MEMORABLES de la historia: nombres de personas, lugares concretos,
-       objetos significativos, acciones centrales (ej: "parque", "nieto", "cumpleaños").
-    2. Selecciona UNA frase BREVE (máximo 12-15 palabras) que contenga uno de esos elementos críticos.
-    3. En "question", pon la frase sustituyendo ese elemento crítico por "_______".
-    4. En "correct_answer", pon el elemento crítico que has ocultado.
+    INFORMACION:
+    -[ {informacion} ]
 
-    CRITERIO DE SELECCIÓN DE LA PALABRA CRÍTICA:
-    - PRIORIZAR: Nombres de personas cercanas, lugares específicos, eventos clave y objetos que tengan una carga emocional o narrativa.
-    - PROHIBIDO: Ocultar adjetivos decorativos (ej: "bonito", "cálido"), verbos genéricos (ej: "fue", "era"), conectores o cualquier palabra que pueda deducirse por gramática pura o contexto trivial.
-    - El objetivo es evaluar la MEMORIA del contenido, no la capacidad lingüística. Si la respuesta puede adivinarse sin conocer la historia, el ejercicio es INVÁLIDO.
+    REGLAS QUE APLICAN A TODOS LOS NIVELES:
+    - Escribe en PRIMERA o SEGUNDA persona (mi, mis, yo, fui...). NUNCA "el narrador" o "el protagonista".
+    - "question" DEBE contener "_______" en lugar de la palabra oculta.
+    - "correct_answer" = UNA SOLA palabra que existe en la información original.
+    - PROHIBIDO ocultar: adjetivos (bonito, cálido, grande), verbos genéricos (fue, era, tenía), conectores.
+    - Si la palabra se puede adivinar por gramática sin conocer la historia → INVÁLIDO.
 
-    REGLAS ESTRUCTURALES SEGÚN DIFICULTAD ({dificultad}):
-    - Si es 'fácil': Una sola frase BREVE y simple. Oculta el protagonista o el lugar central. (Ej: "_______ me llevó al mercado").
-    - Si es 'media': DOS frases con lenguaje narrativo estándar. Oculta un evento principal o una relación clara. (Ej: "Mi nieto Leo vino a casa. Me regaló un ramo de _______").
-    - Si es 'difícil': MÁXIMO 2 frases brevemente redactadas con vocabulario más sofisticado o técnico. El hueco DEBE ser un detalle PERIFÉRICO o de ALTA PRECISIÓN (ej: nombre de una calle secundaria, la marca de un coche, una hora exacta, un objeto mencionado solo una vez). La respuesta debe ser IMPOSIBLE de deducir solo por la lógica de la frase; debe requerir haber memorizado el dato exacto de la historia.
-
-    PROHIBICIONES ESTRICTAS:
-    - PROHIBIDO ocultar adjetivos decorativos, verbos comunes o conectores.
-    - NIVEL DIFÍCIL: No uses frases genéricas. Selecciona el dato más "escondido" de la información proporcionada.
-    - Si la palabra puede deducirse por el contexto lingüístico de la pregunta, el ejercicio es INVÁLIDO. Solo cuenta la MEMORIA.
-
-    REGLAS GENERALES:
-    - PERSPECTIVA: La historia la ha escrito la propia persona que juega. Las frases deben estar en
-      PRIMERA o SEGUNDA PERSONA. Usa "mi", "mis", "yo", "me", "mí", "mi nieto", "mi casa", etc.
-      NUNCA uses "el narrador", "el protagonista", "el abuelo", "la persona", "él/ella" para referirte
-      al autor. Ej: MAL → "El narrador fue al parque". BIEN → "Fui al parque" / "Mi nieto fue al parque".
-    - La frase elegida DEBE ser corta y de fácil lectura.
-    - "question" DEBE contener el hueco "_______".
-    - "correct_answer" debe ser UNA SOLA palabra que sea un elemento crítico de la historia.
-    - PROHIBIDO incluir texto como "Análisis previo" o etiquetas dentro del JSON.
-
-    ESTRUCTURA JSON REQUERIDA:
+    JSON REQUERIDO (sin nada más):
     {
       "type": "fill_in_the_blank",
-      "question": string (la frase con el hueco "_______"),
-      "correct_answer": string (la palabra que falta),
-      "hint": string (pista semántica que ayude a recordar la palabra),
-      "difficulty": string ("fácil", "media" o "difícil")
+      "question": string,
+      "correct_answer": string,
+      "hint": string,
+      "difficulty": "{dificultad}"
     }
-
-    PROHIBIDO:
-    - Hacer frases demasiado largas, tienen que ser breves y concisas.
-    - Añadir texto antes o después del JSON.
-    - Usar markdown.
-    - Añadir comentarios.
-    - Generar múltiples objetos.
-    - Cambiar las claves del JSON.
-
-    
   expected_output: >
     Un único objeto JSON válido con las claves exactas:
     type, question, correct_answer, hint, difficulty.
@@ -102,49 +94,54 @@ fill_in_the_blank_task:
 
 multiple_choice_task:
   description: >
-    Genera un ejercicio de opción múltiple.
+    Genera UN ejercicio de opción múltiple.
 
-    INFORMACION (Puede ser un párrafo narrativo o una lista de datos/frases sin correlación):
-    - {informacion}
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  TU NIVEL DE DIFICULTAD ES: >>> {dificultad} <<<            ║
+    ║  SIGUE SOLO Y EXCLUSIVAMENTE LAS REGLAS DE ESE NIVEL        ║
+    ╚══════════════════════════════════════════════════════════════╝
 
-    NIVEL DE DIFICULTAD REQUERIDO: {dificultad}
-    (Adaptación cognitiva: Si es 'fácil', haz que la respuesta sea evidente y los distractores muy distintos. Si es 'difícil', usa distractores sutiles o que requieran recordar detalles precisos).
+    ########################################
+    # SI TU DIFICULTAD ES "fácil":
+    ########################################
+    - PREGUNTA: Sobre el tema principal o el protagonista (ej: "¿Cómo se llama...?", "¿A dónde fuimos?").
+    - DISTRACTORES: Muy diferentes y absurdos comparados con la respuesta correcta.
+    - EJEMPLO GENÉRICO: "¿A dónde fuimos de paseo?" → options: ["Al parque", "A la luna", "Al desierto"].
+
+    ########################################
+    # SI TU DIFICULTAD ES "media":
+    ########################################
+    - PREGUNTA: Sobre un dato concreto o un hecho secundario (ej: "¿Qué compramos?", "¿Qué día fue?").
+    - DISTRACTORES: De la misma categoría pero falsos (ej: 3 prendas de ropa, 3 días de la semana).
+    - EJEMPLO GENÉRICO: "¿Qué compramos en la tienda?" → options: ["Vaqueros", "Camisetas", "Zapatos"].
+
+    ########################################
+    # SI TU DIFICULTAD ES "difícil":
+    ########################################
+    - PREGUNTA: Sobre el "POR QUÉ" o el "CÓMO" de algo, o sobre un detalle secundario muy preciso que requiera haber entendido la relación entre dos hechos de la historia (ej: "¿Por qué cambiamos de tienda?", "¿Qué pasó justo después de...?").
+    - DISTRACTORES: Que TAMBIÉN podrían ser verdad si no se recuerda bien. Todos deben sonar plausibles.
+    - EJEMPLO GENÉRICO: "¿Por qué tuvimos que ir a otra tienda?" → options: ["No tenían la talla", "Estaba cerrada", "Era muy cara"].
 
     {feedback_ia}
 
-    REGLAS SEGÚN DIFICULTAD ({dificultad}):
-    - Si es 'fácil': Pregunta sobre el tema principal. Distractores muy diferentes (ej: si la respuesta es 'Perro', distractores: 'Avión', 'Manzana').
-    - Si es 'media': Pregunta sobre un dato concreto. Distractores del mismo tipo pero incorrectos (ej: si la respuesta es 'Lunes', distractores: 'Jueves', 'Sábado').
-    - Si es 'difícil': Pregunta sobre un detalle preciso o secundario. Distractores muy similares o que aparezcan en el texto en otro contexto para confundir si no se lee bien.
+    INFORMACION:
+    - {informacion}
 
-    REGLAS GENERALES:
-    - PERSPECTIVA: La historia la ha escrito la propia persona que juega. Las preguntas y opciones deben
-      estar en PRIMERA o SEGUNDA PERSONA. Usa "mi", "mis", "yo", "me", "mi nieto", "mi casa", etc.
-      NUNCA uses "el narrador", "el protagonista", "el abuelo", "la persona", "él/ella" para referirte
-      al autor. Ej: MAL → "¿Adónde fue el narrador?". BIEN → "¿Adónde fui?" / "¿Dónde estaba mi nieto?".
+    REGLAS QUE APLICAN A TODOS LOS NIVELES:
+    - Escribe en PRIMERA o SEGUNDA persona. NUNCA "el narrador" o "el protagonista".
+    - "options" = array de 3 strings del mismo tipo.
+    - "correct_answer" = ÍNDICE (0, 1 o 2) de la opción correcta.
     - La pregunta debe ser concisa y directa.
-    - "options" debe contener 3 opciones del mismo tipo (ej: 3 lugares, 3 fechas, 3 nombres).
-    - Una opción es la correcta y las otras dos son "distractores" plausibles basados en la información.
-    - "correct_answer" debe ser el ÍNDICE (0, 1 o 2) de la opción correcta.
 
-    ESTRUCTURA JSON REQUERIDA:
+    JSON REQUERIDO (sin nada más):
     {
-      "type": string (siempre "multiple_choice"),
-      "question": string (pregunta directa sobre la información),
-      "options": array de 3 strings (las tres opciones de respuesta),
-      "correct_answer": integer (índice 0, 1 o 2 de la opción correcta),
-      "hint": string (pista que ayude a recordar la respuesta),
-      "difficulty": string ("fácil", "media" o "difícil")
+      "type": "multiple_choice",
+      "question": string,
+      "options": array de 3 strings,
+      "correct_answer": integer (0, 1 o 2),
+      "hint": string,
+      "difficulty": "{dificultad}"
     }
-    No incluyas nada más que el JSON.
-
-    PROHIBIDO:
-    - Añadir texto antes o después del JSON.
-    - Usar markdown.
-    - Añadir explicaciones.
-    - Cambiar las claves del JSON.
-    - Generar múltiples objetos.
-
   expected_output: >
     Un único objeto JSON válido con las claves exactas:
     type, question, options, correct_answer, hint, difficulty.
@@ -152,59 +149,56 @@ multiple_choice_task:
 
 ordering_task:
   description: >
-    Genera un ejercicio de ordenación basado en una secuencia de EVENTOS.
+    Genera UN ejercicio de ordenación basado en una secuencia de EVENTOS.
 
-    INFORMACION (Puede ser un párrafo o una lista de datos/frases):
-    - {informacion}
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  TU NIVEL DE DIFICULTAD ES: >>> {dificultad} <<<            ║
+    ║  SIGUE SOLO Y EXCLUSIVAMENTE LAS REGLAS DE ESE NIVEL        ║
+    ╚══════════════════════════════════════════════════════════════╝
 
-    NIVEL DE DIFICULTAD REQUERIDO: {dificultad}
-    (Adaptación cognitiva: Si es 'fácil', usa eventos con nexos temporales claros. Si es 'difícil', usa eventos más cercanos cronológicamente que requieran una lectura más minuciosa).
+    ########################################
+    # SI TU DIFICULTAD ES "fácil":
+    ########################################
+    - NÚMERO DE EVENTOS: Exactamente 3.
+    - TIPO DE EVENTOS: Muy separados entre sí (principio, medio, final de la historia).
+    - EJEMPLO GENÉRICO: ["Llegué a casa", "Comimos juntos", "Se fue por la tarde"].
+
+    ########################################
+    # SI TU DIFICULTAD ES "media":
+    ########################################
+    - NÚMERO DE EVENTOS: Exactamente 4.
+    - TIPO DE EVENTOS: Pasos intermedios de una misma actividad. Requiere recordar los detalles de la secuencia.
+    - EJEMPLO GENÉRICO: ["Llegué a la tienda", "Elegimos la ropa", "Pagamos en caja", "Tomamos un helado"].
+
+    ########################################
+    # SI TU DIFICULTAD ES "difícil":
+    ########################################
+    - NÚMERO DE EVENTOS: Entre 5 y 6.
+    - TIPO DE EVENTOS: Micro-acciones o matices dentro de una misma escena. El orden solo es deducible si se recuerda la secuencia exacta de la historia.
+    - EJEMPLO GENÉRICO: ["Entramos en la tienda", "Pregunté por la talla", "No la tenían", "Fuimos a otra tienda", "Encontramos la correcta", "Pagamos"].
 
     {feedback_ia}
 
-    REGLAS SEGÚN DIFICULTAD ({dificultad}):
-    - Si es 'fácil': Usa 3 eventos muy separados y claros (ej: Llegada, Actividad principal, Salida).
-    - Si es 'media': Usa 4 eventos que incluyan pasos intermedios de una misma actividad o conversación.
-    - Si es 'difícil': Usa de 5 a 6 eventos muy detallados o matices de una secuencia compleja que requieran recordar exactamente el orden de los hechos (quién habló primero, qué se hizo después de un detalle específico).
+    INFORMACION:
+    - {informacion}
 
-    REGLAS GENERALES:
-    - PERSPECTIVA: La historia la ha escrito la propia persona que juega. Las frases de los eventos deben
-      estar en PRIMERA o SEGUNDA PERSONA. Usa "mi", "mis", "yo", "fui", "llegué", "mi nieto", etc.
-      NUNCA uses "el narrador", "el protagonista", "el abuelo", "la persona", "él/ella" para referirte
-      al autor. Ej: MAL → "El abuelo llegó al parque". BIEN → "Llegué al parque" / "Mi nieto llegó al parque".
-    - Identifica una secuencia lógica de eventos (según la dificultad: 3 para fácil, 4 para media, 5-6 para difícil).
-    - Las frases deben representar acciones o hechos con peso narrativo (quién lo hizo, a dónde se fue, qué ocurrió).
-    - Evita usar frases abstractas, descripciones de ambiente o datos sin una relación secuencial lógica.
-    - El objetivo es que el usuario deba reconstruir la HISTORIA en su mente para ordenar los elementos.
-    - Ponlas en "options" mezcladas (desordenadas).
-    - Ponlas en "correct_answer" en el orden cronológico o lógico exacto según la información.
+    REGLAS QUE APLICAN A TODOS LOS NIVELES:
+    - Escribe en PRIMERA o SEGUNDA persona (mi, mis, yo, fui, llegué...). NUNCA "el narrador", "el protagonista".
+    - Las frases deben representar acciones o hechos concretos, NO descripciones de ambiente.
+    - "options" = los eventos DESORDENADOS.
+    - "correct_answer" = los MISMOS eventos en orden cronológico correcto.
     - VALIDACIÓN CRUZADA: Cada elemento de "correct_answer" DEBE ser idéntico (carácter por carácter) a un elemento de "options".
+    - PROHIBIDO: Frases sin relación de orden, "Evento 1/2/3", etiquetas técnicas.
 
-    PROHIBIDO:
-    - Usar frases que no tengan una relación de orden clara (ej: "Me gusta el azul" y "Tengo 20 años").
-    - Que "correct_answer" tenga frases que no están en "options".
-    - Que las frases en "correct_answer" sean más largas o detalladas que las de "options".
-    - Usar "Evento 1", "Evento 2", etc.
-
-    REGLA DE ORO: No incluyas "Análisis de IA" ni etiquetas técnicas dentro de las frases. El orden debe ser evidente por el contenido.
-
-    ESTRUCTURA JSON REQUERIDA:
+    JSON REQUERIDO (sin nada más):
     {
-      "type": string (siempre "ordering"),
-      "question": string (instrucción para ordenar los elementos),
-      "options": array de strings (datos o frases cortas desordenadas),
-      "correct_answer": array de strings (los mismos elementos en el orden lógico/secuencial correcto),
-      "hint": string (pista sobre el orden),
-      "difficulty": string ("fácil", "media" o "difícil")
+      "type": "ordering",
+      "question": string,
+      "options": array de strings (desordenados),
+      "correct_answer": array de strings (orden correcto),
+      "hint": string,
+      "difficulty": "{dificultad}"
     }
-
-    PROHIBIDO:
-    - Añadir texto antes o después del JSON.
-    - Usar markdown.
-    - Añadir comentarios.
-    - Generar múltiples objetos.
-    - Cambiar las claves del JSON.
-
   expected_output: >
     Un único objeto JSON válido con las claves exactas:
     type, question, options, correct_answer, hint, difficulty.
