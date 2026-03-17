@@ -159,23 +159,24 @@ ordering_task:
     ########################################
     # SI TU DIFICULTAD ES "fácil":
     ########################################
-    - NÚMERO DE EVENTOS: Exactamente 3.
-    - TIPO DE EVENTOS: Muy separados entre sí (principio, medio, final de la historia).
+    - NÚMERO DE OPCIONES en "options": Exactamente 3.
+    - TIPO DE OPCIONES: Muy separadas entre sí (principio, medio, final de la historia).
     - EJEMPLO GENÉRICO: ["Llegué a casa", "Comimos juntos", "Se fue por la tarde"].
 
     ########################################
     # SI TU DIFICULTAD ES "media":
     ########################################
-    - NÚMERO DE EVENTOS: Exactamente 4.
-    - TIPO DE EVENTOS: Pasos intermedios de una misma actividad. Requiere recordar los detalles de la secuencia.
+    - NÚMERO DE OPCIONES en "options": Exactamente 4.
+    - TIPO DE OPCIONES: Pasos intermedios de una misma actividad. Requiere recordar los detalles de la secuencia.
     - EJEMPLO GENÉRICO: ["Llegué a la tienda", "Elegimos la ropa", "Pagamos en caja", "Tomamos un helado"].
 
     ########################################
     # SI TU DIFICULTAD ES "difícil":
     ########################################
-    - NÚMERO DE EVENTOS: Entre 5 y 6.
-    - TIPO DE EVENTOS: Micro-acciones o matices dentro de una misma escena. El orden solo es deducible si se recuerda la secuencia exacta de la historia.
+    - NÚMERO DE OPCIONES en "options": Entre 5 y 6.
+    - TIPO DE OPCIONES: Micro-acciones o matices dentro de una misma escena. El orden solo es deducible si se recuerda la secuencia exacta de la historia.
     - EJEMPLO GENÉRICO: ["Entramos en la tienda", "Pregunté por la talla", "No la tenían", "Fuimos a otra tienda", "Encontramos la correcta", "Pagamos"].
+
 
     {feedback_ia}
 
