@@ -218,12 +218,13 @@ validate_fill_in_the_blank_task:
     Actúa como un revisor técnico literal. No juzgues si la frase es extraña o poco común, solo comprueba si los datos existen en la fuente.
 
     REGLAS DE VALIDACIÓN:
-    1. LITERALIDAD: ¿La frase de la pregunta (ignorando el hueco) existe en la INFORMACIÓN ORIGINAL? Si la frase ha sido inventada o modificada significativamente -> status: "error".
-    2. EXISTENCIA: ¿La "correct_answer" aparece literalmente en el texto original? -> Si no aparece, status: "error".
-    3. FORMATO: ¿El apartado question tiene el "_______"? -> Si no, status: "error".
-    4. COHERENCIA: Si se rellena el hueco con la respuesta, ¿la frase resultante es verdadera según el texto?
+    1. LITERALIDAD: ¿La frase de la pregunta (ignorando el hueco) existe en la INFORMACIÓN ORIGINAL?
+    2. EXISTENCIA: ¿La "correct_answer" aparece literalmente en el texto original?
+    3. RELEVANCIA COGNITIVA: ¿La palabra ocultada es un HECHO, NOMBRE o LUGAR? Si es un adjetivo decorativo (ej: "bueno", "caluroso"), un conector o un verbo genérico -> status: "error".
+    4. PESO DE MEMORIA: Si la palabra puede adivinarse por gramática o contexto trivial (ej: "Me puse el _______ azul") sin conocer la historia -> status: "error".
+    5. COHERENCIA: Si se rellena el hueco con la respuesta, ¿la frase resultante es verdadera según el texto?
     
-    IMPORTANTE: Si la frase existe en el texto, dalo por bueno (status: "ok") aunque gramaticalmente sea simple. Sé objetivo.
+    IMPORTANTE: Rechaza ejercicios que no requieran memoria real del contenido.
 
     RESULTADO (JSON):
     {
@@ -242,10 +243,10 @@ validate_ordering_task:
     INFORMACIÓN ORIGINAL: {informacion_original}
     
     REGLAS DE ORO:
-    1. COMPARACIÓN: Comprueba que el array "correct_answer" y "options" contengan las mismas frases exactas. NO importa si el orden es diferente entre ellos (esto es lo esperado en un ejercicio de ordenar).
-    2. CANTIDAD: Debe haber el mismo número de elementos en ambos listados.
-    3. LITERALIDAD: Cada frase en "correct_answer" debe ser idéntica (letra por letra) a una frase en "options". No se permiten cambios, ni siquiera mínimos.
-    4. Si falta alguna frase, sobra alguna, o hay diferencias en el texto entre arrays -> status: "error
+    1. CRONOLOGÍA: Comprueba que el orden de las frases en "correct_answer" sea el mismo orden cronológico en el que aparecen en la INFORMACIÓN ORIGINAL. Si el orden es incorrecto o ilógico -> status: "error".
+    2. COMPARACIÓN: Comprueba que "correct_answer" y "options" contengan las mismas frases exactas (carácter por carácter).
+    3. CANTIDAD: Debe haber el mismo número de elementos en ambos listados (3 para fácil, 4 para media, 5-6 para difícil).
+    4. RELEVANCIA: Cada frase debe representar un evento con peso en la historia, no detalles triviales de decoración.
     
     RESULTADO (JSON):
     {
@@ -264,23 +265,25 @@ validate_multiple_choice_task:
     EJERCICIO: {ejercicio}
     INFORMACIÓN ORIGINAL: {informacion_original}
     
-    REGLAS DE ORO:
-    1. La respuesta seleccionada por el índice "correct_answer" debe ser VERDADERA según el texto.
-    2. Los "options" (distractores) no deben ser verdaderos según el texto.
-    3. Si la pregunta es ambigua o la respuesta es falsa -> status: "error".
-    4. "Analysis": Respuesta BREVE (1 frase) indicando el error.
-    5. Si options[correct_answer] coincide con la respuesta verdadera según la INFORMACIÓN ORIGINAL, el status DEBE ser "ok".
-    6. No devuelvas status "error" si tu propio análisis concluye que la opción seleccionada es correcta.
-  
-    IMPORTANTE: En ejercicios "multiple_choice", el campo "correct_answer" es un entero que indica la posición de la opción correcta en el array "options".
-    - La indexación empieza en 0.
-    - Debes validar la opción como: options[correct_answer].
-    - Si esa opción es verdadera según el texto → status "ok".
-    - NO interpretes "correct_answer" como texto ni como índice basado en 1.
+    REGLA CRÍTICA DE INDEXACIÓN (0-INDEXED):
+    El campo "correct_answer" SIEMPRE es el índice del array "options", empezando desde 0.
+    Ejemplo de mapeo mental que DEBES seguir:
+    - Si correct_answer es 0 -> La opción es options[0] (la primera).
+    - Si correct_answer es 1 -> La opción es options[1] (la segunda).
+    - Si correct_answer es 2 -> La opción es options[2] (la tercera).
+
+    PASOS DE VALIDACIÓN:
+    1. Identifica qué opción ha marcado el ejercicio como correcta usando el mapeo anterior: options[correct_answer].
+    2. Comprueba si ESE VALOR es verdadero según la INFORMACIÓN ORIGINAL.
+    3. Comprueba que los otros valores en "options" (los distractores) sean falsos o no mencionados.
+    4. Si options[correct_answer] COINCIDE con la verdad del texto -> status: "ok".
+    5. Si options[correct_answer] es FALSO según el texto -> status: "error".
+
+    IMPORTANTE: No te confundas. Si correct_answer es 1, la opción validada es la SEGUNDA de la lista. Si esa segunda opción es la verdad, el ejercicio es correcto.
 
     RESULTADO (JSON):
     {
-      "Analysis": "explicación breve",
+      "Analysis": "explicación breve y técnica del porqué del status",
       "status": "ok" o "error"
     }
 
@@ -310,5 +313,3 @@ corrector_task:
   expected_output: >
     Un objeto JSON con las claves 'analysis' y 'status'.
   agent: "corrector_agent"
-
-
