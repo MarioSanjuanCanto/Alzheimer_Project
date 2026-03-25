@@ -205,8 +205,6 @@ ordering_task:
     type, question, options, correct_answer, hint, difficulty.
   agent: "ordering_agent"
 
-
-
 validate_fill_in_the_blank_task:
   description: >
     Valida un ejercicio de "Rellenar Huecos". 

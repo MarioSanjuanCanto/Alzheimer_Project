@@ -23,6 +23,7 @@ def excercise_correction_endpoint():
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
 
+    # --- Extract exercise data ---
     exercise_data = request.get_json()
     user_id = exercise_data.get('user_id')
     exercise_type = exercise_data.get('exercise_type')
@@ -39,11 +40,12 @@ def excercise_correction_endpoint():
     
     print(f"[app] Correcting exercise for user: {user_id} | Type: {exercise_type} | Result: {resultado}")
 
-   # --- Updating database values ---
+   # --- Evaluate exercise and update database values ---
 
     is_correct = (resultado == 'succeed')
     
     try:        
+        # Update the database
         logic.update_exercise_stats(user_id, exercise_type, is_correct)
         return jsonify({"status": "success", "message": "Exercise stats updated."}), 200
     except Exception as e:
@@ -61,6 +63,7 @@ def fill_in_the_blank_correction_endpoint():
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
 
+    # --- Extract exercise data ---
     exercise_data = request.get_json()
     user_id = exercise_data.get('user_id')
     exercise_type = exercise_data.get('exercise_type')
@@ -78,9 +81,12 @@ def fill_in_the_blank_correction_endpoint():
         }), 400
     
     # --- Exercise correction ---
+
+    # Si la respuesta es la palabra exacta
     if user_answer == correct_answer:
         return jsonify({"status": "correct"}), 200
 
+    # Si la respuesta no es tal cual la palabra exacta, comprobar con agente de ai si se parece a la original
     result = service.correct_fill_in_the_blank(user_answer, correct_answer)
     status = result.get('status')
 

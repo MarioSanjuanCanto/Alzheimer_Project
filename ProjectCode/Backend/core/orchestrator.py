@@ -81,7 +81,7 @@ class Orchestrator:
                 if validation.get('status') == 'ok':
                     exercises.append(exercise)
                     status = 'ok'
-                elif i >= 3:
+                elif i == 2:
                     exercises.append(exercise)
                     status = 'failed - last one chosen'
                 else:
