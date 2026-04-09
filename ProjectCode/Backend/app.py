@@ -96,16 +96,6 @@ def fill_in_the_blank_correction_endpoint():
         feedback_msg = result.get('analysis', result.get('Analysis', ''))
         return jsonify({"status": "incorrect", "feedback": feedback_msg}), 200
 
-@app.route('/api/test', methods=['GET'])
-def test_endpoint():
-    """Test endpoint to verify that the API is working."""
-    print("[app] test_endpoint")
-    
-    return jsonify({
-        "message": "The exercise generation API is active.",
-        "usage": "Send a POST request to /api/generate_exercise with the memory data."
-    })
-
 @app.route('/api/generate_exercise', methods=['POST'])
 def generate_exercise_endpoint():
     """
@@ -137,6 +127,16 @@ def generate_exercise_endpoint():
         print("[app] Answer: " + str(exercise_set) + " | Type: " + str(type(exercise_set)))
         return jsonify(exercise_set)
 
+
+@app.route('/api/test', methods=['GET'])
+def test_endpoint():
+    """Test endpoint to verify that the API is working."""
+    print("[app] test_endpoint")
+    
+    return jsonify({
+        "message": "The exercise generation API is active.",
+        "usage": "Send a POST request to /api/generate_exercise with the memory data."
+    })
 
 if __name__ == '__main__':
     print("Starting Cognitive Exercise Generation API...")

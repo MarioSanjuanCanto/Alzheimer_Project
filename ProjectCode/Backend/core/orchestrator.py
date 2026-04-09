@@ -99,7 +99,7 @@ class Orchestrator:
 
         # Now we can determine the strategy based on the user's performance
         user_stats = user_stats[0]
-
+        
         if user_stats["multiple_choice_done"] >= 15 or user_stats["fill_in_the_blank_done"] >= 15 or user_stats["ordering_done"] >= 15:
             db.reset_user_stats(user_id)
 
