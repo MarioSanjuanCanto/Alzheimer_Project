@@ -12,11 +12,13 @@ from agents.validation.corrector import CorrectorAgent
 
 import database.db as db
 import os
+import yaml
 
 class Orchestrator:
     def __init__(self):
         print("[orchestrator] orquestrator initialized")
         # 1) Path to config file with agents info
+
         # Obtener ruta absoluta del archivo actual (core/selector.py)
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -50,6 +52,11 @@ class Orchestrator:
             "ordering": {"type", "question", "options", "correct_answer", "hint", "difficulty"}
         }
 
+
+        # Save the path to the custom flows
+        self.custom_flows_path = os.path.join(backend_dir, "flows")
+
+    # --- Main pipeline ---
     def run_pipeline(self, title: str, description: str, analysis: str, exercise_types: List[str], user_id: str) -> Dict[str, Any]:
         # A) adapt memory for each exercise type
         selected = self.selector.select(title, description, analysis, exercise_types)
@@ -119,3 +126,88 @@ class Orchestrator:
     def correct_fill_in_the_blank(self, user_answer: str, correct_answer:str):
         result = self.validators.get("corrector").correct_exercise(user_answer, correct_answer)
         return result
+
+    # --- Visual flow functions ---
+    def run_custom_pipeline(self, flow_doc, user_id, title: str, description: str, analysis: str, exercise_types):
+        
+        nodes = []
+        edges = []
+        # Open the .yaml
+        with open(os.path.join(self.custom_flows_path, flow_doc), 'r') as f:
+            flow = yaml.safe_load(f)
+            nodes = flow["nodes"]
+            edges = flow["edges"]
+
+            if not nodes or not edges:
+                raise Exception("No nodes or edges passed in the .yaml file")
+
+        node_results = {}
+        
+        for node in nodes:
+            if node["type"] == "selector":
+                node_results[node["id"]] = {"type":"selector", "agent": selector(), "params": {}}
+            elif node["type"] == "generator":
+                if node["ex_type"] == "ordering":
+                    node_results[node["id"]] = {"type":"generator", "ex_type": "ordering", "agent": OrderingAgent(self.config_path), "params": {}}
+                elif node["ex_type"] == "multiple_choice":
+                    node_results[node["id"]] = {"type":"generator", "ex_type": "multiple_choice", "agent": MultipleChoiceAgent(self.config_path), "params": {}}
+                elif node["ex_type"] == "fill_in_the_blank":
+                    node_results[node["id"]] = {"type":"generator", "ex_type": "fill_in_the_blank", "agent": FillInTheBlankAgent(self.config_path), "params": {}}
+            elif node["type"] == "validator":
+                node_results[node["id"]] = {"type":"validator", "agent": VerificadorAgent(self.config_path), "params": {}}
+        
+        outputs = {}
+
+        for edge in edges:
+            source_id = edge["from"]
+            target_id = edge["to"]
+
+            # 1. Si el origen no se ha ejecutado (ej: el Selector al inicio), lo ejecutamos
+            if source_id not in outputs:
+                source_node = node_results[source_id]
+                if source_node["type"] == "selector":
+                    outputs[source_id] = self.run_selector(title, description, analysis, exercise_types)
+                # Aquí podrías añadir más tipos de nodos iniciales si existieran
+
+            # 2. Cogemos el output del origen para dárselo al destino
+            data_from_source = outputs[source_id]
+            target_node = node_results[target_id]
+
+            # 3. Ejecutamos el destino (si no se ha ejecutado ya por otro cable)
+            if target_id not in outputs:
+                if target_node["type"] == "generator":
+                    ex_type = target_node["ex_type"]
+                    # Filtramos la data si viene de un selector
+                    gen_input = data_from_source.get(ex_type) if isinstance(data_from_source, dict) else data_from_source
+                    
+                    outputs[target_id] = self.run_generator(ex_type, gen_input, feedback="", difficulty="media")
+                    print(f"--- Nodo {target_id} ({ex_type}) ejecutado ---")
+
+                elif target_node["type"] == "validator":
+                    # El validador recibe lo que soltó el nodo anterior
+                    # Tienes que saber el ex_type (puedes guardarlo en el nodo origen o pasarlo en el edge)
+                    outputs[target_id] = self.run_validator("verificador", "multiple_choice", data_from_source, "info_referencia")
+                    print(f"--- Nodo {target_id} validado ---")
+                    
+        return outputs
+
+        
+
+
+    def run_selector(self, title, description, analysis, exercise_types):
+        return self.selector.select(title, description, analysis, exercise_types)
+    
+    def run_generator(self, ex_type, data, feedback, difficulty):
+        gen = self.generators.get(ex_type)
+        if not gen:
+            return None
+        return gen.generate(data, feedback, difficulty)
+
+    def run_validator(self, val_type, ex_type, exercise, data):
+        val = self.validators.get(val_type)
+        if not val:
+            return None
+        
+        structure = self.structures.get(ex_type)
+        
+        return val.validate(exercise, data, structure)
