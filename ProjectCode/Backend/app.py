@@ -1,11 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import logic
+import database.db as db
 from services.exercise_service import ExerciseService
-
-# ______________________________________ Global Objects ______________________________________
-
-service = ExerciseService()
 
 # ______________________________________ API END Points ______________________________________
 
@@ -46,7 +42,7 @@ def excercise_correction_endpoint():
     
     try:        
         # Update the database
-        logic.update_exercise_stats(user_id, exercise_type, is_correct)
+        db.update_user_stats(user_id, exercise_type, is_correct)
         return jsonify({"status": "success", "message": "Exercise stats updated."}), 200
     except Exception as e:
         print(f"[app] Error updating user stats: {e}")
@@ -58,6 +54,9 @@ def fill_in_the_blank_correction_endpoint():
     Endpoint to correct the fill in the blank exercise using an agent
     """
     print("[app] fill_in_the_blank_correction_endpoint")
+
+    # --- Inicializar el service una vez por llamada ---
+    service = ExerciseService()
 
     # --- Request Input validation ---
     if not request.is_json:
@@ -103,6 +102,9 @@ def generate_exercise_endpoint():
     """
     print("[app] generate_exercise_endpoint")
 
+    # --- Inicializar el service una vez por llamada ---
+    service = ExerciseService()
+
     # --- Request Input validation ---
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
@@ -120,7 +122,7 @@ def generate_exercise_endpoint():
     exercise_set = service.generate(user_id, memory_data['title'], memory_data['user_description'], memory_data.get("ai_analysis", {}), exercise_types)
     
     if not exercise_set or exercise_set == "":
-        return logic.generate_fallback_exercises(memory_data, count=3)
+        return service.generate_fallback_exercises(memory_data, count=3)
     else: 
         exercise_set = {"exercises": exercise_set}
 
