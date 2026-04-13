@@ -6,7 +6,7 @@ from utils.json_utils import parse_llm_json
 
 class MultipleChoiceAgent:
   def __init__(self, config_path):
-    print("[multiple_choice_agent] initialized")
+    print("\033[94m[multiple_choice_agent]\033[0m initialized")
     self.config_path = config_path
 
   def refresh(self):
@@ -29,7 +29,7 @@ class MultipleChoiceAgent:
     self.task = Task(**tasks_config["multiple_choice_task"])
 
   def generate(self, data:dict, validation="", difficulty="media"):
-    print(f"[multiple_choice_agent] Generating exercise")
+    print(f"\033[94m[multiple_choice_agent]\033[0m Generating exercise")
     self.refresh()
     if validation != "":
       validation = "COSAS A MEJORAR: " + validation
@@ -48,12 +48,12 @@ class MultipleChoiceAgent:
         "dificultad": difficulty
         })
 
-        print("[multiple_choice_agent] Raw: " + str(result.raw))
+        print("\033[94m[multiple_choice_agent]\033[0m Raw: " + str(result.raw))
         result = result.raw.strip()
         parsed = parse_llm_json(result)
         parsed["type"] = "multiple_choice"
 
         return parsed
     except Exception as e:
-        print(f"[multiple_choice_agent] Error: {e}")
+        print(f"\033[94m[multiple_choice_agent]\033[0m Error: {e}")
         return {}

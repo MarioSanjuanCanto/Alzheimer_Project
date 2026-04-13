@@ -6,7 +6,7 @@ from utils.json_utils import parse_llm_json
 
 class CorrectorAgent:
     def __init__(self, config_path):
-        print("[corrector] initialized")
+        print("\033[95m[corrector]\033[0m initialized")
         self.config_path = config_path
 
     def refresh(self):
@@ -29,7 +29,7 @@ class CorrectorAgent:
         task_name = "corrector_task"
         if task_name not in tasks_config:
              # Fallback simple si no existe la específica
-             print(f"[corrector_agent] Advertencia: No existe la tarea {task_name}")
+             print(f"\033[95m[corrector_agent]\033[0m Advertencia: No existe la tarea {task_name}")
              return False
 
         tasks_config[task_name]["agent"] = self.agent
@@ -37,7 +37,7 @@ class CorrectorAgent:
         return True
 
     def correct_exercise(self, user_answer: str, correct_answer:str):
-        print("[corrector] Validating exercises")
+        print("\033[95m[corrector]\033[0m Validating exercises")
 
         # Call the agent
         if not self.refresh():
@@ -56,11 +56,11 @@ class CorrectorAgent:
                 "user_answer": user_answer
             })
 
-            print("[corrector] Raw: " + str(result.raw))
+            print("\033[95m[corrector]\033[0m Raw: " + str(result.raw))
             result = result.raw.strip()
             parsed = parse_llm_json(result)
 
             return parsed
         except Exception as e:
-            print(f"[corrector] Error: {e}")
+            print(f"\033[95m[corrector]\033[0m Error: {e}")
             return {"status": "error", "Analysis": "Error en el proceso de corrección."}

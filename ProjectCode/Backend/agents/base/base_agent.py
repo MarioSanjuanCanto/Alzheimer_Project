@@ -8,7 +8,7 @@ class BaseAgent:
     def __init__(self, name):
         self.name = name
         self.client = OpenAI(api_key = os.getenv("OPENROUTER_API_KEY"), base_url=os.getenv("OPENROUTER_URL"))
-        print(f"[BaseAgent] {self.name} initialized")
+        print(f"\033[95m[BaseAgent]\033[0m {self.name} initialized")
 
 
     def _call_llm(self, prompt, model="openrouter/free"):

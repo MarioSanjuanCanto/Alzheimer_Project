@@ -6,7 +6,7 @@ from utils.json_utils import parse_llm_json
 
 class FillInTheBlankAgent:
   def __init__(self, config_path):
-    print("[fill_in_the_blank_agent] initialized")
+    print("\033[94m[fill_in_the_blank_agent]\033[0m initialized")
     self.config_path = config_path
 
   def refresh(self):
@@ -30,7 +30,7 @@ class FillInTheBlankAgent:
     self.task = Task(**tasks_config["fill_in_the_blank_task"])
 
   def generate(self, data:dict, validation="", difficulty="media"):
-    print(f"[fill_in_the_blank_agent] Generating exercise")
+    print(f"\033[94m[fill_in_the_blank_agent]\033[0m Generating exercise")
     self.refresh()
 
     if validation != "":
@@ -50,7 +50,7 @@ class FillInTheBlankAgent:
         "dificultad": difficulty
         })
         
-        print("[fill_in_the_blank_agent] Raw: " + str(result.raw))
+        print("\033[94m[fill_in_the_blank_agent]\033[0m Raw: " + str(result.raw))
         result = result.raw.strip()
         parsed = parse_llm_json(result)
 
@@ -63,5 +63,5 @@ class FillInTheBlankAgent:
         
         return parsed
     except Exception as e:
-        print(f"[fill_in_the_blank_agent] Error: {e}")
+        print(f"\033[94m[fill_in_the_blank_agent]\033[0m Error: {e}")
         return {}

@@ -17,18 +17,18 @@ def init():
 
 # _______________ User functions  _______________
 def get_users():
-    print("[db] get_users")
+    print("\033[92m[db]\033[0m get_users")
     response = client.table("users").select("*").execute()
     return response.data
 
 def get_user_info(id:str):
-    print("[db] get_user_info")
+    print("\033[92m[db]\033[0m get_user_info")
     response = client.table("users").select("*").eq("id", id).execute()
     return response.data
 
 # _______________ User stats functions  _______________
 def reset_user_stats_table():
-    print("[db] get_user_parsed_info")
+    print("\033[92m[db]\033[0m get_user_parsed_info")
     users = get_users()
 
     for i, user in enumerate(users):
@@ -47,7 +47,7 @@ def reset_user_stats_table():
     return {"status": "success"}
 
 def reset_user_stats(id:str):
-    print("[db] reset_user_stats")
+    print("\033[92m[db]\033[0m reset_user_stats")
     response = client.table("user_stats").update({
         "multiple_choice_done" : 0,
         "multiple_choice_right" : 0,
@@ -59,12 +59,12 @@ def reset_user_stats(id:str):
     return response.data
 
 def get_user_stats(id:str):
-    print("[db] get_user_stats")
+    print("\033[92m[db]\033[0m get_user_stats")
     response = client.table("user_stats").select("*").eq("id", id).execute()
     return response.data
 
 def add_new_user_stats(id:str):
-    print("[db] add_new_user_stats")
+    print("\033[92m[db]\033[0m add_new_user_stats")
     user = get_user_info(id)
 
     info = {
@@ -81,12 +81,12 @@ def add_new_user_stats(id:str):
     return response.data
 
 def delete_user_stats(id:str):
-    print("[db] delete_user_stats")
+    print("\033[92m[db]\033[0m delete_user_stats")
     response = client.table("user_stats").delete().eq("id", id).execute()
     return response.data
 
 def update_user_stats(id:str, exercise_type:str, correct:bool):
-    print("[db] update_user_stats")
+    print("\033[92m[db]\033[0m update_user_stats")
     user_stats = get_user_stats(id)
     if not user_stats or user_stats == []:
         return
@@ -113,6 +113,6 @@ def update_user_stats(id:str, exercise_type:str, correct:bool):
 client = init()
 
 if __name__ == "__main__":
-    print("[db] Debugging")
+    print("\033[92m[db]\033[0m Debugging")
     
     

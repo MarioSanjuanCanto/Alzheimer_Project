@@ -13,7 +13,7 @@ def excercise_correction_endpoint():
     """
     Endpoint to correct cognitive exercises from memory data.
     """
-    print("[app] excercise_correction_endpoint")
+    print("\033[91m[app]\033[0m excercise_correction_endpoint")
 
     # --- Request Input validation ---
     if not request.is_json:
@@ -34,7 +34,7 @@ def excercise_correction_endpoint():
             "error": "JSON must contain 'user_id'."
         }), 400
     
-    print(f"[app] Correcting exercise for user: {user_id} | Type: {exercise_type} | Result: {resultado}")
+    print(f"\033[91m[app]\033[0m Correcting exercise for user: {user_id} | Type: {exercise_type} | Result: {resultado}")
 
    # --- Evaluate exercise and update database values ---
 
@@ -45,7 +45,7 @@ def excercise_correction_endpoint():
         db.update_user_stats(user_id, exercise_type, is_correct)
         return jsonify({"status": "success", "message": "Exercise stats updated."}), 200
     except Exception as e:
-        print(f"[app] Error updating user stats: {e}")
+        print(f"\033[91m[app]\033[0m Error updating user stats: {e}")
         return jsonify({"error": "Could not update user stats."}), 500
 
 @app.route('/api/excercise_correction/fill_in_the_blank', methods=['POST'])
@@ -53,7 +53,7 @@ def fill_in_the_blank_correction_endpoint():
     """
     Endpoint to correct the fill in the blank exercise using an agent
     """
-    print("[app] fill_in_the_blank_correction_endpoint")
+    print("\033[91m[app]\033[0m fill_in_the_blank_correction_endpoint")
 
     # --- Inicializar el service una vez por llamada ---
     service = ExerciseService()
@@ -100,7 +100,7 @@ def generate_exercise_endpoint():
     """
     Endpoint to generate cognitive exercises from memory data.
     """
-    print("[app] generate_exercise_endpoint")
+    print("\033[91m[app]\033[0m generate_exercise_endpoint")
 
     # --- Inicializar el service una vez por llamada ---
     service = ExerciseService()
@@ -126,14 +126,14 @@ def generate_exercise_endpoint():
     else: 
         exercise_set = {"exercises": exercise_set}
 
-        print("[app] Answer: " + str(exercise_set) + " | Type: " + str(type(exercise_set)))
+        print("\033[91m[app]\033[0m Answer: " + str(exercise_set) + " | Type: " + str(type(exercise_set)))
         return jsonify(exercise_set)
 
 
 @app.route('/api/test', methods=['GET'])
 def test_endpoint():
     """Test endpoint to verify that the API is working."""
-    print("[app] test_endpoint")
+    print("\033[91m[app]\033[0m test_endpoint")
     
     return jsonify({
         "message": "The exercise generation API is active.",

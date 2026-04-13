@@ -16,7 +16,7 @@ import yaml
 
 class Orchestrator:
     def __init__(self):
-        print("[orchestrator] orquestrator initialized")
+        print("\033[93m[orchestrator]\033[0m orquestrator initialized")
         # 1) Path to config file with agents info
 
         # Obtener ruta absoluta del archivo actual (core/selector.py)
@@ -27,7 +27,6 @@ class Orchestrator:
 
         # Construir ruta absoluta a config/agents.yaml
         self.config_path = os.path.join(backend_dir, "config")
-
 
         # 2) Selector
         self.selector = selector()
@@ -52,16 +51,16 @@ class Orchestrator:
             "ordering": {"type", "question", "options", "correct_answer", "hint", "difficulty"}
         }
 
-
-
     # --- Main pipeline ---
     def run_pipeline(self, title: str, description: str, analysis: str, exercise_types: List[str], user_id: str) -> Dict[str, Any]:
+        print("\033[93m[orchestrator]\033[0m Running generation pipeline")
+
         # A) adapt memory for each exercise type
         selected = self.selector.select(title, description, analysis, exercise_types)
 
         # B) Generate exercises
         difficulty = self.get_user_difficulty(user_id)
-        print("[orchestrator] Difficulty: ", difficulty)
+        print("\033[93m[orchestrator]\033[0m Difficulty: ", difficulty)
 
         exercises = []
         for ex_type in exercise_types:
@@ -75,9 +74,9 @@ class Orchestrator:
 
             while status == 'error' and i < 3:
                 # C) Generate exercise
-                print(f"[orchestrator] Generating {ex_type}")
+                print(f"\033[93m[orchestrator]\033[0m Generating {ex_type}")
                 data = selected.get(ex_type, f'{title}: {description}')
-                print(f"[orchestrator] Selected: {data}\n\n")
+                print(f"\033[93m[orchestrator]\033[0m Selected: {data}\n\n")
                 exercise = gen.generate(data, validation.get("Analysis", ""), difficulty.get(ex_type, "media"))
 
                 # D) Validate exercise
@@ -90,12 +89,13 @@ class Orchestrator:
                     exercises.append(exercise)
                     status = 'failed - last one chosen'
                 else:
-                    print(f"[orquestrator] Error detected, feedback received: {validation.get('Analysis','')}")
+                    print(f"\033[93m[orquestrator]\033[0m Error detected, feedback received: {validation.get('Analysis','')}")
                     i += 1
 
         return exercises
 
     def get_user_difficulty(self, user_id:str):
+        print("\033[93m[orchestrator]\033[0m get_user_difficulty")
         user_stats = db.get_user_stats(user_id)
 
         if not user_stats or user_stats == []:
@@ -122,5 +122,6 @@ class Orchestrator:
             return "difícil"
 
     def correct_fill_in_the_blank(self, user_answer: str, correct_answer:str):
+        print("\033[93m[orchestrator]\033[0m correct_fill_in_the_blank")
         result = self.validators.get("corrector").correct_exercise(user_answer, correct_answer)
         return result

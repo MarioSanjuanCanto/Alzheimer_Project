@@ -6,7 +6,7 @@ from utils.json_utils import parse_llm_json
 
 class OrderingAgent:
     def __init__(self, config_path):
-        print("[ordering_agent] initialized")
+        print("\033[94m[ordering_agent]\033[0m initialized")
         self.config_path = config_path
 
     def refresh(self):
@@ -30,7 +30,7 @@ class OrderingAgent:
         self.task = Task(**tasks_config["ordering_task"])
 
     def generate(self, data:dict, validation="", difficulty="media"):
-        print(f"[ordering_agent] Generating exercise")
+        print(f"\033[94m[ordering_agent]\033[0m Generating exercise")
         self.refresh()
         
         if validation != "":
@@ -50,12 +50,12 @@ class OrderingAgent:
             "dificultad": difficulty
             })
 
-            print("[ordering_agent] Raw: " + str(result.raw))
+            print("\033[94m[ordering_agent]\033[0m Raw: " + str(result.raw))
             result = result.raw.strip()
             parsed = parse_llm_json(result)
             parsed["type"] = "ordering"
 
             return parsed
         except Exception as e:
-            print(f"[ordering_agent] Error: {e}")
+            print(f"\033[94m[ordering_agent]\033[0m Error: {e}")
             return {}

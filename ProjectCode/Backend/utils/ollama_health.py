@@ -11,7 +11,7 @@ load_dotenv()
 
 
 def test_selector_agent():
-    print("[test_selector_agent] Testing selector agent")
+    print("\033[97m[test_selector_agent]\033[0m Testing selector agent")
 
     # _____________ LLM con temperature=0 para consistencia _____________
     llm = LLM(
@@ -72,13 +72,13 @@ def test_selector_agent():
         result = selector_crew.kickoff()
 
         result = result.raw.strip()
-        print("[ollama_health] RAW result: " + result)
+        print("\033[97m[ollama_health]\033[0m RAW result: " + result)
     except Exception as e:
-        print(f"[ollama_health] Error: {e}")
+        print(f"\033[97m[ollama_health]\033[0m Error: {e}")
         return {}
 
 def test_ordering_agent():
-    print("[test_ordering_agent] Testing ordering agent")
+    print("\033[97m[test_ordering_agent]\033[0m Testing ordering agent")
 
     # _____________ LLM con temperature=0 para consistencia _____________
     llm = LLM(
@@ -177,13 +177,13 @@ def test_ordering_agent():
         result = ordering_crew.kickoff()
 
         result = result.raw.strip()
-        print("[ollama_health] RAW result: " + result)
+        print("\033[97m[ollama_health]\033[0m RAW result: " + result)
     except Exception as e:
-        print(f"[ollama_health] Error: {e}")
+        print(f"\033[97m[ollama_health]\033[0m Error: {e}")
         return {}
 
 def test_verificador_agent():
-    print("[test_verificador_agent] Testing verificador agent")
+    print("\033[97m[test_verificador_agent]\033[0m Testing verificador agent")
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     # Subir un nivel (Backend/)

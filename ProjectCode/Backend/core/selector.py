@@ -8,7 +8,7 @@ load_dotenv()
 
 class selector:
     def __init__(self):
-        print("[selector] initialized")
+        print("\033[96m[selector]\033[0m initialized")
         current_dir = os.path.dirname(os.path.abspath(__file__))
         backend_dir = os.path.dirname(current_dir)
         self.config_path = os.path.join(backend_dir, "config")
@@ -33,7 +33,7 @@ class selector:
         self.selector_task = Task(**tasks_config["select_task"])
 
     def select(self, title, description, analysis, exercise_types):
-        print(f"[selector] Selecting content for: {exercise_types}")
+        print(f"\033[96m[selector]\033[0m Selecting content for: {exercise_types}")
         self.refresh()
 
         try:
@@ -50,11 +50,11 @@ class selector:
             "analysis": analysis,
             "exercise_types": exercise_types
            })
-           print("[selector] Raw: " + str(result.raw))
+           print("\033[96m[selector]\033[0m Raw: " + str(result.raw))
            result = result.raw.strip()
            parsed = json.loads(result)
 
            return parsed
         except Exception as e:
-            print(f"[selector] Error: {e}")
+            print(f"\033[96m[selector]\033[0m Error: {e}")
             return {etype: f"{title}: {description}" for etype in exercise_types}

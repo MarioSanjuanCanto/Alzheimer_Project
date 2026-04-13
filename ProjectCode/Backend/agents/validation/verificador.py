@@ -6,7 +6,7 @@ from utils.json_utils import parse_llm_json
 
 class VerificadorAgent:
     def __init__(self, config_path):
-        print("[verificador_agent] initialized")
+        print("\033[95m[verificador_agent]\033[0m initialized")
         self.config_path = config_path
 
     def refresh(self, exercise_type):
@@ -29,7 +29,7 @@ class VerificadorAgent:
         task_name = f"validate_{exercise_type}_task"
         if task_name not in tasks_config:
              # Fallback simple si no existe la específica
-             print(f"[verificador_agent] Advertencia: No existe la tarea {task_name}")
+             print(f"\033[95m[verificador_agent]\033[0m Advertencia: No existe la tarea {task_name}")
              return False
 
         tasks_config[task_name]["agent"] = self.agent
@@ -37,12 +37,12 @@ class VerificadorAgent:
         return True
 
     def validate(self, exercise: dict, original_information: str, structure:dict):
-        print("[verificador_agent] Validating exercises")
+        print("\033[95m[verificador_agent]\033[0m Validating exercises")
 
         # First thing verify the structure
         for key in structure:
             if key not in exercise:
-                print(f"[verificador_agent] Error: Falta el apartado llamado {key}")
+                print(f"\033[95m[verificador_agent]\033[0m Error: Falta el apartado llamado {key}")
                 return {"status": "error", "Analysis": f"Estructura incorrecta, falta el apartado llamado {key}"}
 
         # Call the agent
@@ -63,11 +63,11 @@ class VerificadorAgent:
                 "informacion_original": original_information
             })
 
-            print("[verificador_agent] Raw: " + str(result.raw))
+            print("\033[95m[verificador_agent]\033[0m Raw: " + str(result.raw))
             result = result.raw.strip()
             parsed = parse_llm_json(result)
 
             return parsed
         except Exception as e:
-            print(f"[verificador_agent] Error: {e}")
+            print(f"\033[95m[verificador_agent]\033[0m Error: {e}")
             return {"status": "error", "Analysis": "Error en el proceso de validación."}
