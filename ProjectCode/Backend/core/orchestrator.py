@@ -156,17 +156,22 @@ class Orchestrator:
             elif node["type"] == "validator":
                 node_results[node["id"]] = {"type":"validator", "agent": VerificadorAgent(self.config_path), "params": {}}
         
+
         outputs = {}
 
         for edge in edges:
             source_id = edge["from"]
             target_id = edge["to"]
 
+            print(f"--- Edge: {source_id} -> {target_id} ---")
+
             # 1. Si el origen no se ha ejecutado (ej: el Selector al inicio), lo ejecutamos
             if source_id not in outputs:
                 source_node = node_results[source_id]
                 if source_node["type"] == "selector":
+                    print(f"--- Nodo {source_id} (selector) inicio ---")
                     outputs[source_id] = self.run_selector(title, description, analysis, exercise_types)
+                    print(f"--- Nodo {source_id} (selector) fin ---")
                 # Aquí podrías añadir más tipos de nodos iniciales si existieran
 
             # 2. Cogemos el output del origen para dárselo al destino
@@ -176,19 +181,34 @@ class Orchestrator:
             # 3. Ejecutamos el destino (si no se ha ejecutado ya por otro cable)
             if target_id not in outputs:
                 if target_node["type"] == "generator":
+                    print(f"--- Nodo {target_id} ({ex_type}) inicio ---")
                     ex_type = target_node["ex_type"]
                     # Filtramos la data si viene de un selector
                     gen_input = data_from_source.get(ex_type) if isinstance(data_from_source, dict) else data_from_source
                     
-                    outputs[target_id] = self.run_generator(ex_type, gen_input, feedback="", difficulty="media")
-                    print(f"--- Nodo {target_id} ({ex_type}) ejecutado ---")
+                    exercise_result = self.run_generator(ex_type, gen_input, feedback="", difficulty="media")
+                    
+                    outputs[target_id] = {
+                        "exercise": exercise_result,
+                        "ex_type": ex_type,
+                        "selector_id": source_id
+                    }
+                    print(f"--- Nodo {target_id} ({ex_type}) fin ---")
 
                 elif target_node["type"] == "validator":
-                    # El validador recibe lo que soltó el nodo anterior
-                    # Tienes que saber el ex_type (puedes guardarlo en el nodo origen o pasarlo en el edge)
-                    outputs[target_id] = self.run_validator("verificador", "multiple_choice", data_from_source, "info_referencia")
-                    print(f"--- Nodo {target_id} validado ---")
-                    
+                    print(f"--- Nodo {target_id} (validator) inicio ---")
+                    # Extraer info del paquete del generador
+                    exercise = data_from_source["exercise"]
+                    ex_type = data_from_source["ex_type"]
+                    selector_id = data_from_source["selector_id"]
+     
+                    # Coger info original del selector
+                    selector_output = outputs.get(selector_id)
+                    original_data = selector_output.get(ex_type) if isinstance(selector_output, dict) else selector_output
+
+                    outputs[target_id] = self.run_validator("verificador", ex_type, exercise, original_data)
+                    print(f"--- Nodo {target_id} validado. Status: {outputs[target_id].get('status')} ---")
+
         return outputs
 
         
