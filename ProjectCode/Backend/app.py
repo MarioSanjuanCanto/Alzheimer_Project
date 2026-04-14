@@ -5,6 +5,7 @@ from services.exercise_service import ExerciseService
 
 # ______________________________________ API END Points ______________________________________
 
+print("\033[42m[INFO] Server initialized\033[0m")
 app = Flask(__name__)
 CORS(app)
 
@@ -118,16 +119,21 @@ def generate_exercise_endpoint():
         }), 400
 
     # --- Exercise generation logic ---
-    exercise_types = ["multiple_choice", "fill_in_the_blank", "ordering"]
-    exercise_set = service.generate(user_id, memory_data['title'], memory_data['user_description'], memory_data.get("ai_analysis", {}), exercise_types)
-    
-    if not exercise_set or exercise_set == "":
-        return service.generate_fallback_exercises(memory_data, count=3)
-    else: 
-        exercise_set = {"exercises": exercise_set}
+    try:
+        exercise_types = ["multiple_choice", "fill_in_the_blank", "ordering"]
+        exercise_set = service.generate(user_id, memory_data['title'], memory_data['user_description'], memory_data.get("ai_analysis", {}), exercise_types)
+        
+        if not exercise_set or exercise_set == "":
+            return jsonify(service.generate_fallback_exercises(memory_data, count=3))
+        else: 
+            exercise_set = {"exercises": exercise_set}
 
-        print("\033[91m[app]\033[0m Answer: " + str(exercise_set) + " | Type: " + str(type(exercise_set)))
-        return jsonify(exercise_set)
+            print("\033[91m[app]\033[0m Answer: " + str(exercise_set) + " | Type: " + str(type(exercise_set)))
+            return jsonify(exercise_set)
+    except Exception as e:
+        print(f"\033[91m[app]\033[0m Error generating exercises: {e}")
+        print(f"\033[91m[app]\033[0m Generating fallback exercises:")
+        return jsonify(service.generate_fallback_exercises(memory_data, count=3))
 
 @app.route('/api/test', methods=['GET'])
 def test_endpoint():

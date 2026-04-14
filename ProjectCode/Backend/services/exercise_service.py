@@ -1,11 +1,15 @@
 from core.orchestrator import Orchestrator
+import random
+import re
 
 class ExerciseService:
     # _____ Default Agents Flow _____    
     def __init__(self):
+        print("\033[32m[ExerciseService]\033[0m Initializing ExerciseService")
         self.orchestrator = Orchestrator()
 
     def generate(self, user_id, title: str, description: str, analysis: str, exercise_types):
+        print("\033[32m[ExerciseService]\033[0m Generating exercises")
         return self.orchestrator.run_pipeline(
             title=title,
             description=description,
@@ -15,11 +19,12 @@ class ExerciseService:
         )
     
     def correct_fill_in_the_blank(self, user_answer: str, correct_answer:str):
+        print("\033[32m[ExerciseService]\033[0m Correcting fill in the blank")
         return self.orchestrator.correct_fill_in_the_blank(user_answer, correct_answer)
         
     def generate_fallback_exercises(self, memory_data, count=1):
         """Generates fallback exercises dynamically if the AI fails."""
-        print(f"[logic] generate_fallback_exercises_dynamic(count={count})")
+        print("\033[32m[ExerciseService]\033[0m Generating fallback exercises")
 
         title = memory_data.get('title', 'este recuerdo')
         description = memory_data.get('user_description', '')
