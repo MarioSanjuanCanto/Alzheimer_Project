@@ -129,7 +129,6 @@ def generate_exercise_endpoint():
         print("\033[91m[app]\033[0m Answer: " + str(exercise_set) + " | Type: " + str(type(exercise_set)))
         return jsonify(exercise_set)
 
-
 @app.route('/api/test', methods=['GET'])
 def test_endpoint():
     """Test endpoint to verify that the API is working."""
