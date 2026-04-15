@@ -32,8 +32,8 @@ class selector:
         tasks_config["select_task"]["agent"] = self.selector_agent
         self.selector_task = Task(**tasks_config["select_task"])
 
-    def select(self, title, description, analysis, exercise_types):
-        print(f"\033[96m[selector]\033[0m Selecting content for: {exercise_types}")
+    def select(self, title, description, analysis, distribution):
+        print(f"\033[96m[selector]\033[0m Selecting content for distribution: {distribution}")
         self.refresh()
 
         try:
@@ -48,13 +48,19 @@ class selector:
             "title": title,
             "description": description,
             "analysis": analysis,
-            "exercise_types": exercise_types
+            "exercise_types": distribution
            })
            print("\033[96m[selector]\033[0m Raw: " + str(result.raw))
            result = result.raw.strip()
            parsed = json.loads(result)
 
-           return parsed
+           # Expect a JSON array, one item per slot
+           if isinstance(parsed, list):
+               return parsed
+
+           # Fallback: if returned a dict (old format), map distribution to list
+           return [parsed.get(ex_type, f"{title}: {description}") for ex_type in distribution]
+
         except Exception as e:
             print(f"\033[96m[selector]\033[0m Error: {e}")
-            return {etype: f"{title}: {description}" for etype in exercise_types}
+            return [f"{title}: {description}" for _ in distribution]

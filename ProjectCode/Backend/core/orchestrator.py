@@ -55,31 +55,31 @@ class Orchestrator:
     def run_pipeline(self, title: str, description: str, analysis: str, user_id: str) -> Dict[str, Any]:
         print("\033[93m[orchestrator]\033[0m Running generation pipeline")
 
-        exercise_types = ["multiple_choice", "fill_in_the_blank", "ordering"]
-
-        # A) adapt memory for each exercise type
-        selected = self.selector.select(title, description, analysis, exercise_types)
-
-        # B) Generate exercises
+        # A) Get distribution first (needed to select different content per slot)
         difficulty, distribution = self.get_user_difficulty(user_id)
         print("\033[93m[orchestrator]\033[0m Difficulty: ", difficulty)
 
+        # B) Select different content for each slot in the distribution
+        # selector returns a LIST, one item per slot - different content for repeated types
+        selected = self.selector.select(title, description, analysis, distribution)
+
         exercises = []
-        for ex_type in distribution:
+        for idx, ex_type in enumerate(distribution):
             gen = self.generators.get(ex_type)
             if not gen:
                 continue
 
+            # Variables del bucle
             status = 'error'
             validation = {}
             i = 0
 
             while status == 'error' and i < 3:
-                # C) Generate exercise
-                print(f"\033[93m[orchestrator]\033[0m Generating {ex_type}")
-                data = selected.get(ex_type, f'{title}: {description}')
+                # C) Generate exercise using the content for this specific slot
+                print(f"\033[93m[orchestrator]\033[0m Generating {ex_type} (slot {idx})")
+                data = selected[idx] if isinstance(selected, list) and idx < len(selected) else f'{title}: {description}'
                 print(f"\033[93m[orchestrator]\033[0m Selected: {data}\n\n")
-                exercise = gen.generate(data, validation.get("Analysis", ""), difficulty.get(ex_type, "media"))
+                exercise = gen.generate(data, validation=validation.get("Analysis", ""), difficulty=difficulty.get(ex_type, "media"))
 
                 # D) Validate exercise
                 validation = self.validators.get('verificador').validate(exercise, data, self.structures.get(ex_type))
@@ -148,13 +148,14 @@ class Orchestrator:
         dificultades = list(strategy.values())
 
         # favorecer ejercicios fáciles
-        scores = [1 - d for d in dificultades]
+        scores = [(1 - d) for d in dificultades]
 
         # convertir a probabilidades
         probs = self.softmax(scores)
+        print("\033[93m[orchestrator]\033[0m Probs: ", probs)
 
         # elegir 3 ejercicios con repetición
         resultado = random.choices(nombres, weights=probs, k=3)
-        print(resultado)
+        print("\033[93m[orchestrator]\033[0m Resultado: ", resultado)
 
         return resultado

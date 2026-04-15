@@ -1,36 +1,31 @@
 select_task:
   description: >
-    Analiza la memoria proporcionada y extrae ÚNICAMENTE los datos y fragmentos de texto relevantes que servirán como "materia prima" para preparar futuros ejercicios cognitivos. 
-    ¡ATENCIÓN! BAJO NINGÚN CONCEPTO DEBES GENERAR PREGUNTAS NI RESPUESTAS. TU ÚNICO TRABAJO ES EXTRAER INFORMACIÓN, DATOS Y TEXTO LITERAL DE LA MEMORIA ORIGINAL.
-    
+    Analiza la memoria proporcionada y extrae contenido diferente para cada ranura de ejercicio indicada.
+
     INFORMACIÓN DE LA MEMORIA:
     - Título: {title}
     - Descripción: {description}
     {analysis}
 
-    EJERCICIOS SOLICITADOS:
-    - Tipos de ejercicios que alguien más generará posteriormente: {exercise_types}
+    LISTA DE RANURAS (en orden): {exercise_types}
 
-    INSTRUCCIONES DE EXTRACCIÓN (NO HACER PREGUNTAS):
-    Genera un JSON estructurado donde cada clave sea exactamente el nombre del tipo de ejercicio, y el valor sea un listado de HECHOS, DATOS o FRAGMENTOS DE TEXTO Puros extraídos del original.
-    
-        ESTRUCTURA JSON REQUERIDA:
-    {
-      "exercise_name1": "...",
-      "exercise_name2": "...",
-      "...": "...",
+    TU MISIÓN:
+    Devuelve un JSON array con EXACTAMENTE tantos elementos como ranuras hay en la lista.
+    El elemento en la posición N corresponde a la ranura N.
 
-    }
+    REGLAS DE EXTRACCIÓN:
+    - Para 'fill_in_the_blank': Extrae un fragmento extenso (mínimo 2-3 párrafos o 100 palabras). Si aparece más de una vez, toma SECCIONES DISTINTAS del texto para cada ocurrencia (ej: primera mitad, segunda mitad).
+    - Para 'multiple_choice': Extrae entre 4 y 6 afirmaciones cortas de hechos concretos. Si aparece más de una vez, cubre HECHOS DISTINTOS.
+    - Para 'ordering': Extrae de 4 a 6 eventos clave en orden cronológico. Si aparece más de una vez, selecciona EVENTOS DE ETAPAS DISTINTAS.
 
+    CRÍTICO: Para tipos REPETIDOS en la lista, el contenido de cada ocurrencia DEBE SER DIFERENTE. Nunca repitas el mismo fragmento ni los mismos hechos.
 
-    Reglas estrictas de extracción según el tipo de ejercicio futuro:
-    - Para 'multiple_choice': Extrae una lista de afirmaciones cortas basadas en hechos concretos, nombres propios o fechas clave. ¡NO ESCRIBAS PREGUNTAS O CUESTIONARIOS! Solo saca el 'dato'.
-    - Para 'fill_in_the_blank': Extrae fragmentos extensos (mínimo 2-3 párrafos o 100 palabras) que contengan múltiples detalles, nombres y acciones. NO recortes el texto; pásalo íntegro para que el generador tenga contexto de sobra.
-    - Para 'ordering': Extrae del texto original de 4 a 6 eventos clave y preséntalos como una lista de oraciones literales en estricto orden cronológico. NO MANDES ORDENAR NADA.
+    RESPONDE ÚNICAMENTE con un array JSON válido (sin texto adicional):
+    ["contenido para ranura 0", "contenido para ranura 1", "contenido para ranura 2"]
 
-    IMPORTANTE: Tu respuesta debe ser ÚNICA Y EXCLUSIVAMENTE un bloque JSON válido. No te inventes historias, cíñete a extraer datos.
   expected_output: >
-    Un objeto JSON válido cuyas claves sean los tipos de ejercicio: {exercise_types}, y cuyos valores sean exclusivamente los datos, fragmentos literales o listados de hechos concretos en bruto. ¡ESTÁ TERMINANTEMENTE PROHIBIDO CONTENER PREGUNTAS!
+    Un array JSON válido con exactamente tantos elementos como ranuras hay en {exercise_types}.
+    Cada elemento es el contenido extraído para esa ranura específica.
   agent: "selector_agent"
 
 fill_in_the_blank_task:
@@ -68,6 +63,8 @@ fill_in_the_blank_task:
     - CLAVE: La respuesta debe ser IMPOSIBLE de adivinar sin haber memorizado ese detalle concreto de la historia.
 
     {feedback_ia}
+
+    {content_to_avoid}
 
     INFORMACION:
     -[ {informacion} ]
@@ -124,6 +121,8 @@ multiple_choice_task:
 
     {feedback_ia}
 
+    {content_to_avoid}
+
     INFORMACION:
     - {informacion}
 
@@ -179,6 +178,8 @@ ordering_task:
 
 
     {feedback_ia}
+
+    {content_to_avoid}
 
     INFORMACION:
     - {informacion}
