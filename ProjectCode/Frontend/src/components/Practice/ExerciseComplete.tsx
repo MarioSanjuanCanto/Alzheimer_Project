@@ -10,9 +10,10 @@ interface ExerciseCompleteProps {
     hint?: string;
   };
   userId: string;
+  index: number;
 }
 
-const ExerciseComplete = ({ exercise, userId }: ExerciseCompleteProps) => {
+const ExerciseComplete = ({ exercise, userId, index }: ExerciseCompleteProps) => {
   const { t } = useTranslation();
 
   const [answer, setAnswer] = useState("");
@@ -63,7 +64,7 @@ const ExerciseComplete = ({ exercise, userId }: ExerciseCompleteProps) => {
   return (
     <section>
       <h3 className="font-fraunces text-4xl lg:text-3xl text-primary font-semibold mb-4">
-        {t("exercises.question")} 1
+        {t("exercises.question")} {index}
       </h3>
 
       <div className="bg-bggreen w-full rounded-lg p-4 md:p-8 space-y-8">
@@ -107,7 +108,7 @@ const ExerciseComplete = ({ exercise, userId }: ExerciseCompleteProps) => {
         {/* Question */}
         <div>
           <h4
-            id="exercise-question-1"
+            id={`exercise-question-${index}`}
             className="text-2xl lg:text-3xl font-semibold mb-4"
           >
             {exercise.question}
@@ -136,7 +137,7 @@ const ExerciseComplete = ({ exercise, userId }: ExerciseCompleteProps) => {
             onChange={(e) => setAnswer(e.target.value)}
             disabled={checked}
             type="text"
-            aria-labelledby="exercise-question-1"
+            aria-labelledby={`exercise-question-${index}`}
             placeholder={t("exercises.enterAnswer")}
             className={`
               w-full

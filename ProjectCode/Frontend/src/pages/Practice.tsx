@@ -70,14 +70,6 @@ const Practice = () => {
     generateExercises();
   }, [memory, exercises.length, loadingExercise, loadingMemory]);
 
-  const completeExercise = exercises.find(
-    (e) => e.type === "fill_in_the_blank"
-  );
-
-  const chooseExercise = exercises.find((e) => e.type === "multiple_choice");
-
-  const clickExercise = exercises.find((e) => e.type === "ordering");
-
   if (loadingMemory) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-bggreen">
@@ -129,26 +121,39 @@ const Practice = () => {
               )}
 
               <div className="space-y-12">
-                {completeExercise && (
-                  <ExerciseComplete
-                    exercise={completeExercise}
-                    userId={memory.user_id}
-                  />
-                )}
-
-                {chooseExercise && (
-                  <ExerciseChoose
-                    exercise={chooseExercise}
-                    userId={memory.user_id}
-                  />
-                )}
-
-                {clickExercise && (
-                  <ExerciseClick
-                    exercise={clickExercise}
-                    userId={memory.user_id}
-                  />
-                )}
+                {exercises.map((exercise, index) => {
+                  if (exercise.type === "fill_in_the_blank") {
+                    return (
+                      <ExerciseComplete
+                        key={`fib-${index}`}
+                        index={index + 1}
+                        exercise={exercise}
+                        userId={memory.user_id}
+                      />
+                    );
+                  }
+                  if (exercise.type === "multiple_choice") {
+                    return (
+                      <ExerciseChoose
+                        key={`mc-${index}`}
+                        index={index + 1}
+                        exercise={exercise}
+                        userId={memory.user_id}
+                      />
+                    );
+                  }
+                  if (exercise.type === "ordering") {
+                    return (
+                      <ExerciseClick
+                        key={`ord-${index}`}
+                        index={index + 1}
+                        exercise={exercise}
+                        userId={memory.user_id}
+                      />
+                    );
+                  }
+                  return null;
+                })}
               </div>
             </>
           )}

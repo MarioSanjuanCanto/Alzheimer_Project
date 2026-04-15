@@ -10,9 +10,10 @@ interface ExerciseClickProps {
     hint?: string;
   };
   userId: string;
+  index: number;
 }
 
-const ExerciseClick = ({ exercise, userId }: ExerciseClickProps) => {
+const ExerciseClick = ({ exercise, userId, index }: ExerciseClickProps) => {
   const { t } = useTranslation();
 
   const items = exercise.options;
@@ -56,7 +57,7 @@ const ExerciseClick = ({ exercise, userId }: ExerciseClickProps) => {
   return (
     <section>
       <h3 className="font-fraunces text-4xl lg:text-3xl text-primary font-semibold mb-4">
-        {t("exercises.question")} 3
+        {t("exercises.question")} {index}
       </h3>
 
       <div className="bg-bggreen w-full rounded-lg p-4 md:p-8 space-y-8">

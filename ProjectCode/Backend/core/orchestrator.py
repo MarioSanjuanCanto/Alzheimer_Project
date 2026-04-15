@@ -65,7 +65,7 @@ class Orchestrator:
         print("\033[93m[orchestrator]\033[0m Difficulty: ", difficulty)
 
         exercises = []
-        for ex_type in exercise_types:
+        for ex_type in distribution:
             gen = self.generators.get(ex_type)
             if not gen:
                 continue
@@ -140,8 +140,7 @@ class Orchestrator:
         exp_scores = [math.exp(s) for s in scores]
         total = sum(exp_scores)
         return [e / total for e in exp_scores]
-
-
+         
     def decide_exercises_distribution(self, strategy):
         print("\033[93m[orchestrator]\033[0m decide_exercises_distribution")
 
