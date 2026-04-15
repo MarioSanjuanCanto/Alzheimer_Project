@@ -4,15 +4,15 @@ from core.selector import selector
 from agents.exercise.multiple_choice import MultipleChoiceAgent
 from agents.exercise.fill_in_the_blank import FillInTheBlankAgent
 from agents.exercise.ordering import OrderingAgent
-
-from agents.validation.adecuacion import AdecuacionCognitivaAgent
-from agents.validation.regulador_emocional import ReguladorEmocionalAgent
 from agents.validation.verificador import VerificadorAgent
 from agents.validation.corrector import CorrectorAgent
 
 import database.db as db
 import os
 import yaml
+import random
+import math
+
 
 class Orchestrator:
     def __init__(self):
@@ -108,9 +108,16 @@ class Orchestrator:
         if user_stats["multiple_choice_done"] >= 15 or user_stats["fill_in_the_blank_done"] >= 15 or user_stats["ordering_done"] >= 15:
             db.reset_user_stats(user_id)
 
-        strategy = {"multiple_choice": self.difficulty_level(user_stats["multiple_choice_right"] / (user_stats["multiple_choice_done"] if user_stats["multiple_choice_done"] > 0 else 1)), 
-                    "fill_in_the_blank": self.difficulty_level(user_stats["fill_in_the_blank_right"] / (user_stats["fill_in_the_blank_done"] if user_stats["fill_in_the_blank_done"] > 0 else 1)), 
-                    "ordering": self.difficulty_level(user_stats["ordering_right"] / (user_stats["ordering_done"] if user_stats["ordering_done"] > 0 else 1))}
+        strategy = {"multiple_choice": user_stats["multiple_choice_right"] / (user_stats["multiple_choice_done"] if user_stats["multiple_choice_done"] > 0 else 1), 
+                    "fill_in_the_blank": user_stats["fill_in_the_blank_right"] / (user_stats["fill_in_the_blank_done"] if user_stats["fill_in_the_blank_done"] > 0 else 1), 
+                    "ordering": user_stats["ordering_right"] / (user_stats["ordering_done"] if user_stats["ordering_done"] > 0 else 1)}
+        
+        distribution = self.decide_exercises_distribution(strategy)
+
+        strategy["multiple_choice"] = self.difficulty_level(strategy["multiple_choice"])
+        strategy["fill_in_the_blank"] = self.difficulty_level(strategy["fill_in_the_blank"])
+        strategy["ordering"] = self.difficulty_level(strategy["ordering"])
+        
         return strategy
 
     def difficulty_level(self, score:float):
@@ -125,3 +132,28 @@ class Orchestrator:
         print("\033[93m[orchestrator]\033[0m correct_fill_in_the_blank")
         result = self.validators.get("corrector").correct_exercise(user_answer, correct_answer)
         return result
+
+    # --- Adecuación Cognitiva ---
+    def softmax(self, scores):
+        exp_scores = [math.exp(s) for s in scores]
+        total = sum(exp_scores)
+        return [e / total for e in exp_scores]
+
+
+    def decide_exercises_distribution(self, strategy):
+        print("\033[93m[orchestrator]\033[0m decide_exercises_distribution")
+
+        nombres = list(strategy.keys())
+        dificultades = list(strategy.values())
+
+        # favorecer ejercicios fáciles
+        scores = [1 - d for d in dificultades]
+
+        # convertir a probabilidades
+        probs = self.softmax(scores)
+
+        # elegir 3 ejercicios con repetición
+        resultado = random.choices(nombres, weights=probs, k=3)
+        print(resultado)
+
+        return resultado
