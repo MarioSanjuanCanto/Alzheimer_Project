@@ -120,8 +120,7 @@ def generate_exercise_endpoint():
 
     # --- Exercise generation logic ---
     try:
-        exercise_types = ["multiple_choice", "fill_in_the_blank", "ordering"]
-        exercise_set = service.generate(user_id, memory_data['title'], memory_data['user_description'], memory_data.get("ai_analysis", {}), exercise_types)
+        exercise_set = service.generate(user_id, memory_data['title'], memory_data['user_description'], memory_data.get("ai_analysis", {}))
         
         if not exercise_set or exercise_set == "":
             return jsonify(service.generate_fallback_exercises(memory_data, count=3))

@@ -8,15 +8,14 @@ class ExerciseService:
         print("\033[32m[ExerciseService]\033[0m Initializing ExerciseService")
         self.orchestrator = Orchestrator()
 
-    def generate(self, user_id, title: str, description: str, analysis: str, exercise_types):
+    def generate(self, user_id, title: str, description: str, analysis: str):
         print("\033[32m[ExerciseService]\033[0m Generating exercises")
         return self.orchestrator.run_pipeline(
             title=title,
             description=description,
             analysis=analysis,
-            exercise_types=exercise_types,
             user_id=user_id
-        )
+        ) 
     
     def correct_fill_in_the_blank(self, user_answer: str, correct_answer:str):
         print("\033[32m[ExerciseService]\033[0m Correcting fill in the blank")

@@ -52,14 +52,16 @@ class Orchestrator:
         }
 
     # --- Main pipeline ---
-    def run_pipeline(self, title: str, description: str, analysis: str, exercise_types: List[str], user_id: str) -> Dict[str, Any]:
+    def run_pipeline(self, title: str, description: str, analysis: str, user_id: str) -> Dict[str, Any]:
         print("\033[93m[orchestrator]\033[0m Running generation pipeline")
+
+        exercise_types = ["multiple_choice", "fill_in_the_blank", "ordering"]
 
         # A) adapt memory for each exercise type
         selected = self.selector.select(title, description, analysis, exercise_types)
 
         # B) Generate exercises
-        difficulty = self.get_user_difficulty(user_id)
+        difficulty, distribution = self.get_user_difficulty(user_id)
         print("\033[93m[orchestrator]\033[0m Difficulty: ", difficulty)
 
         exercises = []
@@ -118,7 +120,7 @@ class Orchestrator:
         strategy["fill_in_the_blank"] = self.difficulty_level(strategy["fill_in_the_blank"])
         strategy["ordering"] = self.difficulty_level(strategy["ordering"])
         
-        return strategy
+        return (strategy, distribution)
 
     def difficulty_level(self, score:float):
         if score < 0.5:
