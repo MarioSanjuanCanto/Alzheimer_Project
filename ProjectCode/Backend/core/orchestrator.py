@@ -96,6 +96,8 @@ class Orchestrator:
 
         return exercises
 
+
+    # --- Difficulty ---
     def get_user_difficulty(self, user_id:str):
         print("\033[93m[orchestrator]\033[0m get_user_difficulty")
         user_stats = db.get_user_stats(user_id)
@@ -106,9 +108,6 @@ class Orchestrator:
 
         # Now we can determine the strategy based on the user's performance
         user_stats = user_stats[0]
-        
-        if user_stats["multiple_choice_done"] >= 15 or user_stats["fill_in_the_blank_done"] >= 15 or user_stats["ordering_done"] >= 15:
-            db.reset_user_stats(user_id)
 
         strategy = {"multiple_choice": user_stats["multiple_choice_right"] / (user_stats["multiple_choice_done"] if user_stats["multiple_choice_done"] > 0 else 1), 
                     "fill_in_the_blank": user_stats["fill_in_the_blank_right"] / (user_stats["fill_in_the_blank_done"] if user_stats["fill_in_the_blank_done"] > 0 else 1), 
@@ -135,7 +134,36 @@ class Orchestrator:
         result = self.validators.get("corrector").correct_exercise(user_answer, correct_answer)
         return result
 
-    # --- Adecuación Cognitiva ---
+
+    # --- Adaptative Difficulty ---
+    def adaptative_difficulty(self, current_level:int, score:float, levels:list= ["fácil", "medio", "difícil"], tresholds:list= [0.5, 0.8]):
+        # Esperar cantidad de jugadas específica para decir
+        # ---
+        
+        # Obtener y aplicar la acción a realizar
+        action = self.upgrade_level(score, tresholds)
+        new_level = current_level + action
+
+        # Limitar el nivel
+        if new_level < 0:
+            new_level = 0
+        elif new_level >= len(levels):
+            new_level = len(levels) - 1
+            
+        return levels[new_level]
+
+    def upgrade_level(self, score, tresholds):
+        # Umbral de bajada
+        if score < tresholds[0]:
+            return -1
+        # Umbral de mantenimiento
+        elif score < tresholds[1]:
+            return 0
+        # Umbral de subida
+        else:
+            return 1
+
+    # --- Distribution ---
     def softmax(self, scores):
         exp_scores = [math.exp(s) for s in scores]
         total = sum(exp_scores)

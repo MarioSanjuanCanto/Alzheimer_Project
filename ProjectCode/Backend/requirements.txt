@@ -8,3 +8,4 @@ crewai
 litellm
 requests
 pyyaml
+math
