@@ -96,7 +96,6 @@ class Orchestrator:
 
         return exercises
 
-
     # --- Difficulty ---
     def get_user_difficulty(self, user_id:str):
         print("\033[93m[orchestrator]\033[0m get_user_difficulty")
@@ -134,30 +133,34 @@ class Orchestrator:
         result = self.validators.get("corrector").correct_exercise(user_answer, correct_answer)
         return result
 
-
     # --- Adaptative Difficulty ---
-    def adaptative_difficulty(self, current_level:int, score:float, levels:list= ["fácil", "medio", "difícil"], tresholds:list= [0.5, 0.8]):
-        # Esperar cantidad de jugadas específica para decir
-        # ---
-        
+    def get_difficulties(self, current_level:int, scores:dict):
+        new_difficulties = {}
+        for exercise_type, score in scores.items():
+            new_difficulties[exercise_type] = self.adaptative_difficulty(current_level, score)
+        return new_difficulties
+
+    def adaptative_difficulty(self, current_level:int, score:float, levels:tuple= ("fácil", "medio", "difícil"), thresholds:tuple= (0.5, 0.8)):        
         # Obtener y aplicar la acción a realizar
-        action = self.upgrade_level(score, tresholds)
+        action = self.upgrade_level(score, thresholds)
         new_level = current_level + action
 
         # Limitar el nivel
         if new_level < 0:
-            new_level = 0
+            # Remover ejercicio
+            return None
         elif new_level >= len(levels):
+            # Mantener el máximo
             new_level = len(levels) - 1
-            
+
         return levels[new_level]
 
-    def upgrade_level(self, score, tresholds):
+    def upgrade_level(self, score, thresholds):
         # Umbral de bajada
-        if score < tresholds[0]:
+        if score < thresholds[0]:
             return -1
         # Umbral de mantenimiento
-        elif score < tresholds[1]:
+        elif score < thresholds[1]:
             return 0
         # Umbral de subida
         else:
@@ -168,7 +171,7 @@ class Orchestrator:
         exp_scores = [math.exp(s) for s in scores]
         total = sum(exp_scores)
         return [e / total for e in exp_scores]
-         
+
     def decide_exercises_distribution(self, strategy):
         print("\033[93m[orchestrator]\033[0m decide_exercises_distribution")
 
