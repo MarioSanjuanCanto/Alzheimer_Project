@@ -1,3 +1,4 @@
+from shutil import ExecError
 from typing import List, Dict, Any
 
 from core.selector import selector
@@ -65,6 +66,10 @@ class Orchestrator:
         # A) Get distribution first (needed to select different content per slot)
         difficulty = self.get_difficulties(user_id)
         distribution = self.get_distribution(difficulty)
+
+        if distribution is None:
+            # All exercises difficulty under the treshold - contact with caretaker
+            return []
 
 
         print("\033[93m[orchestrator]\033[0m Difficulty: ", difficulty)
@@ -146,7 +151,7 @@ class Orchestrator:
             # Mantener el máximo
             max_level = len(levels) - 1
             db.update_current_level(max_level)
-            return max_level
+            return levels[max_level]
         else:
             db.update_current_level(user_id, new_level)
             return levels[new_level]
@@ -164,7 +169,19 @@ class Orchestrator:
             return 1
 
     def get_distribution(self, difficulty:dict):
-        return self.exercise_types
+        distribution = []
+
+        for ex_type, difficulty in difficulty.items():
+            if difficulty is None:
+                continue
+            
+            distribution.append(ex_type)
+        
+        if len(distribution) == 0:
+            # If no exercises available return empty
+            return None
+
+        return distribution
     
     # --- Old Difficulty Methods ---
     def get_user_difficulty(self, user_id:str):
