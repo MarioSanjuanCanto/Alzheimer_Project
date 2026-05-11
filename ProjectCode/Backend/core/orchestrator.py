@@ -17,7 +17,7 @@ import math
 class Orchestrator:
     def __init__(self):
         print("\033[93m[orchestrator]\033[0m orquestrator initialized")
-        # 1) Path to config file with agents info
+        # 1.1) Path to config file with agents info
 
         # Obtener ruta absoluta del archivo actual (core/selector.py)
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -28,23 +28,30 @@ class Orchestrator:
         # Construir ruta absoluta a config/agents.yaml
         self.config_path = os.path.join(backend_dir, "config")
 
-        # 2) Selector
+        # 1.2) Selector
         self.selector = selector()
 
-        # 3) Generators
+        # 1.3) Generators
         self.generators = {
             "multiple_choice": MultipleChoiceAgent(self.config_path),
             "fill_in_the_blank": FillInTheBlankAgent(self.config_path),
             "ordering": OrderingAgent(self.config_path),
         }
 
-        # 4) validators
+        # 1.4) validators
         self.validators = {
             "verificador": VerificadorAgent(self.config_path),
             "corrector": CorrectorAgent(self.config_path),
         }
 
-        # 5) structures
+
+        # 2.1) Difficulty levels:
+        self.levels = ["fácil", "media", "difícil"]
+
+        # 2.2) Exercise types:
+        self.exercise_types = ["fill_in_the_blank", "multiple_choice", "ordering"]
+
+        # 2.3) structures
         self.structures = {
             "fill_in_the_blank": {"type", "question", "correct_answer", "hint", "difficulty"}, 
             "multiple_choice": {"type", "question", "options", "correct_answer", "hint", "difficulty"}, 
@@ -56,14 +63,17 @@ class Orchestrator:
         print("\033[93m[orchestrator]\033[0m Running generation pipeline")
 
         # A) Get distribution first (needed to select different content per slot)
-        difficulty, distribution = self.get_user_difficulty(user_id)
+        difficulty = self.get_difficulties(user_id)
+        distribution = self.get_distribution(difficulty)
+
+
         print("\033[93m[orchestrator]\033[0m Difficulty: ", difficulty)
 
         # B) Select different content for each slot in the distribution
-        # selector returns a LIST, one item per slot - different content for repeated types
         selected = self.selector.select(title, description, analysis, distribution)
 
         exercises = []
+
         for idx, ex_type in enumerate(distribution):
             gen = self.generators.get(ex_type)
             if not gen:
@@ -78,7 +88,6 @@ class Orchestrator:
                 # C) Generate exercise using the content for this specific slot
                 print(f"\033[93m[orchestrator]\033[0m Generating {ex_type} (slot {idx})")
                 data = selected[idx] if isinstance(selected, list) and idx < len(selected) else f'{title}: {description}'
-                print(f"\033[93m[orchestrator]\033[0m Selected: {data}\n\n")
                 exercise = gen.generate(data, validation=validation.get("Analysis", ""), difficulty=difficulty.get(ex_type, "media"))
 
                 # D) Validate exercise
@@ -94,9 +103,70 @@ class Orchestrator:
                     print(f"\033[93m[orquestrator]\033[0m Error detected, feedback received: {validation.get('Analysis','')}")
                     i += 1
 
-        return exercises
+        print(f"\033[93m[orchestrator]\033[0m Generation status of {ex_type} : ", status)
 
-    # --- Difficulty ---
+        return exercises
+    
+    def correct_fill_in_the_blank(self, user_answer: str, correct_answer:str):
+        print("\033[93m[orchestrator]\033[0m correct_fill_in_the_blank")
+        result = self.validators.get("corrector").correct_exercise(user_answer, correct_answer)
+        return result
+
+    # --- Adaptative Difficulty ---
+
+    def get_difficulties(self, user_id):
+        print("\033[93m[orchestrator]\033[0m get_difficulties")
+        new_difficulties = {}
+
+        #Read current levels from db
+        scores = db.get_user_stats(user_id) # TODO Poner el current level en base de datos
+       
+        for exercise_type, score, current_level in scores.items():
+            new_difficulties[exercise_type] = self.adaptative_difficulty(user_id, current_level, score)
+
+        print("\033[93m[orchestrator]\033[0m New difficulties: ", new_difficulties)
+
+        return new_difficulties
+
+    def adaptative_difficulty(self, user_id, current_level:int, score:float, thresholds:tuple= (0.5, 0.8)):        
+        print("\033[93m[orchestrator]\033[0m adaptative_difficulty")
+
+        # Obtener los niveles:
+        levels = self.levels
+
+        # Obtener y aplicar la acción a realizar
+        action = self.update_level(score, thresholds)
+        new_level = current_level + action
+
+        # Limitar el nivel
+        if new_level < 0:
+            # Remover ejercicio
+            return None
+        elif new_level >= len(levels):
+            # Mantener el máximo
+            max_level = len(levels) - 1
+            db.update_current_level(max_level)
+            return max_level
+        else:
+            db.update_current_level(user_id, new_level)
+            return levels[new_level]
+
+    def update_level(self, score, thresholds):
+        print("\033[93m[orchestrator]\033[0m upgrade_level")
+        # Umbral de bajada
+        if score < thresholds[0]:
+            return -1
+        # Umbral de mantenimiento
+        elif score < thresholds[1]:
+            return 0
+        # Umbral de subida
+        else:
+            return 1
+
+    def get_distribution(self, difficulty:dict):
+        return self.exercise_types
+    
+    # --- Old Difficulty Methods ---
     def get_user_difficulty(self, user_id:str):
         print("\033[93m[orchestrator]\033[0m get_user_difficulty")
         user_stats = db.get_user_stats(user_id)
@@ -128,45 +198,6 @@ class Orchestrator:
         else:
             return "difícil"
 
-    def correct_fill_in_the_blank(self, user_answer: str, correct_answer:str):
-        print("\033[93m[orchestrator]\033[0m correct_fill_in_the_blank")
-        result = self.validators.get("corrector").correct_exercise(user_answer, correct_answer)
-        return result
-
-    # --- Adaptative Difficulty ---
-    def get_difficulties(self, current_level:int, scores:dict):
-        new_difficulties = {}
-        for exercise_type, score in scores.items():
-            new_difficulties[exercise_type] = self.adaptative_difficulty(current_level, score)
-        return new_difficulties
-
-    def adaptative_difficulty(self, current_level:int, score:float, levels:tuple= ("fácil", "medio", "difícil"), thresholds:tuple= (0.5, 0.8)):        
-        # Obtener y aplicar la acción a realizar
-        action = self.upgrade_level(score, thresholds)
-        new_level = current_level + action
-
-        # Limitar el nivel
-        if new_level < 0:
-            # Remover ejercicio
-            return None
-        elif new_level >= len(levels):
-            # Mantener el máximo
-            new_level = len(levels) - 1
-
-        return levels[new_level]
-
-    def upgrade_level(self, score, thresholds):
-        # Umbral de bajada
-        if score < thresholds[0]:
-            return -1
-        # Umbral de mantenimiento
-        elif score < thresholds[1]:
-            return 0
-        # Umbral de subida
-        else:
-            return 1
-
-    # --- Distribution ---
     def softmax(self, scores):
         exp_scores = [math.exp(s) for s in scores]
         total = sum(exp_scores)
@@ -190,3 +221,10 @@ class Orchestrator:
         print("\033[93m[orchestrator]\033[0m Resultado: ", resultado)
 
         return resultado
+
+
+
+
+
+
+
