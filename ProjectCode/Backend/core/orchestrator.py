@@ -47,7 +47,7 @@ class Orchestrator:
 
 
         # 2.1) Difficulty levels:
-        self.levels = ["fácil", "media", "difícil"]
+        self.difficulty_levels = ["fácil", "media", "difícil"]
 
         # 2.2) Exercise types:
         self.exercise_types = ["fill_in_the_blank", "multiple_choice", "ordering"]
@@ -67,6 +67,7 @@ class Orchestrator:
         difficulty = self.get_difficulties(user_id)
         distribution = self.get_distribution(difficulty)
 
+        
         if distribution is None:
             # All exercises difficulty under the treshold - contact with caretaker
             return []
@@ -119,7 +120,7 @@ class Orchestrator:
 
     # --- Adaptative Difficulty ---
 
-    def get_difficulties(self, user_id):
+    def get_difficulties(self, user_id, min_done:int = 3):
         print("\033[93m[orchestrator]\033[0m get_difficulties")
         new_difficulties = {}
 
@@ -127,40 +128,54 @@ class Orchestrator:
         scores = db.get_user_exercises_stats(user_id, self.exercise_types)
 
         for exercise_type, data in scores.items():
-            score = data["score"]
+            done = data["score"]["done"]
+            right = data["score"]["right"]
             current_level = data["current_level"] 
 
-            new_difficulties[exercise_type] = self.adaptative_difficulty(user_id, current_level, score)
+            if done < min_done:
+                print("\033[93m[orchestrator]\033[0m Minimum exercises treshold not reached yet")
+                
+                if current_level == -1:
+                    new_difficulties[exercise_type] = None
+                else:
+                    new_difficulties[exercise_type] = self.difficulty_levels[current_level]
+                
+                continue
+
+            score = right / done if done > 0 else 0
+
+            new_difficulties[exercise_type] = self.adaptative_difficulty(user_id, exercise_type, current_level, score)  
+
+            db.reset_exercise_stats(user_id, exercise_type)
 
         print("\033[93m[orchestrator]\033[0m New difficulties: ", new_difficulties)
 
         return new_difficulties
 
-    def adaptative_difficulty(self, user_id, current_level:int, score:float, thresholds:tuple= (0.5, 0.8)):        
-        print("\033[93m[orchestrator]\033[0m adaptative_difficulty")
+    def adaptative_difficulty(self, user_id, exercise_type:str, current_level:int, score:float, thresholds:tuple= (0.5, 0.8)):        
+        print(f"\033[93m[orchestrator]\033[0m adaptative_difficulty for {user_id} and {exercise_type}")  
 
-        # Obtener los niveles:
-        levels = self.levels
-
-        # Obtener y aplicar la acción a realizar
+        # Apply action
         action = self.update_level(score, thresholds) 
+        print(f"\033[93m[orchestrator]\033[0m Action: {action}")
         new_level = current_level + action
 
-        # Limitar el nivel
+        # Limit level
         if new_level < 0:
-            # Remover ejercicio
+            # Remove exercise
+            db.update_current_level(user_id, exercise_type, -1)
             return None
-        elif new_level >= len(levels):
-            # Mantener el máximo
-            max_level = len(levels) - 1
-            db.update_current_level(max_level) #TODO Implementar este método
-            return levels[max_level]
+        elif new_level >= len(self.difficulty_levels):
+            # Keep the maximum
+            max_level = len(self.difficulty_levels) - 1
+            db.update_current_level(user_id, exercise_type, max_level)
+            return self.difficulty_levels[max_level]
         else:
-            db.update_current_level(user_id, new_level) #TODO Implementar este método
-            return levels[new_level]
+            db.update_current_level(user_id, exercise_type, new_level)
+            return self.difficulty_levels[new_level]
 
     def update_level(self, score, thresholds):
-        print("\033[93m[orchestrator]\033[0m upgrade_level")
+        print("\033[93m[orchestrator]\033[0m update_level")
         # Umbral de bajada
         if score < thresholds[0]:
             return -1
@@ -241,6 +256,5 @@ class Orchestrator:
         print("\033[93m[orchestrator]\033[0m Resultado: ", resultado)
 
         return resultado
-
 
 

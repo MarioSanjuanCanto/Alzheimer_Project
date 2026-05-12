@@ -14,7 +14,7 @@ const Practice = () => {
   const { memoryId } = useParams<{ memoryId: string }>();
   const [loadingMemory, setLoadingMemory] = useState(true);
   const [memory, setMemory] = useState<any>(null);
-  const [exercises, setExercises] = useState<any[]>([]);
+  const [exercises, setExercises] = useState<any[] | null>(null);
   const [loadingExercise, setLoadingExercise] = useState(false);
 
   useEffect(() => {
@@ -36,8 +36,8 @@ const Practice = () => {
   }, [memoryId]);
 
   useEffect(() => {
-    // Check if memory is loaded and prevent duplicate calls if already loading or exercises already exist
-    if (loadingMemory || !memory || exercises.length > 0 || loadingExercise) return;
+    // Check if memory is loaded and prevent duplicate calls if already loading or exercises already exist (even if empty)
+    if (loadingMemory || !memory || exercises !== null || loadingExercise) return;
 
     const generateExercises = async () => {
       setLoadingExercise(true);
@@ -62,13 +62,14 @@ const Practice = () => {
         setExercises(data.exercises || []);
       } catch (err) {
         console.error("Failed to generate exercises", err);
+        setExercises([]); // Set to empty to avoid infinite loop on error
       } finally {
         setLoadingExercise(false);
       }
     };
 
     generateExercises();
-  }, [memory, exercises.length, loadingExercise, loadingMemory]);
+  }, [memory, exercises, loadingExercise, loadingMemory]);
 
   if (loadingMemory) {
     return (
@@ -121,39 +122,50 @@ const Practice = () => {
               )}
 
               <div className="space-y-12">
-                {exercises.map((exercise, index) => {
-                  if (exercise.type === "fill_in_the_blank") {
-                    return (
-                      <ExerciseComplete
-                        key={`fib-${index}`}
-                        index={index + 1}
-                        exercise={exercise}
-                        userId={memory.user_id}
-                      />
-                    );
-                  }
-                  if (exercise.type === "multiple_choice") {
-                    return (
-                      <ExerciseChoose
-                        key={`mc-${index}`}
-                        index={index + 1}
-                        exercise={exercise}
-                        userId={memory.user_id}
-                      />
-                    );
-                  }
-                  if (exercise.type === "ordering") {
-                    return (
-                      <ExerciseClick
-                        key={`ord-${index}`}
-                        index={index + 1}
-                        exercise={exercise}
-                        userId={memory.user_id}
-                      />
-                    );
-                  }
-                  return null;
-                })}
+                {exercises && exercises.length > 0 ? (
+                  exercises.map((exercise, index) => {
+                    if (exercise.type === "fill_in_the_blank") {
+                      return (
+                        <ExerciseComplete
+                          key={`fib-${index}`}
+                          index={index + 1}
+                          exercise={exercise}
+                          userId={memory.user_id}
+                        />
+                      );
+                    }
+                    if (exercise.type === "multiple_choice") {
+                      return (
+                        <ExerciseChoose
+                          key={`mc-${index}`}
+                          index={index + 1}
+                          exercise={exercise}
+                          userId={memory.user_id}
+                        />
+                      );
+                    }
+                    if (exercise.type === "ordering") {
+                      return (
+                        <ExerciseClick
+                          key={`ord-${index}`}
+                          index={index + 1}
+                          exercise={exercise}
+                          userId={memory.user_id}
+                        />
+                      );
+                    }
+                    return null;
+                  })
+                ) : (
+                  <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                    <p className="text-xl text-primary/70 font-medium">
+                      No se han podido generar ejercicios para esta memoria con tu nivel actual.
+                    </p>
+                    <p className="text-sm text-primary/50 mt-2">
+                      Contacta con tu cuidador para revisar el nivel de dificultad.
+                    </p>
+                  </div>
+                )}
               </div>
             </>
           )}

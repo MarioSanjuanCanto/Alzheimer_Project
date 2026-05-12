@@ -138,26 +138,42 @@ def get_user_exercises_stats(id:str, ex_types:list):
 
     try:
         for ex_type in ex_types:
-            done = data[f"{ex_type}_done"]
-            right = data[f"{ex_type}_right"]
-            score = right / done if done > 0 else 0
-
             response[ex_type] = {
                 "current_level": data[f"{ex_type}_current_level"],
-                "score": score
+                "score": {
+                    "done": data[f"{ex_type}_done"],
+                    "right": data[f"{ex_type}_right"]
+                }
             }
         return response
     except Exception as e:
         print("Error: ", e)
         return None
 
-def update_current_level(id:str, ex_type, new_level) -> dict:
+def update_current_level(id:str, ex_type:str, new_level:int) -> dict:
     print("\033[92m[db]\033[0m update_current_level")
-    pass 
+    response = (
+        client.table("user_stats")
+        .update({f"{ex_type}_current_level": new_level})
+        .eq("id", id)
+        .execute()
+    ) 
 
-    
+    return response.data
 
-     
+def reset_exercise_stats(id:str, ex_type:str):
+    print("\033[92m[db]\033[0m reset_exercise_stats")
+    response = (
+        client.table("user_stats")
+        .update({
+            f"{ex_type}_done": 0,
+            f"{ex_type}_right": 0
+        })
+        .eq("id", id)
+        .execute()
+    ) 
+
+    return response.data
 
 
 # Create supabase client
@@ -166,5 +182,5 @@ client = init()
 if __name__ == "__main__":
     print("\033[92m[db]\033[0m Debugging")
 
-    print(get_user_exercises_stats("38a71d49-27e4-4eed-84b0-6fef657e38b6", ["multiple_choice", "fill_in_the_blank", "ordering"]))
+    print(update_current_level("38a71d49-27e4-4eed-84b0-6fef657e38b6", "multiple_choice", 1))
     
