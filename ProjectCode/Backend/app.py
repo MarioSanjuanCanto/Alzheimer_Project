@@ -126,7 +126,7 @@ def generate_exercise_endpoint():
 
         print("\033[91m[app]\033[0m Answer: " + str(exercise_set) + " | Type: " + str(type(exercise_set)))
         return jsonify(exercise_set)
-        
+
     except Exception as e:
         print(f"\033[91m[app]\033[0m Error generating exercises: {e}")
         print(f"\033[91m[app]\033[0m Generating fallback exercises:")
@@ -136,7 +136,7 @@ def generate_exercise_endpoint():
 def test_endpoint():
     """Test endpoint to verify that the API is working."""
     print("\033[91m[app]\033[0m test_endpoint")
-    
+
     return jsonify({
         "message": "The exercise generation API is active.",
         "usage": "Send a POST request to /api/generate_exercise with the memory data."

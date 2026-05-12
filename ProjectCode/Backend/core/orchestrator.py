@@ -124,9 +124,12 @@ class Orchestrator:
         new_difficulties = {}
 
         #Read current levels from db
-        scores = db.get_user_stats(user_id) # TODO Poner el current level en base de datos
-       
-        for exercise_type, score, current_level in scores.items():
+        scores = db.get_user_exercises_stats(user_id, self.exercise_types)
+
+        for exercise_type, data in scores.items():
+            score = data["score"]
+            current_level = data["current_level"] 
+
             new_difficulties[exercise_type] = self.adaptative_difficulty(user_id, current_level, score)
 
         print("\033[93m[orchestrator]\033[0m New difficulties: ", new_difficulties)
@@ -140,7 +143,7 @@ class Orchestrator:
         levels = self.levels
 
         # Obtener y aplicar la acción a realizar
-        action = self.update_level(score, thresholds)
+        action = self.update_level(score, thresholds) 
         new_level = current_level + action
 
         # Limitar el nivel
@@ -150,10 +153,10 @@ class Orchestrator:
         elif new_level >= len(levels):
             # Mantener el máximo
             max_level = len(levels) - 1
-            db.update_current_level(max_level)
+            db.update_current_level(max_level) #TODO Implementar este método
             return levels[max_level]
         else:
-            db.update_current_level(user_id, new_level)
+            db.update_current_level(user_id, new_level) #TODO Implementar este método
             return levels[new_level]
 
     def update_level(self, score, thresholds):
@@ -238,10 +241,6 @@ class Orchestrator:
         print("\033[93m[orchestrator]\033[0m Resultado: ", resultado)
 
         return resultado
-
-
-
-
 
 
 
