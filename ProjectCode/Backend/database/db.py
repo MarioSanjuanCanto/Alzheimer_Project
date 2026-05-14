@@ -26,6 +26,10 @@ def get_user_info(id:str):
     response = client.table("users").select("*").eq("id", id).execute()
     return response.data
 
+def get_patient_caregiver(user_id:str):
+    admin_id = client.table("admin_user_links").select("admin_id").eq("user_id", user_id).execute()    
+    print(admin_id)
+
 # _______________ User stats functions  _______________
 def reset_user_stats_table():
     print("\033[92m[db]\033[0m get_user_parsed_info")
@@ -181,6 +185,4 @@ client = init()
 
 if __name__ == "__main__":
     print("\033[92m[db]\033[0m Debugging")
-
-    print(update_current_level("38a71d49-27e4-4eed-84b0-6fef657e38b6", "multiple_choice", 1))
     

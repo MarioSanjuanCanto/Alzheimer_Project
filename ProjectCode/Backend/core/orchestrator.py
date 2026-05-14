@@ -187,6 +187,7 @@ class Orchestrator:
             return 1
 
     def get_distribution(self, difficulty:dict):
+        print("\033[93m[orchestrator]\033[0m get_distribution")
         distribution = []
 
         for ex_type, difficulty in difficulty.items():

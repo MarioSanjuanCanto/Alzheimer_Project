@@ -132,8 +132,6 @@ class ExerciseService:
         
         return {"exercises": fallbacks[:count]}
 
-    def debugging_service(self):
-        pass
 
 
 
