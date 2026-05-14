@@ -29,7 +29,7 @@ def get_user_info(id:str):
     response = client.table("users").select("*").eq("id", id).execute()
     return response.data
 
-def get_patient_caregiver_id(user_id:str):
+def get_patient_caretaker_id(user_id:str):
     """ Retrieves the caregiver (admin) ID linked to a specific patient (user). """
     admin_id = client.table("admin_user_links").select("admin_id").eq("user_id", user_id).execute()    
     return admin_id.data[0]["admin_id"]
@@ -199,9 +199,8 @@ client = init()
 
 if __name__ == "__main__":
     print("\033[92m[db]\033[0m Debugging")
-    care_giver_id = get_patient_caregiver_id("fb389574-7091-4c84-8d9f-d9e461d7e182")
-    caregiver = get_admin_info(care_giver_id)
-    print(caregiver)
+    patient = get_user_info("38a71d49-27e4-4eed-84b0-6fef657e38b6")
+    print("PATIENT INFO: ", patient)
     
 
     

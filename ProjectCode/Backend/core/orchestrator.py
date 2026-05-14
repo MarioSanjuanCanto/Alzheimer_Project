@@ -8,6 +8,8 @@ from agents.exercise.ordering import OrderingAgent
 from agents.validation.verificador import VerificadorAgent
 from agents.validation.corrector import CorrectorAgent
 
+from utils.email_sender import send_alert_email
+
 import database.db as db
 import os
 import yaml
@@ -17,6 +19,7 @@ import math
 
 class Orchestrator:
     def __init__(self):
+        """ Initializes the orchestrator, loading agents and configurations. """
         print("\033[93m[orchestrator]\033[0m orquestrator initialized")
         # 1.1) Path to config file with agents info
 
@@ -61,6 +64,7 @@ class Orchestrator:
 
     # --- Main pipeline ---
     def run_pipeline(self, title: str, description: str, analysis: str, user_id: str) -> Dict[str, Any]:
+        """ Main pipeline to orchestrate the selection, generation, and validation of exercises. """
         print("\033[93m[orchestrator]\033[0m Running generation pipeline")
 
         # A) Get distribution first (needed to select different content per slot)
@@ -114,6 +118,7 @@ class Orchestrator:
         return exercises
     
     def correct_fill_in_the_blank(self, user_answer: str, correct_answer:str):
+        """ Corrects a 'fill in the blank' exercise using the assigned agent. """
         print("\033[93m[orchestrator]\033[0m correct_fill_in_the_blank")
         result = self.validators.get("corrector").correct_exercise(user_answer, correct_answer)
         return result
@@ -121,6 +126,7 @@ class Orchestrator:
     # --- Adaptative Difficulty ---
 
     def get_difficulties(self, user_id, min_done:int = 3):
+        """ Calculates the difficulty levels for each exercise type based on user performance. """
         print("\033[93m[orchestrator]\033[0m get_difficulties")
         new_difficulties = {}
 
@@ -153,6 +159,7 @@ class Orchestrator:
         return new_difficulties
 
     def adaptative_difficulty(self, user_id, exercise_type:str, current_level:int, score:float, thresholds:tuple= (0.5, 0.8)):        
+        """ Adjusts the difficulty level of a specific exercise type and returns the new difficulty string. """
         print(f"\033[93m[orchestrator]\033[0m adaptative_difficulty for {user_id} and {exercise_type}")  
 
         # Apply action
@@ -164,6 +171,10 @@ class Orchestrator:
         if new_level < 0:
             # Remove exercise
             db.update_current_level(user_id, exercise_type, -1)
+
+            # Alert caretaker
+            self.alert_caretaker(user_id, exercise_type)
+
             return None
         elif new_level >= len(self.difficulty_levels):
             # Keep the maximum
@@ -175,6 +186,7 @@ class Orchestrator:
             return self.difficulty_levels[new_level]
 
     def update_level(self, score, thresholds):
+        """ Determines the direction to change the difficulty level (-1, 0, 1) based on score. """
         print("\033[93m[orchestrator]\033[0m update_level")
         # Umbral de bajada
         if score < thresholds[0]:
@@ -187,6 +199,7 @@ class Orchestrator:
             return 1
 
     def get_distribution(self, difficulty:dict):
+        """ Filters and returns the exercise types that have an active difficulty level. """
         print("\033[93m[orchestrator]\033[0m get_distribution")
         distribution = []
 
@@ -202,8 +215,18 @@ class Orchestrator:
 
         return distribution
     
+    def alert_caretaker(self, user_id:str, ex_type:str):
+        """ Sends an alert email to the caretaker when an exercise is deactivated. """
+        print("\033[93m[orchestrator]\033[0m alert_caretaker")
+        caretaker_id = db.get_patient_caretaker_id(user_id)
+        caretaker = db.get_admin_info(caretaker_id)[0]
+        patient = db.get_user_info(user_id)[0]
+        send_alert_email(caretaker["email"], patient["full_name"], user_id, ex_type)
+                
+    
     # --- Old Difficulty Methods ---
     def get_user_difficulty(self, user_id:str):
+        """ (Legacy) Gets the user's difficulty strategy and determines an exercise distribution. """
         print("\033[93m[orchestrator]\033[0m get_user_difficulty")
         user_stats = db.get_user_stats(user_id)
 
@@ -227,6 +250,7 @@ class Orchestrator:
         return (strategy, distribution)
 
     def difficulty_level(self, score:float):
+        """ Maps a numerical score to a categorical difficulty level. """
         if score < 0.5:
             return "fácil"
         elif score < 0.8:
@@ -235,11 +259,13 @@ class Orchestrator:
             return "difícil"
 
     def softmax(self, scores):
+        """ Computes the softmax probability distribution for a list of scores. """
         exp_scores = [math.exp(s) for s in scores]
         total = sum(exp_scores)
         return [e / total for e in exp_scores]
 
     def decide_exercises_distribution(self, strategy):
+        """ Selects a random distribution of 3 exercises favoring those with easier difficulties. """
         print("\033[93m[orchestrator]\033[0m decide_exercises_distribution")
 
         nombres = list(strategy.keys())
