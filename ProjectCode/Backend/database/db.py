@@ -5,6 +5,7 @@ from supabase import create_client, Client
 
 # --- Supabase Client Initialization ---
 def init():
+    """ Initializes the Supabase client using environment variables. """
     load_dotenv()
     url: str = os.getenv("VITE_SUPABASE_URL")
     key: str = os.getenv("VITE_SUPABASE_ANON_KEY")
@@ -17,21 +18,32 @@ def init():
 
 # _______________ User functions  _______________
 def get_users():
+    """ Retrieves all users from the database. """
     print("\033[92m[db]\033[0m get_users")
     response = client.table("users").select("*").execute()
     return response.data
 
 def get_user_info(id:str):
+    """ Retrieves information for a specific user by ID. """
     print("\033[92m[db]\033[0m get_user_info")
     response = client.table("users").select("*").eq("id", id).execute()
     return response.data
 
-def get_patient_caregiver(user_id:str):
+def get_patient_caregiver_id(user_id:str):
+    """ Retrieves the caregiver (admin) ID linked to a specific patient (user). """
     admin_id = client.table("admin_user_links").select("admin_id").eq("user_id", user_id).execute()    
-    print(admin_id)
+    return admin_id.data[0]["admin_id"]
+
+# _______________ Admin functions  _______________
+def get_admin_info(id:str):
+    """ Retrieves information for a specific admin by ID. """
+    print("\033[92m[db]\033[0m get_admin")
+    response = client.table("admins").select("*").eq("id", id).execute()
+    return response.data
 
 # _______________ User stats functions  _______________
 def reset_user_stats_table():
+    """ Initializes or resets the stats table for all users. """
     print("\033[92m[db]\033[0m get_user_parsed_info")
     users = get_users()
 
@@ -54,6 +66,7 @@ def reset_user_stats_table():
     return {"status": "success"}
 
 def reset_user_stats(id:str):
+    """ Resets all exercise stats and difficulty levels for a specific user. """
     print("\033[92m[db]\033[0m reset_user_stats")
     response = client.table("user_stats").update({
         "multiple_choice_done" : 0,
@@ -69,14 +82,13 @@ def reset_user_stats(id:str):
     return response.data
 
 def get_user_stats(id:str):
-    '''
-    Get user performance stats
-    '''
+    """ Retrieves performance stats for a specific user. """
     print("\033[92m[db]\033[0m get_user_stats")
     response = client.table("user_stats").select("*").eq("id", id).execute()
     return response.data
 
 def add_new_user_stats(id:str):
+    """ Creates a new initial stats record for a specific user. """
     print("\033[92m[db]\033[0m add_new_user_stats")
     user = get_user_info(id)
 
@@ -97,11 +109,13 @@ def add_new_user_stats(id:str):
     return response.data
 
 def delete_user_stats(id:str):
+    """ Deletes the stats record of a specific user. """
     print("\033[92m[db]\033[0m delete_user_stats")
     response = client.table("user_stats").delete().eq("id", id).execute()
     return response.data
 
 def update_user_stats(id:str, exercise_type:str, correct:bool):
+    """ Updates the exercise performance stats (done/right) for a specific user. """
     print("\033[92m[db]\033[0m update_user_stats")
     user_stats = get_user_stats(id)
     if not user_stats or user_stats == []:
@@ -127,9 +141,7 @@ def update_user_stats(id:str, exercise_type:str, correct:bool):
 
 # _______________ User Exercise stats functions  _______________
 def get_user_exercises_stats(id:str, ex_types:list):
-    '''
-    Get user exercises stats and current difficulty level per exercise
-    '''
+    """ Retrieves exercises stats and current difficulty level per exercise type. """
     print("\033[92m[db]\033[0m get_user_exercises_stats")
     data = get_user_stats(id)
 
@@ -155,6 +167,7 @@ def get_user_exercises_stats(id:str, ex_types:list):
         return None
 
 def update_current_level(id:str, ex_type:str, new_level:int) -> dict:
+    """ Updates the current difficulty level for a specific exercise type. """
     print("\033[92m[db]\033[0m update_current_level")
     response = (
         client.table("user_stats")
@@ -166,6 +179,7 @@ def update_current_level(id:str, ex_type:str, new_level:int) -> dict:
     return response.data
 
 def reset_exercise_stats(id:str, ex_type:str):
+    """ Resets the stats (done/right) for a specific exercise type. """
     print("\033[92m[db]\033[0m reset_exercise_stats")
     response = (
         client.table("user_stats")
@@ -185,4 +199,9 @@ client = init()
 
 if __name__ == "__main__":
     print("\033[92m[db]\033[0m Debugging")
+    care_giver_id = get_patient_caregiver_id("fb389574-7091-4c84-8d9f-d9e461d7e182")
+    caregiver = get_admin_info(care_giver_id)
+    print(caregiver)
+    
+
     
