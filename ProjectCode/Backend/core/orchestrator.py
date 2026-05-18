@@ -69,7 +69,7 @@ class Orchestrator:
 
         # A) Get distribution first (needed to select different content per slot)
         difficulty = self.get_difficulties(user_id)
-        distribution = self.get_distribution(difficulty)
+        distribution = self.get_distribution(user_id, difficulty)
 
         
         if distribution is None:
@@ -198,7 +198,7 @@ class Orchestrator:
         else:
             return 1
 
-    def get_distribution(self, user_id:str, difficulty:dict[str,str]):
+    def get_distribution(self, user_id:str, difficulty:dict[str,str | None]):
         """ Filters and returns the exercise types that have an active difficulty level. """
         print("\033[93m[orchestrator]\033[0m get_distribution")
         distribution = []
