@@ -8,7 +8,7 @@ from agents.exercise.ordering import OrderingAgent
 from agents.validation.verificador import VerificadorAgent
 from agents.validation.corrector import CorrectorAgent
 
-from utils.email_sender import send_alert_email
+from utils.email_sender import send_exercise_disabled_alert_email,send_all_exercises_disabled_alert_email
 
 import database.db as db
 import os
@@ -125,7 +125,7 @@ class Orchestrator:
 
     # --- Adaptative Difficulty ---
 
-    def get_difficulties(self, user_id, min_done:int = 3):
+    def get_difficulties(self, user_id:str, min_done:int = 3):
         """ Calculates the difficulty levels for each exercise type based on user performance. """
         print("\033[93m[orchestrator]\033[0m get_difficulties")
         new_difficulties = {}
@@ -136,7 +136,7 @@ class Orchestrator:
         for exercise_type, data in scores.items():
             done = data["score"]["done"]
             right = data["score"]["right"]
-            current_level = data["current_level"] 
+            current_level = data["current_level"]
 
             if done < min_done:
                 print("\033[93m[orchestrator]\033[0m Minimum exercises treshold not reached yet")
@@ -173,7 +173,7 @@ class Orchestrator:
             db.update_current_level(user_id, exercise_type, -1)
 
             # Alert caretaker
-            self.alert_caretaker(user_id, exercise_type)
+            self.alert_exercise_disabled_caretaker(user_id, exercise_type)
 
             return None
         elif new_level >= len(self.difficulty_levels):
@@ -198,7 +198,7 @@ class Orchestrator:
         else:
             return 1
 
-    def get_distribution(self, difficulty:dict):
+    def get_distribution(self, user_id:str, difficulty:dict[str,str]):
         """ Filters and returns the exercise types that have an active difficulty level. """
         print("\033[93m[orchestrator]\033[0m get_distribution")
         distribution = []
@@ -209,79 +209,54 @@ class Orchestrator:
             
             distribution.append(ex_type)
         
-        if len(distribution) == 0:
-            # If no exercises available return empty
-            return None
+        if len(distribution) == 0 and len(self.exercise_types) > 0:
+            # If no exercises available return first one and notice caretaker
+            distribution = [self.exercise_types[0]]
+
+            self.alert_all_exercises_disabled_caretaker(user_id)
+
+            return distribution
 
         return distribution
     
-    def alert_caretaker(self, user_id:str, ex_type:str):
+    def alert_exercise_disabled_caretaker(self, user_id:str, ex_type:str):
         """ Sends an alert email to the caretaker when an exercise is deactivated. """
         print("\033[93m[orchestrator]\033[0m alert_caretaker")
         caretaker_id = db.get_patient_caretaker_id(user_id)
+
+        if caretaker_id is None:
+            return
+
         caretaker = db.get_admin_info(caretaker_id)[0]
+
+        if caretaker is None:
+            return
+
         patient = db.get_user_info(user_id)[0]
-        send_alert_email(caretaker["email"], patient["full_name"], user_id, ex_type)
+
+        if patient is None:
+            return
+
+        send_exercise_disabled_alert_email(caretaker["email"], patient["full_name"], user_id, ex_type)
+
+    def alert_all_exercises_disabled_caretaker(self, user_id:str):
+        """ Sends an alert email to the caretaker when all exercises are deactivated. """
+        print("\033[93m[orchestrator]\033[0m alert_caretaker")
+        caretaker_id = db.get_patient_caretaker_id(user_id)
+
+        if caretaker_id is None:
+            return
+
+        caretaker = db.get_admin_info(caretaker_id)[0]
+
+        if caretaker is None:
+            return
+
+        patient = db.get_user_info(user_id)[0]
+
+        if patient is None:
+            return
+
+        send_all_exercises_disabled_alert_email(caretaker["email"], patient["full_name"], user_id)
                 
-    
-    # --- Old Difficulty Methods ---
-    def get_user_difficulty(self, user_id:str):
-        """ (Legacy) Gets the user's difficulty strategy and determines an exercise distribution. """
-        print("\033[93m[orchestrator]\033[0m get_user_difficulty")
-        user_stats = db.get_user_stats(user_id)
-
-        if not user_stats or user_stats == []:
-            db.add_new_user_stats(user_id)
-            return {"multiple_choice": "media", "fill_in_the_blank": "media", "ordering": "media"}
-
-        # Now we can determine the strategy based on the user's performance
-        user_stats = user_stats[0]
-
-        strategy = {"multiple_choice": user_stats["multiple_choice_right"] / (user_stats["multiple_choice_done"] if user_stats["multiple_choice_done"] > 0 else 1), 
-                    "fill_in_the_blank": user_stats["fill_in_the_blank_right"] / (user_stats["fill_in_the_blank_done"] if user_stats["fill_in_the_blank_done"] > 0 else 1), 
-                    "ordering": user_stats["ordering_right"] / (user_stats["ordering_done"] if user_stats["ordering_done"] > 0 else 1)}
-        
-        distribution = self.decide_exercises_distribution(strategy)
-
-        strategy["multiple_choice"] = self.difficulty_level(strategy["multiple_choice"])
-        strategy["fill_in_the_blank"] = self.difficulty_level(strategy["fill_in_the_blank"])
-        strategy["ordering"] = self.difficulty_level(strategy["ordering"])
-        
-        return (strategy, distribution)
-
-    def difficulty_level(self, score:float):
-        """ Maps a numerical score to a categorical difficulty level. """
-        if score < 0.5:
-            return "fácil"
-        elif score < 0.8:
-            return "media"
-        else:
-            return "difícil"
-
-    def softmax(self, scores):
-        """ Computes the softmax probability distribution for a list of scores. """
-        exp_scores = [math.exp(s) for s in scores]
-        total = sum(exp_scores)
-        return [e / total for e in exp_scores]
-
-    def decide_exercises_distribution(self, strategy):
-        """ Selects a random distribution of 3 exercises favoring those with easier difficulties. """
-        print("\033[93m[orchestrator]\033[0m decide_exercises_distribution")
-
-        nombres = list(strategy.keys())
-        dificultades = list(strategy.values())
-
-        # favorecer ejercicios fáciles
-        scores = [(1 - d) for d in dificultades]
-
-        # convertir a probabilidades
-        probs = self.softmax(scores)
-        print("\033[93m[orchestrator]\033[0m Probs: ", probs)
-
-        # elegir 3 ejercicios con repetición
-        resultado = random.choices(nombres, weights=probs, k=3)
-        print("\033[93m[orchestrator]\033[0m Resultado: ", resultado)
-
-        return resultado
-
 
