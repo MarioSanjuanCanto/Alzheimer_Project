@@ -32,10 +32,10 @@ export const handleUserInvite = async (
         },
         // It is helpful to pass the role explicitly in the body too, 
         // in case your email template needs to say "You are invited as a User"
-        body: JSON.stringify({ 
-          email, 
-          inviteUrl, 
-          invitedRole: "user" 
+        body: JSON.stringify({
+          email,
+          inviteUrl,
+          invitedRole: "user"
         }),
       }
     );
@@ -80,10 +80,10 @@ export const handleSupporterInvite = async (
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         // It is helpful to pass the role explicitly in the body too
-        body: JSON.stringify({ 
-          email, 
-          inviteUrl, 
-          invitedRole: "admin" 
+        body: JSON.stringify({
+          email,
+          inviteUrl,
+          invitedRole: "admin"
         }),
       }
     );
