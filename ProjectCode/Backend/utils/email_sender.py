@@ -1,13 +1,15 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
-# Datos del correo
 
 def send_email(email_receptor:str, titulo:str, contenido:str, email_type:str="plain"):
     print(f"\033[97m[email_sender]\033[0m Sending email to {email_receptor} with title {titulo}")
-    email_emisor = "vertexlitupv@gmail.com" 
-    password = "wbjk pnnl fkdt ydjk"
+    email_emisor = os.getenv("GMAIL_USER")
+    password = os.getenv("GMAIL_APP_PASSWORD")
 
     # Crear mensaje
     mensaje = MIMEMultipart()

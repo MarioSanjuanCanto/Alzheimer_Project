@@ -31,7 +31,7 @@ def get_user_info(id:str):
 
 def get_patient_caretaker_id(user_id:str):
     """ Retrieves the caregiver (admin) ID linked to a specific patient (user). """
-    admin_id = client.table("admin_user_links").select("admin_id").eq("user_id", user_id).execute()    
+    admin_id = client.table("user_admin_links").select("admin_id").eq("user_id", user_id).execute()    
     return admin_id.data[0]["admin_id"]
 
 # _______________ Admin functions  _______________
@@ -85,6 +85,8 @@ def get_user_stats(id:str):
     """ Retrieves performance stats for a specific user. """
     print("\033[92m[db]\033[0m get_user_stats")
     response = client.table("user_stats").select("*").eq("id", id).execute()
+    if not response.data:
+        return add_new_user_stats(id)
     return response.data
 
 def add_new_user_stats(id:str):
@@ -199,8 +201,8 @@ client = init()
 
 if __name__ == "__main__":
     print("\033[92m[db]\033[0m Debugging")
-    patient = get_user_info("38a71d49-27e4-4eed-84b0-6fef657e38b6")
-    print("PATIENT INFO: ", patient)
+    caretaker = get_patient_caretaker_id("af30d17b-dd21-4704-acf3-3701135fefc0")
+    print("CAREGIVER INFO: ", caretaker)
     
 
     
