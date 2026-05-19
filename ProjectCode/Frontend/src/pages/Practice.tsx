@@ -26,6 +26,7 @@ const Practice = () => {
   const [answered, setAnswered] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const [progressWidth, setProgressWidth] = useState(0);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   useEffect(() => {
     if (!memoryId) return;
@@ -147,7 +148,7 @@ const Practice = () => {
 
       {/* Content */}
       <div className="relative z-20 flex justify-center">
-        <div className={`bg-white lg:rounded-lg w-full ${loadingExercise ? 'h-[70vh] flex flex-col items-center justify-center' : 'py-12 lg:py-16'} lg:mt-36 lg:mb-14 lg:mx-44 px-4 md:px-8 lg:px-32`}>
+        <div className={`bg-white lg:rounded-lg w-full ${loadingExercise ? 'h-[70vh] flex flex-col items-center justify-center' : 'py-12 lg:py-16'} lg:mt-36 lg:mb-14 lg:mx-44 px-4 md:px-8 lg:px-16`}>
           <h1 className="sr-only">{t("exercises.title")}</h1>
 
           {loadingExercise ? (
@@ -167,139 +168,157 @@ const Practice = () => {
             </div>
           ) : (
             <>
-              {/* Memory header: title + image */}
-              {memory && (
-                <div className="mb-8 lg:mb-12">
-                  <h2 className="font-fraunces text-5xl text-primary font-semibold mt-2 mb-4">
-                    {memory.title}
-                  </h2>
+              {/* Header row: Memory title and progress */}
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 border-b border-gray-100 pb-4">
+                <span className="text-2xl font-fraunces text-primary font-semibold">
+                  {memory?.title}
+                </span>
 
-                  {/* Memory subtitle */}
-                  <p className="text-lg italic text-primary/50 mb-6">
-                    {t("exercises.myMemory")}
-                  </p>
-
-                  {/* Memory image */}
-                  {memory.image && (
-                    <div className="w-full max-h-[400px] overflow-hidden rounded-xl mb-6">
-                      <img
-                        src={memory.image}
-                        alt={memory.title}
-                        className="w-full h-full object-cover"
-                      />
+                {totalExercises > 0 && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg font-medium text-primary/70">
+                      {t("exercises.exerciseProgress", {
+                        current: currentIndex + 1,
+                        total: totalExercises,
+                      })}
+                    </span>
+                    {/* Mini progress dots */}
+                    <div className="flex gap-1.5">
+                      {exercises!.map((_, i) => (
+                        <div
+                          key={i}
+                          className={`
+                            h-2.5 w-2.5 rounded-full transition-all duration-300
+                            ${i < currentIndex
+                              ? "bg-primary scale-100"
+                              : i === currentIndex
+                                ? "bg-primary/70 scale-125 ring-2 ring-primary/30"
+                                : "bg-gray-300 scale-100"
+                            }
+                          `}
+                        />
+                      ))}
                     </div>
-                  )}
+                  </div>
+                )}
+              </div>
 
-                  {/* Exercise progress indicator */}
-                  {totalExercises > 0 && (
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-sm font-medium text-primary/70">
-                        {t("exercises.exerciseProgress", {
-                          current: currentIndex + 1,
-                          total: totalExercises,
-                        })}
-                      </span>
-                      {/* Mini progress dots */}
-                      <div className="flex gap-1.5">
-                        {exercises!.map((_, i) => (
-                          <div
-                            key={i}
-                            className={`
-                              h-2.5 w-2.5 rounded-full transition-all duration-300
-                              ${i < currentIndex
-                                ? "bg-primary scale-100"
-                                : i === currentIndex
-                                  ? "bg-primary/70 scale-125 ring-2 ring-primary/30"
-                                  : "bg-gray-300 scale-100"
-                              }
-                            `}
-                          />
-                        ))}
+              {/* Main content grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+
+                {/* Left column: Memory image */}
+                <div className="lg:col-span-4 w-full h-full flex">
+                  {memory && memory.image && (
+                    <img
+                      src={memory.image}
+                      alt={memory.title}
+                      className="w-full h-full min-h-[280px] lg:min-h-[340px] object-cover rounded-[2rem] shadow-sm border border-gray-100 cursor-zoom-in transition-transform duration-300 hover:scale-[1.01]"
+                      onClick={() => setIsImageModalOpen(true)}
+                    />
+                  )}
+                </div>
+
+                {/* Right column: Transition loader OR Exercise component */}
+                <div className="lg:col-span-8 w-full flex flex-col">
+                  {transitioning ? (
+                    <div className="animate-in fade-in duration-300 py-16 flex flex-col items-center gap-4">
+                      {/* Animated message */}
+                      <p className="text-xl font-medium text-primary animate-pulse">
+                        {isLastExercise
+                          ? t("exercises.finishingUp")
+                          : t("exercises.loadingNext")}
+                      </p>
+
+                      {/* Progress bar */}
+                      <div className="w-full max-w-md h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-primary/70 via-primary to-primary/70 rounded-full"
+                          style={{
+                            width: `${progressWidth}%`,
+                            transition: `width ${TRANSITION_DURATION}ms ease-in-out`,
+                          }}
+                        />
                       </div>
                     </div>
+                  ) : (
+                    exercises && exercises.length > 0 && currentExercise ? (
+                      <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {/* Exercise label */}
+                        <h4 className="font-fraunces text-2xl text-primary/60 font-medium">
+                          {t("exercises.exerciseLabel")}
+                        </h4>
+
+                        {/* Render the current exercise */}
+                        {currentExercise.type === "fill_in_the_blank" && (
+                          <ExerciseComplete
+                            key={`fib-${currentIndex}`}
+                            index={currentIndex + 1}
+                            exercise={currentExercise}
+                            userId={memory.user_id}
+                            onAnswered={handleAnswered}
+                          />
+                        )}
+                        {currentExercise.type === "multiple_choice" && (
+                          <ExerciseChoose
+                            key={`mc-${currentIndex}`}
+                            index={currentIndex + 1}
+                            exercise={currentExercise}
+                            userId={memory.user_id}
+                            onAnswered={handleAnswered}
+                          />
+                        )}
+                        {currentExercise.type === "ordering" && (
+                          <ExerciseClick
+                            key={`ord-${currentIndex}`}
+                            index={currentIndex + 1}
+                            exercise={currentExercise}
+                            userId={memory.user_id}
+                            onAnswered={handleAnswered}
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      exercises && exercises.length === 0 && (
+                        <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                          <p className="text-xl text-primary/70 font-medium">
+                            No se han podido generar ejercicios para esta memoria con tu nivel actual.
+                          </p>
+                          <p className="text-sm text-primary/50 mt-2">
+                            Contacta con tu cuidador para revisar el nivel de dificultad.
+                          </p>
+                        </div>
+                      )
+                    )
                   )}
                 </div>
-              )}
 
-              {/* Transition loading bar */}
-              {transitioning && (
-                <div className="mb-8 animate-in fade-in duration-300">
-                  <div className="flex flex-col items-center gap-4 py-8">
-                    {/* Animated message */}
-                    <p className="text-xl font-medium text-primary animate-pulse">
-                      {isLastExercise
-                        ? t("exercises.finishingUp")
-                        : t("exercises.loadingNext")}
-                    </p>
-
-                    {/* Progress bar */}
-                    <div className="w-full max-w-md h-3 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-primary/70 via-primary to-primary/70 rounded-full"
-                        style={{
-                          width: `${progressWidth}%`,
-                          transition: `width ${TRANSITION_DURATION}ms ease-in-out`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Current exercise */}
-              {!transitioning && exercises && exercises.length > 0 && currentExercise ? (
-                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  {/* Exercise label */}
-                  <h3 className="font-fraunces text-2xl text-primary/60 font-medium">
-                    {t("exercises.exerciseLabel")}
-                  </h3>
-
-                  {/* Render the current exercise */}
-                  {currentExercise.type === "fill_in_the_blank" && (
-                    <ExerciseComplete
-                      key={`fib-${currentIndex}`}
-                      index={currentIndex + 1}
-                      exercise={currentExercise}
-                      userId={memory.user_id}
-                      onAnswered={handleAnswered}
-                    />
-                  )}
-                  {currentExercise.type === "multiple_choice" && (
-                    <ExerciseChoose
-                      key={`mc-${currentIndex}`}
-                      index={currentIndex + 1}
-                      exercise={currentExercise}
-                      userId={memory.user_id}
-                      onAnswered={handleAnswered}
-                    />
-                  )}
-                  {currentExercise.type === "ordering" && (
-                    <ExerciseClick
-                      key={`ord-${currentIndex}`}
-                      index={currentIndex + 1}
-                      exercise={currentExercise}
-                      userId={memory.user_id}
-                      onAnswered={handleAnswered}
-                    />
-                  )}
-
-                </div>
-              ) : (
-                !transitioning && exercises && exercises.length === 0 && (
-                  <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-                    <p className="text-xl text-primary/70 font-medium">
-                      No se han podido generar ejercicios para esta memoria con tu nivel actual.
-                    </p>
-                    <p className="text-sm text-primary/50 mt-2">
-                      Contacta con tu cuidador para revisar el nivel de dificultad.
-                    </p>
-                  </div>
-                )
-              )}
+              </div>
             </>
           )}
         </div>
       </div>
+      {/* Image Modal (Lightbox) */}
+      {isImageModalOpen && memory && memory.image && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-300 cursor-zoom-out"
+          onClick={() => setIsImageModalOpen(false)}
+        >
+          <button
+            className="absolute top-6 right-6 text-white text-5xl hover:text-gray-300 transition-colors focus:outline-none"
+            onClick={() => setIsImageModalOpen(false)}
+            aria-label="Cerrar"
+          >
+            &times;
+          </button>
+          <div className="relative max-w-[90vw] max-h-[85vh] p-4 flex items-center justify-center">
+            <img
+              src={memory.image}
+              alt={memory.title}
+              className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border-4 border-white animate-in zoom-in-95 duration-300"
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 };
