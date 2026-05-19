@@ -11,9 +11,10 @@ interface ExerciseCompleteProps {
   };
   userId: string;
   index: number;
+  onAnswered?: () => void;
 }
 
-const ExerciseComplete = ({ exercise, userId, index }: ExerciseCompleteProps) => {
+const ExerciseComplete = ({ exercise, userId, index, onAnswered }: ExerciseCompleteProps) => {
   const { t } = useTranslation();
 
   const [answer, setAnswer] = useState("");
@@ -43,6 +44,7 @@ const ExerciseComplete = ({ exercise, userId, index }: ExerciseCompleteProps) =>
       setIsCorrect(correct);
       setChecked(true);
       setShowHint(false);
+      onAnswered?.();
 
       // 2. Registrar el resultado en la base de datos
       await fetch("http://localhost:5001/api/excercise_correction", {

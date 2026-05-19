@@ -11,9 +11,10 @@ interface ExerciseClickProps {
   };
   userId: string;
   index: number;
+  onAnswered?: () => void;
 }
 
-const ExerciseClick = ({ exercise, userId, index }: ExerciseClickProps) => {
+const ExerciseClick = ({ exercise, userId, index, onAnswered }: ExerciseClickProps) => {
   const { t } = useTranslation();
 
   const items = exercise.options;
@@ -38,6 +39,7 @@ const ExerciseClick = ({ exercise, userId, index }: ExerciseClickProps) => {
   const handleCheckAnswer = async () => {
     setChecked(true);
     setShowHint(false); // hide hint once answer is checked
+    onAnswered?.();
 
     try {
       await fetch("http://localhost:5001/api/excercise_correction", {

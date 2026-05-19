@@ -11,9 +11,10 @@ interface ExerciseChooseProps {
   };
   userId: string;
   index: number;
+  onAnswered?: () => void;
 }
 
-const ExerciseChoose = ({ exercise, userId, index }: ExerciseChooseProps) => {
+const ExerciseChoose = ({ exercise, userId, index, onAnswered }: ExerciseChooseProps) => {
   const { t } = useTranslation();
 
   const [selected, setSelected] = useState<number | null>(null);
@@ -26,6 +27,7 @@ const ExerciseChoose = ({ exercise, userId, index }: ExerciseChooseProps) => {
   const handleCheckAnswer = async () => {
     setChecked(true);
     setShowHint(false);
+    onAnswered?.();
 
     try {
       await fetch("http://localhost:5001/api/excercise_correction", {

@@ -115,7 +115,14 @@
     "orderEventsHint": "Toca los eventos en el orden correcto.",
     "correctAnswerIs": "La respuesta correcta es:",
     "correctFeedback": "¡Eso es correcto!",
-    "generating": "Generando tus ejercicios personales..."
+    "generating": "Generando tus ejercicios personales...",
+    "myMemory": "Mi recuerdo",
+    "exerciseProgress": "Ejercicio {{current}} de {{total}}",
+    "exerciseLabel": "Ejercicio",
+    "nextExercise": "Siguiente Ejercicio",
+    "finishExercises": "Finalizar",
+    "loadingNext": "Cargando siguiente ejercicio...",
+    "finishingUp": "¡Muy bien! Volviendo a practicar..."
   },
   "memories": {
     "title": "Recuerdos",

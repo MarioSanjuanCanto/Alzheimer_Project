@@ -116,7 +116,14 @@
     "orderEventsHint": "Tap the events in the correct order.",
     "correctAnswerIs": "The correct answer is:",
     "correctFeedback": "That's correct!",
-    "generating": "Generating your personal exercises..."
+    "generating": "Generating your personal exercises...",
+    "myMemory": "My memory",
+    "exerciseProgress": "Exercise {{current}} of {{total}}",
+    "exerciseLabel": "Exercise",
+    "nextExercise": "Next Exercise",
+    "finishExercises": "Finish",
+    "loadingNext": "Loading next exercise...",
+    "finishingUp": "Great job! Heading back to practice..."
   },
   "memories": {
     "title": "Memories",
