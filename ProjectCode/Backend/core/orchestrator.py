@@ -98,6 +98,7 @@ class Orchestrator:
                 # C) Generate exercise using the content for this specific slot
                 print(f"\033[93m[orchestrator]\033[0m Generating {ex_type} (slot {idx})")
                 data = selected[idx] if isinstance(selected, list) and idx < len(selected) else f'{title}: {description}'
+                print("Data: ", ex_type)
                 exercise = gen.generate(data, validation=validation.get("Analysis", ""), difficulty=difficulty.get(ex_type, "media"))
 
                 # D) Validate exercise
@@ -212,7 +213,6 @@ class Orchestrator:
 
             for _ in range(exercise_limits.get(ex_type, 1)):
                 distribution.append(ex_type)
-            
         
         if len(distribution) == 0 and len(self.exercise_types) > 0:
             # If no exercises available return first one and notice caretaker

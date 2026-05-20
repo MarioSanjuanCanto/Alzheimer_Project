@@ -19,8 +19,8 @@ class selector:
             agents_config = yaml.safe_load(f)
 
         llm = LLM(
-            model="gpt-4o-mini",
-            temperature=0
+            model="gpt-5.4-mini",
+            temperature=0.1
         )
         agents_config["selector_agent"]["llm"] = llm
 
