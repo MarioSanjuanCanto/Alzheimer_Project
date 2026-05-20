@@ -151,6 +151,11 @@
       "showExerciseResults": "Mostrar resultados de ejercicios",
       "showExerciseResultsHint": "Este participante puede ver los resultados de sus ejercicios."
     },
+    "exerciseLimits": {
+      "title": "Cantidad de ejercicios",
+      "description": "Selecciona cuántos ejercicios de cada tipo quieres que se generen (máximo 5 en total).",
+      "errorMax": "El total de ejercicios no puede superar los 5."
+    },
     "personalInformation": {
       "title": "Configuración de mi perfil",
       "personalInformation": "Información personal",
@@ -256,6 +261,7 @@
     "startExercise": "Empezar Ejercicio",
     "viewDemo": "Ver Demostración",
     "saveChanges": "Guardar Cambios",
+    "applyChanges": "Aplicar cambios",
     "saving": "Guardando Cambios...",
     "submitting": "Enviando...",
     "savingChanges": "Guardando Cambios",

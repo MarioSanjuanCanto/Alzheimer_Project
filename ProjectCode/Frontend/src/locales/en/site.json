@@ -154,6 +154,11 @@
       "showExerciseResults": "Show exercise results",
       "showExerciseResultsHint": "This participant can view the results of their exercises."
     },
+    "exerciseLimits": {
+      "title": "Exercise quantity",
+      "description": "Select how many exercises of each type you want to generate (maximum of 5 in total).",
+      "errorMax": "The total number of exercises cannot exceed 5."
+    },
     "personalInformation": {
       "title": "My Profile Settings",
       "personalInformation": "Personal Information",
@@ -258,6 +263,7 @@
     "startExercise": "Start Exercise",
     "viewDemo": "View Demo",
     "saveChanges": "Save Changes",
+    "applyChanges": "Apply Changes",
     "saving": "Saving Changes...",
     "submitting": "Submitting...",
     "addSupporter": "Invites Supporter",

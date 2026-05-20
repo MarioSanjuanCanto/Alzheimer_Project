@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import SettingsSidebar from "@/components/settings/SettingsSidebar";
 import GeneralInformation from "@/components/settings/GeneralInformation";
 import UserPermission from "@/components/settings/UserPermission";
+import ExerciseLimitConfig from "@/components/settings/ExerciseLimitConfig";
 import Supporters from "@/components/settings/Supporters";
 import MyProfileSettings from "@/components/settings/MyProfileSettings";
 import AddUser from "@/components/AddUser";
@@ -113,6 +114,9 @@ const Settings = () => {
                   </div>
                   <div className="py-8 lg:py-10">
                     <UserPermission user={selectedParticipant} />
+                  </div>
+                  <div className="py-8 lg:py-10">
+                    <ExerciseLimitConfig userId={selectedParticipant.id} />
                   </div>
                   {isAdmin && (
                     <div className="pt-8 lg:py-10">

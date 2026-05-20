@@ -195,6 +195,27 @@ def reset_exercise_stats(id:str, ex_type:str):
 
     return response.data
 
+def get_exercise_limits(user_id: str):
+    """ Retrieves the exercise limits for a specific user. """
+    print("\033[92m[db]\033[0m get_exercise_limits")
+    try:
+        response = client.table("users").select("multiple_choice, fill_in_the_blank, ordering").eq("id", user_id).execute()
+        if response.data and len(response.data) > 0:
+            limits = response.data[0]
+            return {
+                "multiple_choice": limits.get("multiple_choice") if limits.get("multiple_choice") is not None else 1,
+                "fill_in_the_blank": limits.get("fill_in_the_blank") if limits.get("fill_in_the_blank") is not None else 1,
+                "ordering": limits.get("ordering") if limits.get("ordering") is not None else 1,
+            }
+    except Exception as e:
+        print(f"\033[91m[db]\033[0m Error fetching exercise limits: {e}")
+    
+    return {
+        "multiple_choice": 1,
+        "fill_in_the_blank": 1,
+        "ordering": 1,
+    }
+
 
 # Create supabase client
 client = init()

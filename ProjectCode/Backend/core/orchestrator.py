@@ -203,11 +203,16 @@ class Orchestrator:
         print("\033[93m[orchestrator]\033[0m get_distribution")
         distribution = []
 
+        exercise_limits = db.get_exercise_limits(user_id)
+        print("\033[93m[orchestrator]\033[0m Exercise limits: ", exercise_limits)
+
         for ex_type, difficulty in difficulty.items():
             if difficulty is None:
                 continue
+
+            for _ in range(exercise_limits.get(ex_type, 1)):
+                distribution.append(ex_type)
             
-            distribution.append(ex_type)
         
         if len(distribution) == 0 and len(self.exercise_types) > 0:
             # If no exercises available return first one and notice caretaker
