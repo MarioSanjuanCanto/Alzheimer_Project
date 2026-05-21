@@ -132,6 +132,31 @@ def generate_exercise_endpoint():
         print(f"\033[91m[app]\033[0m Generating fallback exercises:")
         return jsonify(service.generate_fallback_exercises(memory_data, count=3))
 
+
+@app.route('/api/delete_account', methods=['POST'])
+def delete_account_endpoint():
+    """
+    Endpoint to delete a user account and all associated data.
+    """
+    print("\033[91m[app]\033[0m delete_account_endpoint")
+
+    # --- Request Input validation ---
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    user_id = data.get('user_id')
+
+    if not user_id:
+        return jsonify({"error": "JSON must contain 'user_id'."}), 400
+
+    try:
+        result = db.delete_user_account(user_id)
+        return jsonify(result), 200
+    except Exception as e:
+        print(f"\033[91m[app]\033[0m Error deleting account: {e}")
+        return jsonify({"error": "Could not delete account."}), 500
+
 @app.route('/api/test', methods=['GET'])
 def test_endpoint():
     """Test endpoint to verify that the API is working."""

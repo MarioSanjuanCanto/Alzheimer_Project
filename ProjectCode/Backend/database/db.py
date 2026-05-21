@@ -216,14 +216,71 @@ def get_exercise_limits(user_id: str):
         "ordering": 1,
     }
 
+def delete_user_account(user_id: str):
+    """
+    Deletes a user account and all associated data.
+    Removes data from: user_stats, user_admin_links, memories, users tables.
+    Then deletes the auth user using admin API.
+    """
+    print(f"\033[92m[db]\033[0m delete_user_account: {user_id}")
+
+    # Get id by auth_id
+    user_data = client.table("users").select("id").eq("auth_id", user_id).execute()
+
+    if user_data is None or user_data.data == []:
+        return {"error": "User not found"}
+
+    auth_id = user_id
+    user_id = user_data.data[0]["id"]
+
+    if user_id is None:
+        return {"error": "User not found"}
+
+    # Delete user stats
+    try:
+        client.table("user_stats").delete().eq("id", user_id).execute()
+        print(f"\033[92m[db]\033[0m Deleted user_stats for {user_id}")
+    except Exception as e:
+        print(f"\033[91m[db]\033[0m Error deleting user_stats: {e}")
+
+    # Delete user-admin links
+    try:
+        client.table("user_admin_links").delete().eq("user_id", user_id).execute()
+        print(f"\033[92m[db]\033[0m Deleted user_admin_links for {user_id}")
+    except Exception as e:
+        print(f"\033[91m[db]\033[0m Error deleting user_admin_links: {e}")
+
+    # Delete user memories
+    try:
+        client.table("memories").delete().eq("user_id", user_id).execute()
+        print(f"\033[92m[db]\033[0m Deleted memories for {user_id}")
+    except Exception as e:
+        print(f"\033[91m[db]\033[0m Error deleting memories: {e}")
+
+    # Delete user record
+    try:
+        client.table("users").delete().eq("id", user_id).execute()
+        print(f"\033[92m[db]\033[0m Deleted user record for {user_id}")
+    except Exception as e:
+        print(f"\033[91m[db]\033[0m Error deleting user record: {e}")
+
+    # Delete auth user (requires service_role key)
+    try:
+        client.auth.admin.delete_user(auth_id)
+        print(f"\033[92m[db]\033[0m Deleted auth user {auth_id}")
+    except Exception as e:
+        print(f"\033[91m[db]\033[0m Error deleting auth user: {e}")
+
+    return {"status": "success"}
+
+
 
 # Create supabase client
 client = init()
 
 if __name__ == "__main__":
     print("\033[92m[db]\033[0m Debugging")
-    caretaker = get_patient_caretaker_id("af30d17b-dd21-4704-acf3-3701135fefc0")
-    print("CAREGIVER INFO: ", caretaker)
+    delete_user_account("2abc7555-32ea-44aa-b32e-6d22c96565e1")
     
 
     

@@ -8,10 +8,6 @@ const DeleteAccount = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
 
-  function handleDeleteAccount() {
-    throw new Error("Function not implemented.");
-  }
-
   return (
     <div className="bg-bggreen rounded-lg p-4 md:p-8 mt-10">
       {/* Section Header */}
