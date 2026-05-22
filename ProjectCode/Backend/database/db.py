@@ -216,21 +216,37 @@ def get_exercise_limits(user_id: str):
         "ordering": 1,
     }
 
-def delete_user_account(user_id: str):
+def delete_account(id):
+    # See if its a user:
+    user_data = client.table("users").select("id").eq("auth_id", id).execute()
+
+    if user_data is not None or user_data.data != []:
+        delete_user_account(id)
+        return ""
+
+    admin_data = client.table("admins").select("id").eq("auth_id", id).execute()
+
+    if admin_data is not None or admin_data.data != []:
+        delete_admin_account(id)
+        return ""
+
+    print("\033[91m[db]\033[0m Account not found")
+    return ""
+
+def delete_user_account(auth_id: str):
     """
     Deletes a user account and all associated data.
     Removes data from: user_stats, user_admin_links, memories, users tables.
     Then deletes the auth user using admin API.
     """
-    print(f"\033[92m[db]\033[0m delete_user_account: {user_id}")
+    print(f"\033[92m[db]\033[0m delete_user_account: {auth_id}")
 
     # Get id by auth_id
-    user_data = client.table("users").select("id").eq("auth_id", user_id).execute()
+    user_data = client.table("users").select("id").eq("auth_id", auth_id).execute()
 
     if user_data is None or user_data.data == []:
         return {"error": "User not found"}
 
-    auth_id = user_id
     user_id = user_data.data[0]["id"]
 
     if user_id is None:
@@ -273,6 +289,50 @@ def delete_user_account(user_id: str):
 
     return {"status": "success"}
 
+def delete_admin_account(auth_id: str):
+    """
+    Deletes a user account and all associated data.
+    Removes data from: user_stats, user_admin_links, memories, users tables.
+    Then deletes the auth user using admin API.
+    """
+    print(f"\033[92m[db]\033[0m delete_admin_account: {auth_id}")
+
+    # Get id by auth_id
+    admin_data = client.table("admins").select("id").eq("auth_id", auth_id).execute()
+
+    if admin_data is None or admin_data.data == []:
+        return {"error": "Admin not found"}
+
+    admin_id = admin_data.data[0]["id"]
+
+    if admin_id is None:
+        return {"error": "Admin not found"}
+
+    # Delete user-admin links
+    try:
+        client.table("user_admin_links").delete().eq("admin_id", admin_id).execute()
+        print(f"\033[92m[db]\033[0m Deleted user_admin_links for {admin_id}")
+    except Exception as e:
+        print(f"\033[91m[db]\033[0m Error deleting user_admin_links: {e}")
+
+
+    # Delete admin record
+    try:
+        client.table("admins").delete().eq("id", admin_id).execute()
+        print(f"\033[92m[db]\033[0m Deleted admin record for {admin_id}")
+    except Exception as e:
+        print(f"\033[91m[db]\033[0m Error deleting admin record: {e}")
+
+    # Delete auth user (requires service_role key)
+    try:
+        client.auth.admin.delete_user(auth_id)
+        print(f"\033[92m[db]\033[0m Deleted auth admin {auth_id}")
+    except Exception as e:
+        print(f"\033[91m[db]\033[0m Error deleting auth admin: {e}")
+
+    return {"status": "success"}
+
+
 
 
 # Create supabase client
@@ -280,7 +340,8 @@ client = init()
 
 if __name__ == "__main__":
     print("\033[92m[db]\033[0m Debugging")
-    delete_user_account("2abc7555-32ea-44aa-b32e-6d22c96565e1")
+    delete_admin_account("8a95f2ff-deb9-4c04-8faf-07ab169e52a1")
+
     
 
     

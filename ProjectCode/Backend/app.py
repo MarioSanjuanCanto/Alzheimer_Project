@@ -151,7 +151,7 @@ def delete_account_endpoint():
         return jsonify({"error": "JSON must contain 'user_id'."}), 400
 
     try:
-        result = db.delete_user_account(user_id)
+        result = db.delete_account(user_id)
         return jsonify(result), 200
     except Exception as e:
         print(f"\033[91m[app]\033[0m Error deleting account: {e}")
