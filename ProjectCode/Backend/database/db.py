@@ -252,27 +252,6 @@ def delete_user_account(auth_id: str):
     if user_id is None:
         return {"error": "User not found"}
 
-    # Delete user stats
-    try:
-        client.table("user_stats").delete().eq("id", user_id).execute()
-        print(f"\033[92m[db]\033[0m Deleted user_stats for {user_id}")
-    except Exception as e:
-        print(f"\033[91m[db]\033[0m Error deleting user_stats: {e}")
-
-    # Delete user-admin links
-    try:
-        client.table("user_admin_links").delete().eq("user_id", user_id).execute()
-        print(f"\033[92m[db]\033[0m Deleted user_admin_links for {user_id}")
-    except Exception as e:
-        print(f"\033[91m[db]\033[0m Error deleting user_admin_links: {e}")
-
-    # Delete user memories
-    try:
-        client.table("memories").delete().eq("user_id", user_id).execute()
-        print(f"\033[92m[db]\033[0m Deleted memories for {user_id}")
-    except Exception as e:
-        print(f"\033[91m[db]\033[0m Error deleting memories: {e}")
-
     # Delete user record
     try:
         client.table("users").delete().eq("id", user_id).execute()

@@ -42,8 +42,10 @@ def excercise_correction_endpoint():
     is_correct = (resultado == 'succeed')
     
     try:        
-        # Update the database
+        # Update user stats in the database
         db.update_user_stats(user_id, exercise_type, is_correct)
+        # Update user long term memory in the database
+        #db.update_user_long_term_memory(user_id, exercise_type, is_correct)
         return jsonify({"status": "success", "message": "Exercise stats updated."}), 200
     except Exception as e:
         print(f"\033[91m[app]\033[0m Error updating user stats: {e}")
