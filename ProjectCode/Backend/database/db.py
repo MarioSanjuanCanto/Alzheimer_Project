@@ -3,7 +3,9 @@ from dotenv import load_dotenv
 from supabase import create_client, Client
 
 
-# --- Supabase Client Initialization ---
+# =====================================================================
+# 0. Supabase Client Initialization
+# =====================================================================
 def init():
     """ Initializes the Supabase client using environment variables. """
     load_dotenv()
@@ -16,32 +18,66 @@ def init():
 
     return client
 
-# _______________ User functions  _______________
+
+# =====================================================================
+# 1. 'users' Table Operations
+# =====================================================================
 def get_users():
     """ Retrieves all users from the database. """
     print("\033[92m[db]\033[0m get_users")
     response = client.table("users").select("*").execute()
     return response.data
 
-def get_user_info(id:str):
+def get_user_info(id: str):
     """ Retrieves information for a specific user by ID. """
     print("\033[92m[db]\033[0m get_user_info")
     response = client.table("users").select("*").eq("id", id).execute()
     return response.data
 
-def get_patient_caretaker_id(user_id:str):
-    """ Retrieves the caregiver (admin) ID linked to a specific patient (user). """
-    admin_id = client.table("user_admin_links").select("admin_id").eq("user_id", user_id).execute()    
-    return admin_id.data[0]["admin_id"]
+def get_exercise_limits(user_id: str):
+    """ Retrieves the exercise limits for a specific user. """
+    print("\033[92m[db]\033[0m get_exercise_limits")
+    try:
+        response = client.table("users").select("multiple_choice, fill_in_the_blank, ordering").eq("id", user_id).execute()
+        if response.data and len(response.data) > 0:
+            limits = response.data[0]
+            return {
+                "multiple_choice": limits.get("multiple_choice") if limits.get("multiple_choice") is not None else 1,
+                "fill_in_the_blank": limits.get("fill_in_the_blank") if limits.get("fill_in_the_blank") is not None else 1,
+                "ordering": limits.get("ordering") if limits.get("ordering") is not None else 1,
+            }
+    except Exception as e:
+        print(f"\033[91m[db]\033[0m Error fetching exercise limits: {e}")
+    
+    return {
+        "multiple_choice": 1,
+        "fill_in_the_blank": 1,
+        "ordering": 1,
+    }
 
-# _______________ Admin functions  _______________
-def get_admin_info(id:str):
+
+# =====================================================================
+# 2. 'admins' Table Operations
+# =====================================================================
+def get_admin_info(id: str):
     """ Retrieves information for a specific admin by ID. """
     print("\033[92m[db]\033[0m get_admin")
     response = client.table("admins").select("*").eq("id", id).execute()
     return response.data
 
-# _______________ User stats functions  _______________
+
+# =====================================================================
+# 3. 'user_admin_links' Table Operations
+# =====================================================================
+def get_patient_caretaker_id(user_id: str):
+    """ Retrieves the caregiver (admin) ID linked to a specific patient (user). """
+    admin_id = client.table("user_admin_links").select("admin_id").eq("user_id", user_id).execute()    
+    return admin_id.data[0]["admin_id"]
+
+
+# =====================================================================
+# 4. 'user_stats' Table Operations (Cumulative Cache Stats)
+# =====================================================================
 def reset_user_stats_table():
     """ Initializes or resets the stats table for all users. """
     print("\033[92m[db]\033[0m get_user_parsed_info")
@@ -65,7 +101,7 @@ def reset_user_stats_table():
 
     return {"status": "success"}
 
-def reset_user_stats(id:str):
+def reset_user_stats(id: str):
     """ Resets all exercise stats and difficulty levels for a specific user. """
     print("\033[92m[db]\033[0m reset_user_stats")
     response = client.table("user_stats").update({
@@ -81,7 +117,7 @@ def reset_user_stats(id:str):
     }).eq("id", id).execute()
     return response.data
 
-def get_user_stats(id:str):
+def get_user_stats(id: str):
     """ Retrieves performance stats for a specific user. """
     print("\033[92m[db]\033[0m get_user_stats")
     response = client.table("user_stats").select("*").eq("id", id).execute()
@@ -89,7 +125,7 @@ def get_user_stats(id:str):
         return add_new_user_stats(id)
     return response.data
 
-def add_new_user_stats(id:str):
+def add_new_user_stats(id: str):
     """ Creates a new initial stats record for a specific user. """
     print("\033[92m[db]\033[0m add_new_user_stats")
     user = get_user_info(id)
@@ -110,13 +146,13 @@ def add_new_user_stats(id:str):
     response = client.table("user_stats").insert(info).execute()
     return response.data
 
-def delete_user_stats(id:str):
+def delete_user_stats(id: str):
     """ Deletes the stats record of a specific user. """
     print("\033[92m[db]\033[0m delete_user_stats")
     response = client.table("user_stats").delete().eq("id", id).execute()
     return response.data
 
-def update_user_stats(id:str, exercise_type:str, correct:bool):
+def update_user_stats(id: str, exercise_type: str, correct: bool):
     """ Updates the exercise performance stats (done/right) for a specific user. """
     print("\033[92m[db]\033[0m update_user_stats")
     user_stats = get_user_stats(id)
@@ -141,8 +177,7 @@ def update_user_stats(id:str, exercise_type:str, correct:bool):
     response = client.table("user_stats").update(user_stats).eq("id", id).execute()
     return response.data
 
-# _______________ User Exercise stats functions  _______________
-def get_user_exercises_stats(id:str, ex_types:list):
+def get_user_exercises_stats(id: str, ex_types: list):
     """ Retrieves exercises stats and current difficulty level per exercise type. """
     print("\033[92m[db]\033[0m get_user_exercises_stats")
     data = get_user_stats(id)
@@ -168,7 +203,7 @@ def get_user_exercises_stats(id:str, ex_types:list):
         print("Error: ", e)
         return None
 
-def update_current_level(id:str, ex_type:str, new_level:int) -> dict:
+def update_current_level(id: str, ex_type: str, new_level: int) -> dict:
     """ Updates the current difficulty level for a specific exercise type. """
     print("\033[92m[db]\033[0m update_current_level")
     response = (
@@ -180,7 +215,7 @@ def update_current_level(id:str, ex_type:str, new_level:int) -> dict:
 
     return response.data
 
-def reset_exercise_stats(id:str, ex_type:str):
+def reset_exercise_stats(id: str, ex_type: str):
     """ Resets the stats (done/right) for a specific exercise type. """
     print("\033[92m[db]\033[0m reset_exercise_stats")
     response = (
@@ -195,27 +230,62 @@ def reset_exercise_stats(id:str, ex_type:str):
 
     return response.data
 
-def get_exercise_limits(user_id: str):
-    """ Retrieves the exercise limits for a specific user. """
-    print("\033[92m[db]\033[0m get_exercise_limits")
-    try:
-        response = client.table("users").select("multiple_choice, fill_in_the_blank, ordering").eq("id", user_id).execute()
-        if response.data and len(response.data) > 0:
-            limits = response.data[0]
-            return {
-                "multiple_choice": limits.get("multiple_choice") if limits.get("multiple_choice") is not None else 1,
-                "fill_in_the_blank": limits.get("fill_in_the_blank") if limits.get("fill_in_the_blank") is not None else 1,
-                "ordering": limits.get("ordering") if limits.get("ordering") is not None else 1,
-            }
-    except Exception as e:
-        print(f"\033[91m[db]\033[0m Error fetching exercise limits: {e}")
-    
-    return {
-        "multiple_choice": 1,
-        "fill_in_the_blank": 1,
-        "ordering": 1,
-    }
 
+# =====================================================================
+# 5. 'user_exercise_history' Table Operations (Long-term History Logs)
+# =====================================================================
+
+def insert_exercise_history(user_id: str, exercise_type: str, is_correct: bool, difficulty_level: int = 1, memory_id: str = None):
+    """ Inserts a new exercise record in the user_exercise_history table. """
+    print("\033[92m[db]\033[0m insert_exercise_history")
+    
+    info = {
+        "user_id": user_id,
+        "exercise_type": exercise_type,
+        "is_correct": is_correct,
+        "difficulty_level": difficulty_level,
+    }
+    if memory_id is not None:
+        info["memory_id"] = memory_id
+
+    response = client.table("user_exercise_history").insert(info).execute()
+    return response.data
+
+def get_user_exercise_history(user_id: str, limit: int = 100):
+    """ Retrieves the exercise history for a specific user. """
+    print("\033[92m[db]\033[0m get_user_exercise_history")
+    response = (
+        client.table("user_exercise_history")
+        .select("*")
+        .eq("user_id", user_id)
+        .order("created_at", desc=True)
+        .limit(limit)
+        .execute()
+    )
+    return response.data
+
+def delete_user_exercise_history(user_id: str):
+    """ Deletes all exercise history records for a specific user. """
+    print("\033[92m[db]\033[0m delete_user_exercise_history")
+    response = client.table("user_exercise_history").delete().eq("user_id", user_id).execute()
+    return response.data
+
+def delete_exercise_history_entry(id: str):
+    """ Deletes a single exercise history entry by its ID. """
+    print("\033[92m[db]\033[0m delete_exercise_history_entry")
+    response = client.table("user_exercise_history").delete().eq("id", id).execute()
+    return response.data
+
+def update_exercise_history_entry(id: str, updates: dict):
+    """ Updates specific fields of an exercise history entry. """
+    print("\033[92m[db]\033[0m update_exercise_history_entry")
+    response = client.table("user_exercise_history").update(updates).eq("id", id).execute()
+    return response.data
+
+
+# =====================================================================
+# 6. Administrative Account Deletions (Multi-Table Operations)
+# =====================================================================
 def delete_account(id):
     # See if its a user:
     user_data = client.table("users").select("id").eq("auth_id", id).execute()
@@ -312,15 +382,11 @@ def delete_admin_account(auth_id: str):
     return {"status": "success"}
 
 
-
-
-# Create supabase client
+# =====================================================================
+# Global Client Instantiation
+# =====================================================================
 client = init()
 
 if __name__ == "__main__":
     print("\033[92m[db]\033[0m Debugging")
-    delete_admin_account("8a95f2ff-deb9-4c04-8faf-07ab169e52a1")
-
-    
-
-    
+    print(delete_user_exercise_history("38a71d49-27e4-4eed-84b0-6fef657e38b6"))

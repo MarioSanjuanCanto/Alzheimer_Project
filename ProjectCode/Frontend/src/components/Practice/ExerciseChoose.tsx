@@ -8,13 +8,15 @@ interface ExerciseChooseProps {
     options: string[];
     correct_answer: number;
     hint?: string;
+    difficulty?: string;
   };
   userId: string;
   index: number;
   onAnswered?: () => void;
+  memoryId?: string;
 }
 
-const ExerciseChoose = ({ exercise, userId, index, onAnswered }: ExerciseChooseProps) => {
+const ExerciseChoose = ({ exercise, userId, index, onAnswered, memoryId }: ExerciseChooseProps) => {
   const { t } = useTranslation();
 
   const [selected, setSelected] = useState<number | null>(null);
@@ -37,6 +39,8 @@ const ExerciseChoose = ({ exercise, userId, index, onAnswered }: ExerciseChooseP
           user_id: userId,
           exercise_type: "multiple_choice",
           resultado: isCorrect ? "succeed" : "fail",
+          difficulty: exercise.difficulty,
+          memory_id: memoryId,
         }),
       });
     } catch (error) {

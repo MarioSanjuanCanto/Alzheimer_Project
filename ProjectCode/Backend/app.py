@@ -44,8 +44,18 @@ def excercise_correction_endpoint():
     try:        
         # Update user stats in the database
         db.update_user_stats(user_id, exercise_type, is_correct)
-        # Update user long term memory in the database
-        #db.update_user_long_term_memory(user_id, exercise_type, is_correct)
+        
+        # --- Map difficulty and insert to exercise history ---
+        difficulty_level = db.get_user_stats(user_id)[0].get(f"{exercise_type}_current_level", None)
+        memory_id = exercise_data.get('memory_id')
+        
+        db.insert_exercise_history(
+            user_id=user_id,
+            exercise_type=exercise_type,
+            is_correct=is_correct,
+            difficulty_level=difficulty_level,
+            memory_id=memory_id
+        )
         return jsonify({"status": "success", "message": "Exercise stats updated."}), 200
     except Exception as e:
         print(f"\033[91m[app]\033[0m Error updating user stats: {e}")

@@ -8,13 +8,15 @@ interface ExerciseCompleteProps {
     question: string;
     correct_answer: string;
     hint?: string;
+    difficulty?: string;
   };
   userId: string;
   index: number;
   onAnswered?: () => void;
+  memoryId?: string;
 }
 
-const ExerciseComplete = ({ exercise, userId, index, onAnswered }: ExerciseCompleteProps) => {
+const ExerciseComplete = ({ exercise, userId, index, onAnswered, memoryId }: ExerciseCompleteProps) => {
   const { t } = useTranslation();
 
   const [answer, setAnswer] = useState("");
@@ -54,6 +56,8 @@ const ExerciseComplete = ({ exercise, userId, index, onAnswered }: ExerciseCompl
           user_id: userId,
           exercise_type: "fill_in_the_blank",
           resultado: correct ? "succeed" : "fail",
+          difficulty: exercise.difficulty,
+          memory_id: memoryId,
         }),
       });
     } catch (error) {

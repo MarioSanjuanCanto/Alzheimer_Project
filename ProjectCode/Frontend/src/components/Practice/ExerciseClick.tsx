@@ -8,13 +8,15 @@ interface ExerciseClickProps {
     options: string[];
     correct_answer: string[];
     hint?: string;
+    difficulty?: string;
   };
   userId: string;
   index: number;
   onAnswered?: () => void;
+  memoryId?: string;
 }
 
-const ExerciseClick = ({ exercise, userId, index, onAnswered }: ExerciseClickProps) => {
+const ExerciseClick = ({ exercise, userId, index, onAnswered, memoryId }: ExerciseClickProps) => {
   const { t } = useTranslation();
 
   const items = exercise.options;
@@ -49,6 +51,8 @@ const ExerciseClick = ({ exercise, userId, index, onAnswered }: ExerciseClickPro
           user_id: userId,
           exercise_type: "ordering",
           resultado: isCorrect ? "succeed" : "fail",
+          difficulty: exercise.difficulty,
+          memory_id: memoryId,
         }),
       });
     } catch (error) {

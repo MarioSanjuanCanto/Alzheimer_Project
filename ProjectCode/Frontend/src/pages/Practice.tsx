@@ -255,6 +255,7 @@ const Practice = () => {
                             index={currentIndex + 1}
                             exercise={currentExercise}
                             userId={memory.user_id}
+                            memoryId={memoryId}
                             onAnswered={handleAnswered}
                           />
                         )}
@@ -264,6 +265,7 @@ const Practice = () => {
                             index={currentIndex + 1}
                             exercise={currentExercise}
                             userId={memory.user_id}
+                            memoryId={memoryId}
                             onAnswered={handleAnswered}
                           />
                         )}
@@ -273,6 +275,7 @@ const Practice = () => {
                             index={currentIndex + 1}
                             exercise={currentExercise}
                             userId={memory.user_id}
+                            memoryId={memoryId}
                             onAnswered={handleAnswered}
                           />
                         )}
