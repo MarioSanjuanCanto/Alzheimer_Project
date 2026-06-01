@@ -125,11 +125,12 @@ ordering_task:
     4. "correct_answer" contiene los mismos eventos en orden cronológico correcto.
     5. Cada elemento de "correct_answer" debe ser idéntico carácter por carácter a un elemento de "options".
     6. No uses frases vagas, descripciones de ambiente ni etiquetas como "Evento 1".
+    7. EL NÚMERO DE OPCIONES ES ESTRICTO SEGÚN DIFICULTAD: fácil=3, media=4, difícil=5. Bajo ningún concepto generes más o menos elementos.
 
-    ADAPTACIÓN DE DIFICULTAD:
-    - fácil: exactamente 3 eventos principales muy separados.
-    - media: exactamente 4 eventos relacionados de una misma escena o actividad.
-    - difícil: 5 o 6 micro-eventos claros cuyo orden requiera recordar la secuencia exacta.
+    ADAPTACIÓN DE DIFICULTAD (ESTRICTO - respeta el número exacto de elementos):
+    - fácil: EXACTAMENTE 3 eventos principales, claros y bien separados en el tiempo.
+    - media: EXACTAMENTE 4 eventos relacionados de una misma escena o actividad.
+    - difícil: EXACTAMENTE 5 eventos cuyo orden requiera recordar la secuencia exacta.
 
     JSON REQUERIDO:
     {
@@ -205,7 +206,7 @@ validate_ordering_task:
     1. Todos los eventos deben aparecer en la información original.
     2. "correct_answer" debe estar en el mismo orden cronológico que el texto.
     3. "options" y "correct_answer" deben contener las mismas frases exactas.
-    4. Cantidad esperada: fácil = 3, media = 4, difícil = 5 o 6.
+    4. Cantidad EXACTA esperada: fácil = 3, media = 4, difícil = 5. Rechaza si no coincide.
     5. Rechaza eventos inventados, vagos, decorativos o sin relación temporal clara.
 
     RESPONDE SOLO:

@@ -19,11 +19,12 @@ import { useParticipant } from "@/context/practicerContext";
 import { NoUser } from "@/assets/images/no-users";
 
 const Settings = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const { selectedParticipant, switchParticipant } = useParticipant();
 
   const [activeSection, setActiveSection] = useState("myProfile");
+  const [patientTab, setPatientTab] = useState<"stats" | "config" | "team">("stats");
   const [currentProfile, setCurrentProfile] = useState<any>(null);
   const [linkedUsers, setLinkedUsers] = useState<LinkedUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -88,12 +89,13 @@ const Settings = () => {
         onSelectParticipant={(user) => {
           switchParticipant(user);
           setActiveSection("practicerProfiles");
+          setPatientTab("stats");
         }}
         onSelectMyProfile={() => setActiveSection("myProfile")}
         onAddUser={() => setActiveSection("addUser")}
       />
 
-      <div className="page-padding flex flex-col lg:mx-auto pt-20 lg:pt-28 z-10 animate-in fade-in-50 slide-in-from-right-5 duration-500">
+      <div className="page-padding flex flex-col lg:ml-10 lg:mr-auto pt-20 lg:pt-28 z-10 animate-in fade-in-50 slide-in-from-right-5 duration-500">
         <div className="block lg:hidden">
           <BackButton />
         </div>
@@ -106,28 +108,75 @@ const Settings = () => {
                 <h2 className="font-fraunces text-4xl font-bold text-primary pb-4 lg:pb-8 lg:mt-0">
                   {t("settings.settingsFor")} {selectedParticipant.fullName}
                 </h2>
+
+                {/* Selector de Pestañas Moderno */}
+                <div className="flex bg-gray-100/80 backdrop-blur-sm p-1 rounded-full border border-lightgrey max-w-fit mb-8 gap-1 overflow-x-auto scrollbar-none">
+                  <button
+                    onClick={() => setPatientTab("stats")}
+                    className={`px-5 py-2.5 rounded-full text-lg font-medium transition-all whitespace-nowrap ${
+                      patientTab === "stats"
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-darkgrey hover:bg-gray-200 hover:text-primary"
+                    }`}
+                  >
+                    {i18n.language?.startsWith("es") ? "Evolución Cognitiva" : "Cognitive Evolution"}
+                  </button>
+                  <button
+                    onClick={() => setPatientTab("config")}
+                    className={`px-5 py-2.5 rounded-full text-lg font-medium transition-all whitespace-nowrap ${
+                      patientTab === "config"
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-darkgrey hover:bg-gray-200 hover:text-primary"
+                    }`}
+                  >
+                    {i18n.language?.startsWith("es") ? "Plan de Ejercicios" : "Exercise Plan"}
+                  </button>
+                  <button
+                    onClick={() => setPatientTab("team")}
+                    className={`px-5 py-2.5 rounded-full text-lg font-medium transition-all whitespace-nowrap ${
+                      patientTab === "team"
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-darkgrey hover:bg-gray-200 hover:text-primary"
+                    }`}
+                  >
+                    {i18n.language?.startsWith("es") ? "Equipo y Cuenta" : "Team & Account"}
+                  </button>
+                </div>
+
                 <div className="divide-y divide-lightgrey">
-                  <div className="py-8 lg:py-10 first:pt-0">
-                    <PatientStatsDashboard userId={selectedParticipant.id} />
-                  </div>
-                  <div className="py-8 lg:py-10">
-                    <Supporters
-                      selectedUser={selectedParticipant}
-                      currentProfile={currentProfile}
-                    />
-                  </div>
-                  <div className="py-8 lg:py-10">
-                    <UserPermission user={selectedParticipant} />
-                  </div>
-                  <div className="py-8 lg:py-10">
-                    <ExerciseLimitConfig userId={selectedParticipant.id} />
-                  </div>
-                  {isAdmin && (
-                    <div className="pt-8 lg:py-10">
-                      <DisconnectUser
-                        adminId={currentProfile.id}
-                        userId={selectedParticipant.id}
-                      />
+                  {patientTab === "stats" && (
+                    <div className="py-4 first:pt-0 animate-in fade-in duration-300">
+                      <PatientStatsDashboard userId={selectedParticipant.id} />
+                    </div>
+                  )}
+
+                  {patientTab === "config" && (
+                    <div className="space-y-10 divide-y divide-lightgrey py-4 first:pt-0 animate-in fade-in duration-300">
+                      <div className="pb-10 first:pt-0">
+                        <ExerciseLimitConfig userId={selectedParticipant.id} />
+                      </div>
+                      <div className="pt-10">
+                        <UserPermission user={selectedParticipant} />
+                      </div>
+                    </div>
+                  )}
+
+                  {patientTab === "team" && (
+                    <div className="space-y-10 divide-y divide-lightgrey py-4 first:pt-0 animate-in fade-in duration-300">
+                      <div className="pb-10 first:pt-0">
+                        <Supporters
+                          selectedUser={selectedParticipant}
+                          currentProfile={currentProfile}
+                        />
+                      </div>
+                      {isAdmin && (
+                        <div className="pt-10">
+                          <DisconnectUser
+                            adminId={currentProfile.id}
+                            userId={selectedParticipant.id}
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
