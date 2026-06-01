@@ -101,10 +101,15 @@ const Navbar = ({ forceMinimized = false }: NavbarProps) => {
           </NavLink>
 
         
-            <NavLink to="/exercises-overview" className={navLinkClass}>
+          <NavLink to="/exercises-overview" className={navLinkClass}>
               {t("navigation.practice")}
             </NavLink>
     
+          {isAdmin && (
+            <NavLink to="/monitor" className={navLinkClass}>
+              {t("navigation.monitor", "Monitorización")}
+            </NavLink>
+          )}
 
           <NavLink to="/settings" className={navLinkClass}>
             {t("navigation.settings")}

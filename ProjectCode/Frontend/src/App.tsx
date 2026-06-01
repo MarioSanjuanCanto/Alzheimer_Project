@@ -9,6 +9,7 @@ import View from "./pages/View";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Settings from "./pages/Settings";
+import Monitor from "./pages/Monitor";
 import NotFound from "./pages/NotFound";
 import MyProfileSettings from "./components/settings/MyProfileSettings";
 import ExercisesOverview from "./pages/ExercisesOverview";
@@ -38,6 +39,7 @@ const AnimatedRoutes = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/monitor" element={<Monitor />} />
           <Route
             path="/my-profile-settings"
             element={<MyProfileSettings currentProfile={undefined} />}
