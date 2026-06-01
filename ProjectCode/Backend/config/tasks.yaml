@@ -126,6 +126,7 @@ ordering_task:
     5. Cada elemento de "correct_answer" debe ser idéntico carácter por carácter a un elemento de "options".
     6. No uses frases vagas, descripciones de ambiente ni etiquetas como "Evento 1".
     7. EL NÚMERO DE OPCIONES ES ESTRICTO SEGÚN DIFICULTAD: fácil=3, media=4, difícil=5. Bajo ningún concepto generes más o menos elementos.
+    8. Mantén las frases de los eventos lo más CORTAS y concisas posible (ej. "Llegué al hospital", no "Hoy martes he ido al hospital para hacer mi revisión").
 
     ADAPTACIÓN DE DIFICULTAD (ESTRICTO - respeta el número exacto de elementos):
     - fácil: EXACTAMENTE 3 eventos principales, claros y bien separados en el tiempo.
@@ -208,6 +209,7 @@ validate_ordering_task:
     3. "options" y "correct_answer" deben contener las mismas frases exactas.
     4. Cantidad EXACTA esperada: fácil = 3, media = 4, difícil = 5. Rechaza si no coincide.
     5. Rechaza eventos inventados, vagos, decorativos o sin relación temporal clara.
+    6. Rechaza opciones con frases excesivamente largas o redundantes; los eventos deben ser muy cortos y concisos.
 
     RESPONDE SOLO:
     {
