@@ -119,14 +119,14 @@ ordering_task:
     {content_to_avoid}
 
     REGLAS OBLIGATORIAS:
-    1. Usa solo eventos o acciones que aparezcan en la información.
+    1. Usa eventos basados en la información, pero DEBES RESUMIRLOS con tus propias palabras. NO copies frases literales del texto original.
     2. No inventes pasos intermedios.
     3. "options" contiene los eventos desordenados.
     4. "correct_answer" contiene los mismos eventos en orden cronológico correcto.
     5. Cada elemento de "correct_answer" debe ser idéntico carácter por carácter a un elemento de "options".
     6. No uses frases vagas, descripciones de ambiente ni etiquetas como "Evento 1".
     7. EL NÚMERO DE OPCIONES ES ESTRICTO SEGÚN DIFICULTAD: fácil=3, media=4, difícil=5. Bajo ningún concepto generes más o menos elementos.
-    8. Mantén las frases de los eventos lo más CORTAS y concisas posible (ej. "Llegué al hospital", no "Hoy martes he ido al hospital para hacer mi revisión").
+    8. RESUME Y REESCRIBE: Cada evento debe ser un breve resumen de la acción (máximo 6-8 palabras). NUNCA copies oraciones literales del texto. (ej. "Mi nieto Leo llegó a casa", en vez de "Llegó justo después del desayuno, irrumpiendo por la puerta principal como una ráfaga de viento").
 
     ADAPTACIÓN DE DIFICULTAD (ESTRICTO - respeta el número exacto de elementos):
     - fácil: EXACTAMENTE 3 eventos principales, claros y bien separados en el tiempo.
