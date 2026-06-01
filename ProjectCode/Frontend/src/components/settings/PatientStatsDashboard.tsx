@@ -44,6 +44,7 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
   const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState<ExerciseHistoryEntry[]>([]);
+  const [dateFilter, setDateFilter] = useState<string>("all");
 
   // Idioma auxiliar para formatear los textos del gráfico
   const isSpanish = i18n.language?.startsWith("es");
@@ -118,14 +119,27 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
     );
   }
 
+  // --- 0. APLICAR FILTRO DE FECHA ---
+  const now = new Date();
+  const filteredHistory = history.filter((x) => {
+    if (dateFilter === "all") return true;
+    const entryDate = new Date(x.created_at);
+    const diffTime = now.getTime() - entryDate.getTime();
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    
+    if (dateFilter === "last_7") return diffDays <= 7;
+    if (dateFilter === "last_30") return diffDays <= 30;
+    return true;
+  });
+
   // --- 1. PROCESAR MÉTRICAS ACUMULADAS ---
-  const totalExercises = history.length;
-  const correctExercises = history.filter((x) => x.is_correct).length;
-  const successRate = Math.round((correctExercises / totalExercises) * 100);
+  const totalExercises = filteredHistory.length;
+  const correctExercises = filteredHistory.filter((x) => x.is_correct).length;
+  const successRate = totalExercises > 0 ? Math.round((correctExercises / totalExercises) * 100) : 0;
 
   // Obtener nivel de dificultad máximo
-  let maxDifficulty = 1;
-  history.forEach((x) => {
+  let maxDifficulty = 0;
+  filteredHistory.forEach((x) => {
     const lvl = parseInt(x.difficulty_level, 10);
     if (!isNaN(lvl) && lvl > maxDifficulty) {
       maxDifficulty = lvl;
@@ -134,7 +148,7 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
 
   // --- 2. DATOS PARA GRÁFICO CIRCULAR (DISTRIBUCIÓN) ---
   const distributionMap: { [key: string]: number } = {};
-  history.forEach((x) => {
+  filteredHistory.forEach((x) => {
     distributionMap[x.exercise_type] = (distributionMap[x.exercise_type] || 0) + 1;
   });
   const pieData = Object.keys(distributionMap).map((key) => ({
@@ -151,7 +165,7 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
     ordering: { correct: 0, incorrect: 0 },
   };
 
-  history.forEach((x) => {
+  filteredHistory.forEach((x) => {
     const key = x.exercise_type;
     if (!performanceMap[key]) {
       performanceMap[key] = { correct: 0, incorrect: 0 };
@@ -172,7 +186,7 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
   // --- 4. DATOS PARA GRÁFICO DE ÁREA TEMPORAL (EVOLUCIÓN) ---
   // Agrupar por fecha local (YYYY-MM-DD)
   const timelineMap: { [key: string]: { total: number; correct: number } } = {};
-  history.forEach((x) => {
+  filteredHistory.forEach((x) => {
     const dateStr = new Date(x.created_at).toLocaleDateString(
       isSpanish ? "es-ES" : "en-US",
       { month: "short", day: "numeric" }
@@ -198,16 +212,32 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
 
   return (
     <div className="space-y-8 max-w-[72rem] animate-in fade-in duration-700">
-      <div>
-        <h3 className="text-black text-3xl font-bold flex items-center gap-2">
-          <BarChart3 className="w-8 h-8 text-primary" />
-          {isSpanish ? "Estadísticas de Evolución Cognitiva" : "Cognitive Evolution Statistics"}
-        </h3>
-        <p className="text-black/70 text-lg">
-          {isSpanish
-            ? "Análisis interactivo detallado de las respuestas e historial de ejercicios del paciente."
-            : "Detailed interactive analysis of the patient's exercise history and responses."}
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h3 className="text-black text-3xl font-bold flex items-center gap-2">
+            <BarChart3 className="w-8 h-8 text-primary" />
+            {isSpanish ? "Estadísticas de Evolución Cognitiva" : "Cognitive Evolution Statistics"}
+          </h3>
+          <p className="text-black/70 text-lg">
+            {isSpanish
+              ? "Análisis interactivo detallado de las respuestas e historial de ejercicios del paciente."
+              : "Detailed interactive analysis of the patient's exercise history and responses."}
+          </p>
+        </div>
+
+        {/* Dropdown de fecha */}
+        <div className="bg-white/60 backdrop-blur-md border border-lightgrey p-2 px-4 rounded-xl shadow-sm flex items-center gap-3">
+          <Calendar className="w-5 h-5 text-darkgrey" />
+          <select 
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="bg-transparent text-black font-medium outline-none cursor-pointer"
+          >
+            <option value="all">{isSpanish ? "Todo el tiempo" : "All time"}</option>
+            <option value="last_7">{isSpanish ? "Últimos 7 días" : "Last 7 days"}</option>
+            <option value="last_30">{isSpanish ? "Últimos 30 días" : "Last 30 days"}</option>
+          </select>
+        </div>
       </div>
 
       {/* --- CARDS DE MÉTRICAS (Glassmorphism) --- */}
