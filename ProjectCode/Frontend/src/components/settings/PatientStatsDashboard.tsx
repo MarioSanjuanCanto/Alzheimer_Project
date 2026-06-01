@@ -284,13 +284,11 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
                 <Legend iconType="circle" />
                 <Bar
                   dataKey={isSpanish ? "Correctas" : "Correct"}
-                  stackId="a"
                   fill="#10B981"
-                  radius={[0, 0, 4, 4]}
+                  radius={[4, 4, 0, 0]}
                 />
                 <Bar
                   dataKey={isSpanish ? "Incorrectas" : "Incorrect"}
-                  stackId="a"
                   fill="#F87171"
                   radius={[4, 4, 0, 0]}
                 />
@@ -313,15 +311,15 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
             </p>
           </div>
           <div className="flex-1 w-full min-h-0 flex items-center justify-center">
-            <div className="w-[60%] h-full">
+            <div className="w-full h-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieData}
                     cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={90}
+                    cy="40%"
+                    innerRadius={50}
+                    outerRadius={80}
                     paddingAngle={5}
                     dataKey="value"
                   >
@@ -336,7 +334,7 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
                       borderRadius: "0.5rem",
                     }}
                   />
-                  <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                  <Legend verticalAlign="bottom" height={48} iconType="circle" />
                 </PieChart>
               </ResponsiveContainer>
             </div>
