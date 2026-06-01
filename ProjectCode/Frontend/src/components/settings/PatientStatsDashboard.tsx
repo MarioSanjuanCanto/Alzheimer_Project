@@ -214,11 +214,11 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
     <div className="space-y-8 max-w-[72rem] animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h3 className="text-black text-3xl font-bold flex items-center gap-2">
-            <BarChart3 className="w-8 h-8 text-primary" />
+          <h3 className="text-black text-2xl font-extrabold flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-primary" strokeWidth={2.5} />
             {isSpanish ? "Estadísticas de Evolución Cognitiva" : "Cognitive Evolution Statistics"}
           </h3>
-          <p className="text-black/70 text-lg">
+          <p className="text-black/70 mt-1">
             {isSpanish
               ? "Análisis interactivo detallado de las respuestas e historial de ejercicios del paciente."
               : "Detailed interactive analysis of the patient's exercise history and responses."}
