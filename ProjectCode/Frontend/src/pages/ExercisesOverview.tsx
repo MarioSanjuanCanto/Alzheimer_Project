@@ -58,9 +58,10 @@ const ExercisesOverview = () => {
         }
 
         setHasLinkedUsers(true);
-        const activeUser = selectedParticipant || links[0].users;
+        const hasRealSelectedParticipant = selectedParticipant && selectedParticipant.role !== "admin";
+        const activeUser = hasRealSelectedParticipant ? selectedParticipant : links[0].users;
 
-        if (!selectedParticipant) {
+        if (!hasRealSelectedParticipant) {
           setSelectedParticipant(activeUser);
         }
         targetId = activeUser.id;

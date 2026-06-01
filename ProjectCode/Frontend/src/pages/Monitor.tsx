@@ -1,26 +1,28 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import { useLocation } from "react-i18next";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import MonitorSidebar from "@/components/monitor/MonitorSidebar";
+import Navbar from "@/components/Navbar";
+import MobileNav from "@/components/MobileNav";
+import BackgroundDesktop from "@/components/ui/backgroundDesktop";
 import ExerciseLimitConfig from "@/components/settings/ExerciseLimitConfig";
 import UserPermission from "@/components/settings/UserPermission";
 import Supporters from "@/components/settings/Supporters";
 import PatientStatsDashboard from "@/components/settings/PatientStatsDashboard";
 import AddUser from "@/components/AddUser";
-import BackButton from "@/components/ui/back-button";
 import { getCurrentProfile } from "@/api/getCurrentProfile";
 import { getLinkedUsers, LinkedUser } from "@/api/getLinkedUsers";
 import DisconnectUser from "@/components/settings/DisconnectUser";
 import { useParticipant } from "@/context/practicerContext";
 import { NoUser } from "@/assets/images/no-users";
+import { useLocation } from "react-router-dom";
 
 const Monitor = () => {
   const { t, i18n } = useTranslation();
   const { selectedParticipant, switchParticipant } = useParticipant();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [activeSection, setActiveSection] = useState("practicerProfiles");
   const [patientTab, setPatientTab] = useState<"stats" | "config" | "team">("stats");
@@ -45,25 +47,39 @@ const Monitor = () => {
       const users = await getLinkedUsers(profile.id);
       setLinkedUsers(users);
 
-      // Si hay paciente seleccionado guardado en el contexto
-      if (selectedParticipant) {
+      const hasRealSelectedParticipant = selectedParticipant && selectedParticipant.role !== "admin";
+
+      // Check if we were navigated here with addUser intent
+      if (location.state?.section === "addUser") {
+        setActiveSection("addUser");
+      } else if (hasRealSelectedParticipant) {
         setActiveSection("practicerProfiles");
       } else if (users.length > 0) {
         switchParticipant(users[0]);
+        setActiveSection("practicerProfiles");
+      } else {
+        switchParticipant(null);
         setActiveSection("practicerProfiles");
       }
     } finally {
       setLoading(false);
     }
-  }, [selectedParticipant, switchParticipant, navigate]);
+  }, [selectedParticipant, switchParticipant, navigate, location.state]);
 
   useEffect(() => {
     loadData();
   }, []);
 
+  // Re-check section when location state changes (e.g., "+ Añadir participante" from Navbar)
+  useEffect(() => {
+    if (location.state?.section === "addUser") {
+      setActiveSection("addUser");
+    }
+  }, [location.state]);
+
   if (loading) {
     return (
-      <div className="relative flex flex-col min-h-screen bg-white overflow-x-hidden">
+      <div className="relative flex flex-col min-h-screen bg-bggreen overflow-x-hidden">
         <div className="page-padding relative flex-grow flex flex-col items-center justify-center z-[10]">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
@@ -75,32 +91,23 @@ const Monitor = () => {
   if (!isAdmin) return null;
 
   return (
-    <main id="main-content" className="page-padding flex flex-row min-h-screen">
-      <h1 className="sr-only">Monitorización</h1>
-      
-      <MonitorSidebar
-        currentProfile={currentProfile}
-        selectedParticipant={selectedParticipant}
-        activeSection={activeSection}
-        onSelectParticipant={(user) => {
-          switchParticipant(user);
-          setActiveSection("practicerProfiles");
-          setPatientTab("stats");
-        }}
-        onAddUser={() => setActiveSection("addUser")}
-      />
+    <>
+      <Navbar />
+      <MobileNav />
 
-      <div className="page-padding flex flex-col lg:ml-10 lg:mr-auto pt-20 lg:pt-28 z-10 animate-in fade-in-50 slide-in-from-right-5 duration-500 w-full">
-        <div className="block lg:hidden mb-4">
-          <BackButton />
-        </div>
+      <main
+        id="main-content"
+        className="relative flex flex-1 flex-col overflow-x-hidden bg-bggreen min-h-screen"
+      >
+        <BackgroundDesktop />
+        <div className="absolute inset-0 z-0 bg-white/10 backdrop-blur-md" />
 
-        {/* SECTION: PRACTICER PROFILES */}
-        {activeSection === "practicerProfiles" &&
-          (selectedParticipant && linkedUsers.length > 0 ? (
-            <div className="max-w-[72rem]">
-              <div>
-                <h2 className="font-fraunces text-4xl font-bold text-primary pb-4 lg:pb-8 lg:mt-0">
+        <div className="relative flex flex-1 flex-col z-10 p-4 lg:pb-20 lg:px-20 animate-in fade-in zoom-in-95 duration-700">
+          {/* SECTION: PRACTICER PROFILES */}
+          {activeSection === "practicerProfiles" &&
+            (selectedParticipant && linkedUsers.length > 0 ? (
+              <div className="max-w-[72rem] mx-auto w-full mt-16 md:mt-24 lg:mt-40">
+                <h2 className="font-fraunces text-4xl font-bold text-primary pb-4 lg:pb-8">
                   {t("settings.settingsFor")} {selectedParticipant.fullName}
                 </h2>
 
@@ -138,72 +145,64 @@ const Monitor = () => {
                   </button>
                 </div>
 
-                <div className="divide-y divide-lightgrey">
+                <div className="space-y-8">
                   {patientTab === "stats" && (
-                    <div className="py-4 first:pt-0 animate-in fade-in duration-300">
+                    <div className="animate-in fade-in duration-300">
                       <PatientStatsDashboard userId={selectedParticipant.id} />
                     </div>
                   )}
 
                   {patientTab === "config" && (
-                    <div className="space-y-10 divide-y divide-lightgrey py-4 first:pt-0 animate-in fade-in duration-300">
-                      <div className="pb-10 first:pt-0">
-                        <ExerciseLimitConfig userId={selectedParticipant.id} />
-                      </div>
-                      <div className="pt-10">
-                        <UserPermission user={selectedParticipant} />
-                      </div>
+                    <div className="space-y-8 animate-in fade-in duration-300">
+                      <ExerciseLimitConfig userId={selectedParticipant.id} />
+                      <UserPermission user={selectedParticipant} />
                     </div>
                   )}
 
                   {patientTab === "team" && (
-                    <div className="space-y-10 divide-y divide-lightgrey py-4 first:pt-0 animate-in fade-in duration-300">
-                      <div className="pb-10 first:pt-0">
-                        <Supporters
-                          selectedUser={selectedParticipant}
-                          currentProfile={currentProfile}
-                        />
-                      </div>
+                    <div className="space-y-8 animate-in fade-in duration-300">
+                      <Supporters
+                        selectedUser={selectedParticipant}
+                        currentProfile={currentProfile}
+                      />
                       {isAdmin && (
-                        <div className="pt-10">
-                          <DisconnectUser
-                            adminId={currentProfile.id}
-                            userId={selectedParticipant.id}
-                          />
-                        </div>
+                        <DisconnectUser
+                          adminId={currentProfile.id}
+                          userId={selectedParticipant.id}
+                        />
                       )}
                     </div>
                   )}
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center mt-28 mb-14 lg:mt-0 lg:mb-0">
-              <NoUser className="h-auto w-full max-w-[15rem] mb-8" />
-              <p className="text-xl font-medium text-gray-600 mb-6">
-                {t("settings.noParticipantsLinked") ||
-                  "You don't have a Participant linked to your account yet"}
-              </p>
-              <button
-                onClick={() => setActiveSection("addUser")}
-                className="button-sm button-primary px-8 py-3"
-              >
-                + {t("buttons.addUser")}
-              </button>
-            </div>
-          ))}
+            ) : (
+              <div className="flex flex-col items-center justify-center min-h-[60vh] text-center mt-28 mb-14 lg:mt-40 lg:mb-0">
+                <NoUser className="h-auto w-full max-w-[15rem] mb-8" />
+                <p className="text-xl font-medium text-gray-600 mb-6">
+                  {t("settings.noParticipantsLinked") ||
+                    "You don't have a Participant linked to your account yet"}
+                </p>
+                <button
+                  onClick={() => setActiveSection("addUser")}
+                  className="button-sm button-primary px-8 py-3"
+                >
+                  + {t("buttons.addUser")}
+                </button>
+              </div>
+            ))}
 
-        {/* SECTION: ADD USER */}
-        {activeSection === "addUser" && isAdmin && (
-          <div className="max-w-6xl">
-            <h2 className="mt-28 lg:mt-0 font-fraunces text-4xl font-bold text-primary pb-4 lg:pb-12">
-              {t("buttons.addUser")}
-            </h2>
-            <AddUser currentAdminId={currentProfile.id} />
-          </div>
-        )}
-      </div>
-    </main>
+          {/* SECTION: ADD USER */}
+          {activeSection === "addUser" && isAdmin && (
+            <div className="max-w-6xl mx-auto w-full mt-16 md:mt-24 lg:mt-40">
+              <h2 className="font-fraunces text-4xl font-bold text-primary pb-4 lg:pb-12">
+                {t("buttons.addUser")}
+              </h2>
+              <AddUser currentAdminId={currentProfile.id} />
+            </div>
+          )}
+        </div>
+      </main>
+    </>
   );
 };
 

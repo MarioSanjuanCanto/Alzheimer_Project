@@ -95,22 +95,22 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
         <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 bg-gray-100 border border-lightgrey p-6 rounded-2xl"></div>
+            <div key={i} className="h-32 bg-white/70 border border-white/50 p-6 rounded-3xl shadow-sm"></div>
           ))}
         </div>
-        <div className="h-[25rem] bg-gray-100 rounded-2xl"></div>
+        <div className="h-[25rem] bg-white/70 border border-white/50 rounded-3xl shadow-sm"></div>
       </div>
     );
   }
 
   if (history.length === 0) {
     return (
-      <div className="bg-bggreen/20 border border-dashed border-primary/30 p-8 md:p-12 rounded-2xl text-center max-w-[72rem] my-4">
+      <div className="bg-white/70 backdrop-blur-xl border border-white/50 p-8 md:p-12 rounded-3xl text-center max-w-[72rem] my-4 shadow-md">
         <Activity className="mx-auto h-14 w-14 text-primary/60 mb-4 animate-bounce" />
-        <h4 className="text-2xl font-semibold text-primary mb-2">
+        <h4 className="text-2xl font-bold font-fraunces text-black mb-2">
           {isSpanish ? "Sin historial de ejercicios" : "No Exercise History Yet"}
         </h4>
-        <p className="text-black/70 text-lg max-w-lg mx-auto">
+        <p className="text-darkgrey text-lg max-w-lg mx-auto leading-relaxed">
           {isSpanish
             ? "Este paciente aún no ha completado ningún ejercicio cognitivo. Una vez que comience a practicar, los gráficos de rendimiento y evolución aparecerán aquí en tiempo real."
             : "This patient has not completed any cognitive exercises yet. Once they start practicing, real-time performance and progress charts will appear here."}
@@ -214,11 +214,11 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
     <div className="space-y-8 max-w-[72rem] animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h3 className="text-black text-2xl font-extrabold flex items-center gap-2">
+          <h3 className="text-black text-2xl font-bold font-fraunces flex items-center gap-2">
             <BarChart3 className="w-6 h-6 text-primary" strokeWidth={2.5} />
             {isSpanish ? "Estadísticas de Evolución Cognitiva" : "Cognitive Evolution Statistics"}
           </h3>
-          <p className="text-black/70 mt-1">
+          <p className="text-darkgrey text-lg mt-1">
             {isSpanish
               ? "Análisis interactivo detallado de las respuestas e historial de ejercicios del paciente."
               : "Detailed interactive analysis of the patient's exercise history and responses."}
@@ -226,12 +226,12 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
         </div>
 
         {/* Dropdown de fecha */}
-        <div className="bg-white/60 backdrop-blur-md border border-lightgrey p-2 px-4 rounded-xl shadow-sm flex items-center gap-3">
-          <Calendar className="w-5 h-5 text-darkgrey" />
+        <div className="bg-white border border-gray-150 p-2.5 px-4 rounded-2xl shadow-sm flex items-center gap-3 transition-all focus-within:ring-2 focus-within:ring-primary/20">
+          <Calendar className="w-5 h-5 text-primary" />
           <select 
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="bg-transparent text-black font-medium outline-none cursor-pointer"
+            className="bg-transparent text-black font-semibold outline-none cursor-pointer text-base"
           >
             <option value="all">{isSpanish ? "Todo el tiempo" : "All time"}</option>
             <option value="last_7">{isSpanish ? "Últimos 7 días" : "Last 7 days"}</option>
@@ -243,41 +243,41 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
       {/* --- CARDS DE MÉTRICAS (Glassmorphism) --- */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Metrica 1: Total ejercicios */}
-        <div className="bg-white/60 backdrop-blur-md border border-lightgrey p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-4">
+        <div className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-md rounded-3xl p-6 transition-all hover:shadow-lg hover:scale-[1.02] duration-300 flex items-center gap-4">
           <div className="p-4 rounded-xl bg-primary/10 text-primary">
             <Activity className="w-7 h-7" />
           </div>
           <div>
-            <p className="text-sm font-medium text-darkgrey uppercase tracking-wider">
+            <p className="text-sm font-semibold text-darkgrey uppercase tracking-wider">
               {isSpanish ? "Ejercicios Realizados" : "Exercises Done"}
             </p>
-            <h4 className="text-3xl font-bold text-black">{totalExercises}</h4>
+            <h4 className="text-3xl font-extrabold text-black">{totalExercises}</h4>
           </div>
         </div>
 
         {/* Metrica 2: Tasa de acierto */}
-        <div className="bg-white/60 backdrop-blur-md border border-lightgrey p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-4">
+        <div className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-md rounded-3xl p-6 transition-all hover:shadow-lg hover:scale-[1.02] duration-300 flex items-center gap-4">
           <div className="p-4 rounded-xl bg-emerald-500/10 text-emerald-600">
             <Award className="w-7 h-7" />
           </div>
           <div>
-            <p className="text-sm font-medium text-darkgrey uppercase tracking-wider">
+            <p className="text-sm font-semibold text-darkgrey uppercase tracking-wider">
               {isSpanish ? "Tasa de Acierto Global" : "Global Success Rate"}
             </p>
-            <h4 className="text-3xl font-bold text-emerald-600">{successRate}%</h4>
+            <h4 className="text-3xl font-extrabold text-emerald-600">{successRate}%</h4>
           </div>
         </div>
 
         {/* Metrica 3: Dificultad Máxima */}
-        <div className="bg-white/60 backdrop-blur-md border border-lightgrey p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-4">
+        <div className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-md rounded-3xl p-6 transition-all hover:shadow-lg hover:scale-[1.02] duration-300 flex items-center gap-4">
           <div className="p-4 rounded-xl bg-amber-500/10 text-amber-600">
             <TrendingUp className="w-7 h-7" />
           </div>
           <div>
-            <p className="text-sm font-medium text-darkgrey uppercase tracking-wider">
+            <p className="text-sm font-semibold text-darkgrey uppercase tracking-wider">
               {isSpanish ? "Dificultad Máx. Alcanzada" : "Max. Difficulty Reached"}
             </p>
-            <h4 className="text-3xl font-bold text-amber-600">{maxDifficulty}</h4>
+            <h4 className="text-3xl font-extrabold text-amber-600">{maxDifficulty}</h4>
           </div>
         </div>
       </div>
@@ -286,13 +286,13 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* Gráfico 1: Barras Apiladas (Aciertos vs Errores) */}
-        <div className="bg-white/60 backdrop-blur-md border border-lightgrey p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col h-[28rem]">
+        <div className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-md rounded-3xl p-6 md:p-8 transition-all hover:shadow-lg duration-300 flex flex-col h-[28rem]">
           <div className="mb-4">
-            <h4 className="text-xl font-bold text-black flex items-center gap-2">
+            <h4 className="text-xl font-bold font-fraunces text-black flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />
               {isSpanish ? "Precisión por Tipo de Ejercicio" : "Accuracy by Exercise Type"}
             </h4>
-            <p className="text-sm text-darkgrey">
+            <p className="text-sm text-darkgrey mt-0.5 leading-relaxed">
               {isSpanish
                 ? "Comparativa de respuestas correctas e incorrectas por categoría."
                 : "Comparison of correct and incorrect answers by category."}
@@ -328,13 +328,13 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
         </div>
 
         {/* Gráfico 2: Donut (Distribución) */}
-        <div className="bg-white/60 backdrop-blur-md border border-lightgrey p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col h-[28rem]">
+        <div className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-md rounded-3xl p-6 md:p-8 transition-all hover:shadow-lg duration-300 flex flex-col h-[28rem]">
           <div className="mb-4">
-            <h4 className="text-xl font-bold text-black flex items-center gap-2">
+            <h4 className="text-xl font-bold font-fraunces text-black flex items-center gap-2">
               <Calendar className="w-5 h-5 text-blue-600" />
               {isSpanish ? "Distribución del Trabajo del Paciente" : "Patient Work Distribution"}
             </h4>
-            <p className="text-sm text-darkgrey">
+            <p className="text-sm text-darkgrey mt-0.5 leading-relaxed">
               {isSpanish
                 ? "Proporción de ejercicios completados por categoría."
                 : "Proportion of completed exercises by category."}
@@ -373,13 +373,13 @@ export default function PatientStatsDashboard({ userId }: PatientStatsDashboardP
       </div>
 
       {/* Gráfico 3: Área (Evolución en el Tiempo) */}
-      <div className="bg-white/60 backdrop-blur-md border border-lightgrey p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col h-[28rem]">
+      <div className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-md rounded-3xl p-6 md:p-8 transition-all hover:shadow-lg duration-300 flex flex-col h-[28rem]">
         <div className="mb-4">
-          <h4 className="text-xl font-bold text-black flex items-center gap-2">
+          <h4 className="text-xl font-bold font-fraunces text-black flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-primary" />
             {isSpanish ? "Evolución y Actividad Histórica" : "Evolution and Historical Activity"}
           </h4>
-          <p className="text-sm text-darkgrey">
+          <p className="text-sm text-darkgrey mt-0.5 leading-relaxed">
             {isSpanish
               ? "Tendencia diaria de ejercicios completados y tasa de acierto correspondiente."
               : "Daily trend of completed exercises and corresponding success rate."}

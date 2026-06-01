@@ -128,15 +128,15 @@ const ExerciseLimitConfig = ({ userId }: ExerciseLimitConfigProps) => {
 
   if (loading) {
     return (
-      <div className="space-y-4 max-w-[48rem]">
-        <h3 className="text-black text-2xl font-semibold">
+      <div className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-md rounded-3xl p-6 md:p-8 lg:p-10 max-w-[54rem] animate-in fade-in duration-500">
+        <h3 className="text-black text-2xl font-bold font-fraunces">
           {t("settings.exerciseLimits.title")}
         </h3>
-        <div className="flex flex-col md:flex-row gap-6 md:ml-12 lg:ml-0">
+        <div className="flex flex-col md:flex-row gap-6 mt-6">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="flex-1 bg-gray-100 border border-lightgrey p-6 rounded-2xl flex flex-col items-center justify-between min-h-[10rem] animate-pulse"
+              className="flex-1 bg-white border border-gray-100 p-6 rounded-2xl flex flex-col items-center justify-between min-h-[11rem] animate-pulse"
             >
               <div className="h-6 bg-gray-200 rounded w-24 mb-4"></div>
               <div className="flex items-center gap-6">
@@ -152,23 +152,23 @@ const ExerciseLimitConfig = ({ userId }: ExerciseLimitConfigProps) => {
   }
 
   return (
-    <div>
-      <h3 className="text-black text-2xl font-semibold">
+    <div className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-md rounded-3xl p-6 md:p-8 lg:p-10 max-w-[54rem] animate-in fade-in duration-500">
+      <h3 className="text-black text-2xl font-bold font-fraunces mb-2">
         {t("settings.exerciseLimits.title")}
       </h3>
-      <p className="text-black text-xl pb-6">
+      <p className="text-darkgrey text-lg pb-6 leading-relaxed">
         {t("settings.exerciseLimits.description")}
       </p>
 
-      <div className="flex flex-col md:flex-row gap-6 md:ml-12 lg:ml-0 max-w-[48rem]">
+      <div className="flex flex-col md:flex-row gap-6">
         {exerciseTypes.map((type) => {
           const val = limits[type.id];
           return (
             <div
               key={type.id}
-              className="flex-1 bg-bggreen/30 border border-lightgrey p-6 rounded-2xl flex flex-col items-center justify-between min-h-[10rem] transition-all hover:shadow-sm"
+              className="flex-1 bg-white border border-gray-100 p-6 rounded-2xl flex flex-col items-center justify-between min-h-[11rem] shadow-sm transition-all hover:shadow-md hover:scale-[1.01] duration-300"
             >
-              <span className="text-xl font-medium text-primary text-center mb-4">
+              <span className="text-lg font-semibold text-primary text-center mb-4 leading-snug">
                 {type.name}
               </span>
 
@@ -176,12 +176,11 @@ const ExerciseLimitConfig = ({ userId }: ExerciseLimitConfigProps) => {
                 {/* Decrement Button */}
                 <button
                   type="button"
-
                   onClick={() => handleUpdateLimit(type.id, val - 1)}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all text-xl font-bold
+                  className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all text-xl font-bold shadow-sm
                     ${val <= 0
-                      ? "border-gray-300 text-gray-300 cursor-not-allowed"
-                      : "border-primary text-primary bg-white hover:bg-primary/10 active:scale-95"
+                      ? "border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50/50"
+                      : "border-primary/30 text-primary bg-white hover:bg-primary hover:text-white active:scale-95"
                     }`}
                 >
                   −
@@ -197,10 +196,10 @@ const ExerciseLimitConfig = ({ userId }: ExerciseLimitConfigProps) => {
                   type="button"
                   disabled={total >= 5}
                   onClick={() => handleUpdateLimit(type.id, val + 1)}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all text-xl font-bold
+                  className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all text-xl font-bold shadow-sm
                     ${total >= 5
-                      ? "border-gray-300 text-gray-300 cursor-not-allowed"
-                      : "border-primary text-primary bg-white hover:bg-primary/10 active:scale-95"
+                      ? "border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50/50"
+                      : "border-primary/30 text-primary bg-white hover:bg-primary hover:text-white active:scale-95"
                     }`}
                 >
                   +
@@ -212,26 +211,26 @@ const ExerciseLimitConfig = ({ userId }: ExerciseLimitConfigProps) => {
       </div>
 
       {/* Progress / Status indicator */}
-      <div className="mt-4 md:ml-12 lg:ml-0 flex items-center gap-3">
-        <div className="text-lg font-medium text-darkgrey">
+      <div className="mt-8 flex items-center gap-4">
+        <div className="text-lg font-medium text-darkgrey whitespace-nowrap">
           Total: <span className={total === 5 ? "text-primary font-bold animate-pulse" : "text-black font-semibold"}>{total}</span> / 5
         </div>
-        <div className="flex-1 max-w-[200px] h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="flex-1 max-w-[200px] h-2.5 bg-gray-100 rounded-full overflow-hidden border border-gray-200/30">
           <div
-            className={`h-full transition-all duration-300 rounded-full ${total === 5 ? "bg-primary" : "bg-primary/60"}`}
+            className={`h-full transition-all duration-300 rounded-full ${total === 5 ? "bg-primary" : "bg-gradient-to-r from-primary/80 to-primary"}`}
             style={{ width: `${(total / 5) * 100}%` }}
           />
         </div>
       </div>
 
       {/* Apply Changes Button */}
-      <div className="mt-6 md:ml-12 lg:ml-0">
+      <div className="mt-8">
         <button
           type="button"
           onClick={handleApplyChanges}
           disabled={!hasChanges || saving}
-          className={`button-sm px-8 py-3 rounded-full font-medium transition-all ${hasChanges && !saving
-            ? "button-primary active:scale-[0.98]"
+          className={`button-sm px-8 py-3.5 rounded-full font-medium transition-all ${hasChanges && !saving
+            ? "button-primary hover:shadow active:scale-[0.98]"
             : "button-disabled cursor-not-allowed"
             }`}
         >

@@ -21,7 +21,9 @@ const Settings = () => {
       setLoading(true);
       const profile = await getCurrentProfile();
       setCurrentProfile(profile);
-      switchParticipant(profile);
+      if (profile?.role !== "admin") {
+        switchParticipant(profile);
+      }
       setActiveSection("myProfile");
     } finally {
       setLoading(false);

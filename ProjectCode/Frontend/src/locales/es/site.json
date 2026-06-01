@@ -129,7 +129,8 @@
     "chooseExercise": "Elige un ejercicio para comenzar"
   },
   "exercisesOverview": {
-    "title": "Exercices"
+    "title": "Ejercicios",
+    "exercisesShowingFor": "Mostrando ejercicios de"
   },
   "settings": {
     "title": "Configuración",
