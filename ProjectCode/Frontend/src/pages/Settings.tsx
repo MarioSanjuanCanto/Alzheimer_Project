@@ -8,6 +8,7 @@ import GeneralInformation from "@/components/settings/GeneralInformation";
 import UserPermission from "@/components/settings/UserPermission";
 import ExerciseLimitConfig from "@/components/settings/ExerciseLimitConfig";
 import Supporters from "@/components/settings/Supporters";
+import PatientStatsDashboard from "@/components/settings/PatientStatsDashboard";
 import MyProfileSettings from "@/components/settings/MyProfileSettings";
 import AddUser from "@/components/AddUser";
 import BackButton from "@/components/ui/back-button";
@@ -107,6 +108,9 @@ const Settings = () => {
                 </h2>
                 <div className="divide-y divide-lightgrey">
                   <div className="py-8 lg:py-10 first:pt-0">
+                    <PatientStatsDashboard userId={selectedParticipant.id} />
+                  </div>
+                  <div className="py-8 lg:py-10">
                     <Supporters
                       selectedUser={selectedParticipant}
                       currentProfile={currentProfile}

@@ -169,6 +169,19 @@ def delete_account_endpoint():
         print(f"\033[91m[app]\033[0m Error deleting account: {e}")
         return jsonify({"error": "Could not delete account."}), 500
 
+@app.route('/api/exercise_history/<user_id>', methods=['GET'])
+def get_exercise_history_endpoint(user_id):
+    """
+    Endpoint to get exercise history for a specific user.
+    """
+    print(f"\033[91m[app]\033[0m get_exercise_history_endpoint for user: {user_id}")
+    try:
+        history = db.get_user_exercise_history(user_id, limit=100)
+        return jsonify(history), 200
+    except Exception as e:
+        print(f"\033[91m[app]\033[0m Error fetching exercise history: {e}")
+        return jsonify({"error": "Could not fetch exercise history."}), 500
+
 @app.route('/api/test', methods=['GET'])
 def test_endpoint():
     """Test endpoint to verify that the API is working."""
