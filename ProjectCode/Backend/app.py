@@ -168,7 +168,6 @@ def generate_exercise_endpoint():
         )
 
         memory_data['user_description'] = description
-
         exercise_set = service.generate(user_id, memory_data['title'], description, memory_data.get("ai_analysis", {}))
         
         exercise_set = {"exercises": exercise_set}
