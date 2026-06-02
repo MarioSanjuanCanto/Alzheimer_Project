@@ -63,6 +63,7 @@ const Practice = () => {
               user_id: memory.user_id,
               title: memory.title,
               user_description: memory.description,
+              audio_transcription: memory.audio_transcription,
             }),
           }
         );

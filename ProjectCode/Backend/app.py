@@ -157,7 +157,19 @@ def generate_exercise_endpoint():
 
     # --- Exercise generation logic ---
     try:
-        exercise_set = service.generate(user_id, memory_data['title'], memory_data['user_description'], memory_data.get("ai_analysis", {}))
+        description_parts = [
+            memory_data.get('user_description', ''),
+            memory_data.get('audio_transcription', ''),
+        ]
+        description = "\n".join(
+            part.strip()
+            for part in description_parts
+            if part and part.strip()
+        )
+
+        memory_data['user_description'] = description
+
+        exercise_set = service.generate(user_id, memory_data['title'], description, memory_data.get("ai_analysis", {}))
         
         exercise_set = {"exercises": exercise_set}
 
