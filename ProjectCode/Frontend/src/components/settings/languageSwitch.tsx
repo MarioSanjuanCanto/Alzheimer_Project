@@ -46,26 +46,24 @@ const LanguageSwitch = () => {
               e.stopPropagation();
               handleLanguageChange("en");
             }}
-            className={`w-full text-left px-5 py-2 rounded-full text-xl font-medium transition-all ${
-              isEn
+            className={`w-full text-left px-5 py-2 rounded-full text-xl font-medium transition-all ${isEn
                 ? "bg-primary text-white shadow-sm shadow-primary/20 font-semibold"
                 : "text-darkgrey hover:bg-gray-100 hover:text-black"
-            }`}
+              }`}
           >
             {t("buttons.english") || "Inglés"}
           </button>
-          
+
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               handleLanguageChange("es");
             }}
-            className={`w-full text-left px-5 py-2 rounded-full text-xl font-medium transition-all ${
-              isEs
+            className={`w-full text-left px-5 py-2 rounded-full text-xl font-medium transition-all ${isEs
                 ? "bg-primary text-white shadow-sm shadow-primary/20 font-semibold"
                 : "text-darkgrey hover:bg-gray-100 hover:text-black"
-            }`}
+              }`}
           >
             {t("buttons.spanish") || "Español"}
           </button>
