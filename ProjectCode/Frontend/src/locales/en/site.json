@@ -87,7 +87,9 @@
       "audio": "Audio (Optional)",
       "recordAudio": "Record an audio message",
       "startRecording": "Start Recording",
-      "stopRecording": "Stop Recording"
+      "stopRecording": "Stop Recording",
+      "deleteRecording": "Delete recording",
+      "processingAudio": "Preparing audio..."
     }
   },
   "deleteMemory": {

@@ -2,12 +2,37 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import database.db as db
 from services.exercise_service import ExerciseService
+from services.transcription_service import TranscriptionService
 
 # ______________________________________ API END Points ______________________________________
 
 print("\033[42m[INFO] Server initialized\033[0m")
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/api/transcribe', methods=['POST'])
+def transcribe_audio_endpoint():
+    """
+    Endpoint to transcribe an audio file using OpenAI Whisper.
+    Expects a multipart/form-data request with an 'audio' file.
+    """
+    print("\033[91m[app]\033[0m transcribe_audio_endpoint")
+
+    if 'audio' not in request.files:
+        return jsonify({"error": "No audio file provided. Send it as 'audio' in form-data."}), 400
+
+    audio_file = request.files['audio']
+
+    if audio_file.filename == '':
+        return jsonify({"error": "Empty filename."}), 400
+
+    try:
+        service = TranscriptionService()
+        transcription = service.transcribe(audio_file)
+        return jsonify({"transcription": transcription}), 200
+    except Exception as e:
+        print(f"\033[91m[app]\033[0m Error transcribing audio: {e}")
+        return jsonify({"error": "Could not transcribe audio.", "details": str(e)}), 500
 
 @app.route('/api/excercise_correction', methods=['POST'])
 def excercise_correction_endpoint():

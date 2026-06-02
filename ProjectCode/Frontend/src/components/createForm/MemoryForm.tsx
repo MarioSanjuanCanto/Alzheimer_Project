@@ -29,6 +29,8 @@ export const MemoryForm = ({memory}) => {
     handleSubmit,
     audioUrl,
     recording,
+    isProcessingAudio,
+    isSubmitting,
     startRecording,
     stopRecording,
     deleteRecording,
@@ -123,6 +125,7 @@ export const MemoryForm = ({memory}) => {
                 recording={recording}
                 deleteRecording={deleteRecording}
                 audioUrl={audioUrl}
+                isProcessingAudio={isProcessingAudio}
                 updateFormData={updateFormData}
               />
             )}
@@ -133,6 +136,9 @@ export const MemoryForm = ({memory}) => {
               onNext={handleNext}
               onBack={handleBack}
               onSubmit={handleSubmit}
+              isSubmitting={isSubmitting}
+              isProcessingAudio={isProcessingAudio}
+              recording={recording}
             />
           </div>
         </div>

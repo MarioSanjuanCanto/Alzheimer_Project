@@ -1,4 +1,5 @@
 import { supabase } from "../supabaseClient";
+import transcribeAudio, { getAudioFileExtension } from "./transcribeAudio";
 
 /**
  * Handles uploading assets and creating a memory record.
@@ -18,6 +19,7 @@ const handleCreate = async (formData: any, targetDbId: string) => {
   try {
     let imageUrl = formData.image;
     let audioUrl = formData.audio;
+    let audioTranscription: string | null = null;
 
     // 1. Upload Image to Storage
     if (formData.image instanceof File) {
@@ -36,16 +38,29 @@ const handleCreate = async (formData: any, targetDbId: string) => {
 
     // 2. Upload Audio to Storage
     if (formData.audio instanceof Blob) {
-      const audioName = `${targetDbId}/audio/${Date.now()}_audio.webm`;
+      const audioExtension = getAudioFileExtension(formData.audio.type);
+      const audioName = `${targetDbId}/audio/${Date.now()}_audio.${audioExtension}`;
 
       const { error: audioError } = await supabase.storage
         .from("memories")
-        .upload(audioName, formData.audio, { upsert: true });
+        .upload(audioName, formData.audio, {
+          contentType: formData.audio.type || `audio/${audioExtension}`,
+          upsert: true,
+        });
 
       if (audioError) throw audioError;
 
       const { data } = supabase.storage.from("memories").getPublicUrl(audioName);
       audioUrl = data.publicUrl;
+
+      // 2b. Transcribe the audio via backend (Whisper)
+      console.log("🎙️ Transcribing audio...");
+      audioTranscription = await transcribeAudio(formData.audio);
+      if (audioTranscription) {
+        console.log("✅ Audio transcribed successfully");
+      } else {
+        console.warn("⚠️ Audio transcription returned null, saving memory without transcription");
+      }
     }
 
     // 3. Insert record into the 'memories' table
@@ -54,6 +69,7 @@ const handleCreate = async (formData: any, targetDbId: string) => {
       description: formData.description,
       image: imageUrl,
       audio: audioUrl || null,
+      audio_transcription: audioTranscription,
       user_id: targetDbId, // The Foreign Key to public.users(id)
     });
 

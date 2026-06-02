@@ -14,6 +14,7 @@ export const AudioStep = ({
   audioUrl,
   recording,
   stopRecording,
+  isProcessingAudio,
 }) => {
   const { t } = useTranslation();
 
@@ -43,8 +44,9 @@ export const AudioStep = ({
             type="button"
             onClick={deleteRecording}
             aria-label={t("create.fields.deleteRecording")}
-            className="absolute top-2 right-4 z-10"
+            className="absolute bottom-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-primary shadow-sm transition hover:bg-white"
           >
+            <Delete className="h-8 w-8" aria-hidden="true" />
           </button>
 
           <AudioPlayer
@@ -61,8 +63,6 @@ export const AudioStep = ({
               width: "100%",
             }}
           />
-          {/* Button doesnt work here */}
-          <Delete className="absolute bottom-4 right-4 h-8 w-8 text-primary z-999" aria-hidden="true" />
         </div>
       )}
 
@@ -81,13 +81,16 @@ export const AudioStep = ({
                     type="button"
                     onClick={startRecording}
                     aria-label={t("create.fields.startRecording")}
-                    className="absolute flex h-16 w-16 items-center justify-center rounded-full bg-primary"
+                    disabled={isProcessingAudio}
+                    className="absolute flex h-16 w-16 items-center justify-center rounded-full bg-primary disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Mic className="h-10 w-10 text-white" aria-hidden="true" />
                   </button>
                 </div>
                 <p className="text-xl text-primary w-40 text-center">
-                  {t("create.fields.startRecording")}
+                  {isProcessingAudio
+                    ? t("create.fields.processingAudio")
+                    : t("create.fields.startRecording")}
                 </p>
               </>
             ) : (
